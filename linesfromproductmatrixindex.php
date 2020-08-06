@@ -45,10 +45,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix"));
 
 $action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$toselect = GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'orderlist';
+$search_product_category = GETPOST('search_product_category', 'int');
 
 
 // Security check
-//if (! $user->rights->linesfromproductmatrix->myobject->read) accessforbidden();
+if (! $user->rights->linesfromproductmatrix->bloc->read) accessforbidden();
+
 $socid = GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0)
 {
@@ -58,6 +63,12 @@ if (isset($user->socid) && $user->socid > 0)
 
 $max = 5;
 $now = dol_now();
+
+
+$checkedtypetiers = 0;
+$arrayfields = array(
+	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers
+	),
 
 
 /*
