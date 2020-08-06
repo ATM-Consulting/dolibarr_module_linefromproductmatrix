@@ -100,10 +100,10 @@ class Bloc extends CommonObject
 		'fk_rank' => array('type'=>'integer', 'label'=>'fk_rank', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"fk_rank"),
 	);
 	public $rowid;
-	public $ref;
+//	public $ref;
 	public $label;
 	public $date_creation;
-	public $status;
+	public $fk_status;  // actif ou inactif  (changer $this->status en $this->fk_status )
 	public $tms;
 	public $fk_rank;
 	public $fk_user_creat;
