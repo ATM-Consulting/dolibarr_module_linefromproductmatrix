@@ -67,14 +67,14 @@ $now = dol_now();
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers
-	),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers));
 
 
 /*
  * Actions
  */
-
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 // None
 
 
@@ -86,10 +86,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 llxHeader("", $langs->trans("LinesFromProductMatrixArea"));
-
 print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), '', 'linesfromproductmatrix.png@linesfromproductmatrix');
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">ici config<div class="fichethirdleft">';
 
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT

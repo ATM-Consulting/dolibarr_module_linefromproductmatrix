@@ -14,16 +14,16 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_linesfromproductmatrix_bloc(
+CREATE TABLE llx_linesfromproductmatrix_blocchild(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	label varchar(255),
 	date_creation datetime NOT NULL,
-	tms timestamp,
-	fk_user_creat integer NOT NULL,
+	type tinyint(1),
+	tms timestamp, 
+	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer,
-	fk_rank integer,
-	status tinyint(255)
+	fk_bloc integer NOT NULL,
+	fk_rank integer
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

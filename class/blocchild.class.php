@@ -17,9 +17,9 @@
  */
 
 /**
- * \file        class/bloc.class.php
+ * \file        class/blocchild.class.php
  * \ingroup     linesfromproductmatrix
- * \brief       This file is a CRUD class file for Bloc (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for BlocChild (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -28,19 +28,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for Bloc
+ * Class for BlocChild
  */
-class Bloc extends CommonObject
+class BlocChild extends Bloc
 {
 	/**
 	 * @var string ID to identify managed object.
 	 */
-	public $element = 'bloc';
+	public $element = 'blocchild';
 
 	/**
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
-	public $table_element = 'linesfromproductmatrix_bloc';
+	public $table_element = 'linesfromproductmatrix_blocchild';
 
 	/**
 	 * @var int  Does this object support multicompany module ?
@@ -54,9 +54,9 @@ class Bloc extends CommonObject
 	public $isextrafieldmanaged = 1;
 
 	/**
-	 * @var string String with name of icon for bloc. Must be the part after the 'object_' into object_bloc.png
+	 * @var string String with name of icon for blocchild. Must be the part after the 'object_' into object_blocchild.png
 	 */
-	public $picto = 'bloc@linesfromproductmatrix';
+	public $picto = 'blocchild@linesfromproductmatrix';
 
 
 	const STATUS_DRAFT = 0;
@@ -95,17 +95,21 @@ class Bloc extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>"Help text", 'showoncombobox'=>'1',),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'fk_bloc' => array('type'=>'integer', 'label'=>'fk_bloc', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"fk_bloc"),
 		'fk_rank' => array('type'=>'integer', 'label'=>'fk_rank', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"fk_rank"),
-	);
+		);
 	public $rowid;
-	public $ref;
+	public $fk_bloc;
+	public $type;
+	public $fk_rank;
 	public $label;
 	public $date_creation;
-	public $status;
 	public $tms;
-	public $fk_rank;
 	public $fk_user_creat;
 	public $fk_user_modif;
 
@@ -117,17 +121,17 @@ class Bloc extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'linesfromproductmatrix_blocline';
+	//public $table_element_line = 'linesfromproductmatrix_blocchildline';
 
 	/**
 	 * @var int    Field with ID of parent key if this object has a parent
 	 */
-	//public $fk_element = 'fk_bloc';
+	//public $fk_element = 'fk_blocchild';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'Blocline';
+	//public $class_element_line = 'BlocChildline';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -139,10 +143,10 @@ class Bloc extends CommonObject
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	//protected $childtablesoncascade = array('linesfromproductmatrix_blocdet');
+	//protected $childtablesoncascade = array('linesfromproductmatrix_blocchilddet');
 
 	/**
-	 * @var BlocLine[]     Array of subtable lines
+	 * @var BlocChildLine[]     Array of subtable lines
 	 */
 	//public $lines = array();
 
@@ -163,7 +167,7 @@ class Bloc extends CommonObject
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->linesfromproductmatrix->bloc->read) {
+		/*if ($user->rights->linesfromproductmatrix->blocchild->read) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -471,8 +475,8 @@ class Bloc extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->bloc->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->bloc->bloc_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->blocchild->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->blocchild->blocchild_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -515,7 +519,7 @@ class Bloc extends CommonObject
 			if (!$error && !$notrigger)
 			{
 				// Call trigger
-				$result = $this->call_trigger('BLOC_VALIDATE', $user);
+				$result = $this->call_trigger('BLOCCHILD_VALIDATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -529,16 +533,16 @@ class Bloc extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'bloc/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bloc/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'blocchild/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'blocchild/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->linesfromproductmatrix->dir_output.'/bloc/'.$oldref;
-				$dirdest = $conf->linesfromproductmatrix->dir_output.'/bloc/'.$newref;
+				$dirsource = $conf->linesfromproductmatrix->dir_output.'/blocchild/'.$oldref;
+				$dirdest = $conf->linesfromproductmatrix->dir_output.'/blocchild/'.$newref;
 				if (!$error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
@@ -547,7 +551,7 @@ class Bloc extends CommonObject
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->linesfromproductmatrix->dir_output.'/bloc/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($conf->linesfromproductmatrix->dir_output.'/blocchild/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry)
 						{
 							$dirsource = $fileentry['name'];
@@ -603,7 +607,7 @@ class Bloc extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'BLOC_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'BLOCCHILD_UNVALIDATE');
 	}
 
 	/**
@@ -628,7 +632,7 @@ class Bloc extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'BLOC_CLOSE');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'BLOCCHILD_CLOSE');
 	}
 
 	/**
@@ -653,7 +657,7 @@ class Bloc extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'BLOC_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'BLOCCHILD_REOPEN');
 	}
 
 	/**
@@ -674,14 +678,14 @@ class Bloc extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("Bloc").'</u>';
+		$label = '<u>'.$langs->trans("BlocChild").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
 
-		$url = dol_buildpath('/linesfromproductmatrix/bloc_card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/linesfromproductmatrix/blocchild_card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink')
 		{
@@ -696,7 +700,7 @@ class Bloc extends CommonObject
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowBloc");
+				$label = $langs->trans("ShowBlocChild");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -745,7 +749,7 @@ class Bloc extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
-		$hookmanager->initHooks(array('blocdao'));
+		$hookmanager->initHooks(array('blocchilddao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
@@ -868,8 +872,8 @@ class Bloc extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new BlocLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bloc = '.$this->id));
+		$objectline = new BlocChildLine($this->db);
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_blocchild = '.$this->id));
 
 		if (is_numeric($result))
 		{
@@ -892,18 +896,18 @@ class Bloc extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("linesfromproductmatrix@bloc");
+		$langs->load("linesfromproductmatrix@blocchild");
 
-		if (empty($conf->global->LINESFROMPRODUCTMATRIX_BLOC_ADDON)) {
-			$conf->global->LINESFROMPRODUCTMATRIX_BLOC_ADDON = 'mod_bloc_standard';
+		if (empty($conf->global->LINESFROMPRODUCTMATRIX_BLOCCHILD_ADDON)) {
+			$conf->global->LINESFROMPRODUCTMATRIX_BLOCCHILD_ADDON = 'mod_blocchild_standard';
 		}
 
-		if (!empty($conf->global->LINESFROMPRODUCTMATRIX_BLOC_ADDON))
+		if (!empty($conf->global->LINESFROMPRODUCTMATRIX_BLOCCHILD_ADDON))
 		{
 			$mybool = false;
 
-			$file = $conf->global->LINESFROMPRODUCTMATRIX_BLOC_ADDON.".php";
-			$classname = $conf->global->LINESFROMPRODUCTMATRIX_BLOC_ADDON;
+			$file = $conf->global->LINESFROMPRODUCTMATRIX_BLOCCHILD_ADDON.".php";
+			$classname = $conf->global->LINESFROMPRODUCTMATRIX_BLOCCHILD_ADDON;
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -968,12 +972,12 @@ class Bloc extends CommonObject
 		$langs->load("linesfromproductmatrix@linesfromproductmatrix");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_bloc';
+			$modele = 'standard_blocchild';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->BLOC_ADDON_PDF)) {
-				$modele = $conf->global->BLOC_ADDON_PDF;
+			} elseif (!empty($conf->global->BLOCCHILD_ADDON_PDF)) {
+				$modele = $conf->global->BLOCCHILD_ADDON_PDF;
 			}
 		}
 
@@ -1018,10 +1022,10 @@ class Bloc extends CommonObject
 }
 
 /**
- * Class BlocLine. You can also remove this and generate a CRUD class for lines objects.
+ * Class BlocChildLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class BlocLine
+class BlocChildLine
 {
-	// To complete with content of an object BlocLine
-	// We should have a field rowid, fk_bloc and position
+	// To complete with content of an object BlocChildLine
+	// We should have a field rowid, fk_blocchild and position
 }

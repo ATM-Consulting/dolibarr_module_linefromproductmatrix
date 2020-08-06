@@ -15,13 +15,12 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_linesfromproductmatrix_bloc ADD INDEX idx_linesfromproductmatrix_bloc_rowid (rowid);
-ALTER TABLE llx_linesfromproductmatrix_bloc ADD INDEX idx_linesfromproductmatrix_bloc_ref (ref);
-ALTER TABLE llx_linesfromproductmatrix_bloc ADD CONSTRAINT llx_linesfromproductmatrix_bloc_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
-ALTER TABLE llx_linesfromproductmatrix_bloc ADD INDEX idx_linesfromproductmatrix_bloc_status (status);
+ALTER TABLE llx_linesfromproductmatrix_blocchild ADD INDEX idx_linesfromproductmatrix_blocchild_rowid (rowid);
+ALTER TABLE llx_linesfromproductmatrix_blocchild ADD INDEX idx_linesfromproductmatrix_blocchild_ref (ref);
+ALTER TABLE llx_linesfromproductmatrix_blocchild ADD CONSTRAINT llx_linesfromproductmatrix_blocchild_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 -- END MODULEBUILDER INDEXES
 
---ALTER TABLE llx_linesfromproductmatrix_bloc ADD UNIQUE INDEX uk_linesfromproductmatrix_bloc_fieldxy(fieldx, fieldy);
+--ALTER TABLE llx_linesfromproductmatrix_blocchild ADD UNIQUE INDEX uk_linesfromproductmatrix_blocchild_fieldxy(fieldx, fieldy);
 
---ALTER TABLE llx_linesfromproductmatrix_bloc ADD CONSTRAINT llx_linesfromproductmatrix_bloc_fk_field FOREIGN KEY (fk_field) REFERENCES llx_linesfromproductmatrix_myotherobject(rowid);
+--ALTER TABLE llx_linesfromproductmatrix_blocchild ADD CONSTRAINT llx_linesfromproductmatrix_blocchild_fk_field FOREIGN KEY (fk_field) REFERENCES llx_linesfromproductmatrix_myotherobject(rowid);
 

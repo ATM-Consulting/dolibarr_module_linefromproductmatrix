@@ -18,6 +18,7 @@
 #
 
 # Module label 'ModuleLinesFromProductMatrixName'
+LinesFromProductMatrixArea= Page de configuration d'ajout rapide
 ModuleLinesFromProductMatrixName = Ajout produits rapide
 # Module description 'ModuleLinesFromProductMatrixDesc'
 ModuleLinesFromProductMatrixDesc = Description de LinesFromProductMatrix
