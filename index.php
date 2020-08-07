@@ -211,6 +211,8 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create') {
 
+		$backtopage = dol_buildpath('/custom/linesfromproductmatrix/index.php', 1);
+
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
