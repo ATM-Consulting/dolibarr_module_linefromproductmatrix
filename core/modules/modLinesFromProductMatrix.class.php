@@ -270,7 +270,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 			'titre'=>$langs->trans('ModuleLinesFromProductMatrixName'),
 			'mainmenu'=>'products',
 			'leftmenu'=>'linesfromproductmatrix',
-			'url'=>'/linesfromproductmatrix/linesfromproductmatrixindex.php',
+			'url'=>'/linesfromproductmatrix/index.php',
 			'langs'=>'linesfromproductmatrix@linesfromproductmatrix', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->linesfromproductmatrix->enabled', // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled.

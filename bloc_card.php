@@ -103,10 +103,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 
 $permissiontoread = $user->rights->linesfromproductmatrix->bloc->read;
-$permissiontoadd = $user->rights->linesfromproductmatrix->bloc->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->linesfromproductmatrix->bloc->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->linesfromproductmatrix->bloc->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->linesfromproductmatrix->bloc->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -115,7 +111,7 @@ $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->enti
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'linesfromproductmatrix', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-//if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 /*

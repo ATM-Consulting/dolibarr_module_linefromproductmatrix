@@ -21,7 +21,7 @@ CREATE TABLE llx_linesfromproductmatrix_bloc(
 	label varchar(255),
 	date_creation datetime NOT NULL,
 	tms timestamp,
-	fk_user_creat integer NOT NULL,
+	fk_user_creat integer,
 	fk_user_modif integer,
 	fk_rank integer,
 	fk_status tinyint(1)
