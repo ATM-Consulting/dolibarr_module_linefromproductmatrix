@@ -16,7 +16,8 @@
 
 CREATE TABLE llx_linesfromproductmatrix_matrix(
 	-- BEGIN MODULEBUILDER FIELDS
-	fk_bloc integer NOT NULL,
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_bloc integer NOT NULL,
 	fk_blochead_row integer NOT NULL,
 	fk_blochead_column integer NOT NULL,
 	fk_product integer NOT NULL
