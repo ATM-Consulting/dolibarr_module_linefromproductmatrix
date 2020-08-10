@@ -22,6 +22,7 @@ LinesFromProductMatrixArea = Page de configuration d'ajout rapide
 ModuleLinesFromProductMatrixName = Ajout produits rapide
 # Module description 'ModuleLinesFromProductMatrixDesc'
 ModuleLinesFromProductMatrixDesc = Description de LinesFromProductMatrix
+AddANewBlock = Ajout d'un bloc
 
 #
 # Page d'administration

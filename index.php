@@ -122,7 +122,7 @@ if ($reshook < 0)
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/linesfromproductmatrix/bloc_list.php', 1);
+	$backurlforlist = dol_buildpath('/linesfromproductmatrix/index.php?&action=viewblocs', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -169,28 +169,51 @@ if (empty($reshook)) {
  * Put here all code to build page
  */
 
+
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
+// print load_fiche_titre pour afficher le titre du contenu de la page courante
 llxHeader('', $title, $help_url);
 print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), '', 'linesfromproductmatrix.png@linesfromproductmatrix');
 
-print '<table id="tablelines" class="noborder noshadow" width="100%"><!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->
+// Section "add a new block"
+print '<table id="tablelines" class="noborder noshadow" width="100%">
 <thead>
 <tr class="liste_titre nodrag nodrop">
-<td class="linecoldescription">Ajout d\'un bloc</td>
+<td class="linecoldescription">'.$langs->trans("AddANewBlock").'</td>
 <td class="linecolht right">
-	<a class="btnTitle btnTitlePlus" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?action=create', 1) . '">
+	<a class="btnTitle btnTitlePlus" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?action=preparecreate', 1) . '">
 		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
 		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
 	</a>
 </td>
 </td></tr>
-
 </thead>';
+
+
+
+// Lister les blocs existants et les afficher sous la partie "Ajout d'un bloc"
+$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "linesfromproductmatrix_bloc";
+$resql = $db->query($sql);
+
+if ($resql) {
+
+	while ($obj = $db->fetch_object($resql)) {
+		print '<table id="tablelines" class="noborder noshadow" width="50%">
+			<thead>
+			<tr class="liste_titre nodrag nodrop">
+			<td class="linecoldescription">'.$obj->label.'</td>
+			</tr>
+			</thead>
+			</table>';
+	}
+
+
+}
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -209,44 +232,47 @@ jQuery(document).ready(function() {
 
 
 // Part to create
-if ($action == 'create') {
+if ($action == 'preparecreate') {
 
-		$backtopage = dol_buildpath('/custom/linesfromproductmatrix/index.php', 1);
+	// New Block Form
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="add">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="add">';
-		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	print '<table class="border centpercent">'."\n";
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+	print '</table>'."\n";
 
-//		dol_fiche_head(array(), '');
-
-		// Set some default values
-		//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
-
-		print '<table class="border centpercent tableforfieldcreate">'."\n";
-
-		// Common attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
-
-		// Other attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-
-		print '</table>'."\n";
-
-		dol_fiche_end();
-
-		print '<div class="center">';
-		print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-		print '&nbsp; ';
-		print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-		print '</div>';
-
-		print '</form>';
+	dol_fiche_end();
 
 
-	dol_set_focus('input[name="ref"]');
+	print '<table>'."\n";
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.$_SERVER["PHP_SELF"].'>';
+	print '&nbsp; ';
+	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+	print '</div>';
+	print '</table>'."\n";
+
+	print '</form>';
+
+	// End block form
+
 }
+
+
+// Potential new action after submit add-new-form submit
+if ($action == 'viewblocs') {
+	// code ...
+	// ....
+}
+
+
 
 // Part to edit record
 if (($id || $ref) && $action == 'edit') {
