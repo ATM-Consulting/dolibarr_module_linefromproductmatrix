@@ -35,12 +35,12 @@ class BlocHead extends CommonObject
 	/**
 	 * @var string ID to identify managed object.
 	 */
-	public $element = 'blocchild';
+	public $element = 'blochead';
 
 	/**
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
-	public $table_element = 'linesfromproductmatrix_blocchild';
+	public $table_element = 'linesfromproductmatrix_blochead';
 
 	/**
 	 * @var int  Does this object support multicompany module ?
@@ -357,6 +357,7 @@ class BlocHead extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
+				print $key;
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
 				}

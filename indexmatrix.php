@@ -55,6 +55,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
+dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
+
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
 
 // Load translation files required by the page
@@ -178,9 +180,11 @@ $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 llxHeader('', $title, $help_url);
-print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), '', 'linesfromproductmatrix.png@linesfromproductmatrix');
+
+//print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), '', 'linesfromproductmatrix.png@linesfromproductmatrix');
 
 // Section "add a new block"
+/*
 print '<table id="tablelines" class="noborder noshadow" width="100%">
 <thead>
 <tr class="liste_titre nodrag nodrop">
@@ -193,24 +197,33 @@ print '<table id="tablelines" class="noborder noshadow" width="100%">
 </td>
 </td></tr>
 </thead>';
+*/
 
 
+$bloc = new Bloc($db);
+$blocs =  $bloc->fetchAll('ASC','fk_rank');
 
-// Lister les blocs existants et les afficher sous la partie "Ajout d'un bloc"
-$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "linesfromproductmatrix_bloc";
-$resql = $db->query($sql);
+if ($blocs) {
 
-if ($resql) {
-
-	while ($obj = $db->fetch_object($resql)) {
-		print '<table id="tablelines" class="noborder noshadow" width="50%">
-			<thead>
-			<tr class="liste_titre nodrag nodrop">
-			<td class="linecoldescription">'.$obj->label.'</td>
-			</tr>
-			</thead>
-			</table>';
+	foreach ($blocs as $b){
+		//var_dump($b->id);
+		$ret = $bloc->createMatrix($b);
+		//print '<th class="linecoldescription">'.$b->label."id : ".$b->id.'</th>';
 	}
+
+
+
+//	print'<table id="tablelines" class="noborder noshadow" width="100%">
+//			<thead>
+//				<tr class="liste_titre nodrag nodrop">';
+//				foreach ($blocs as $b){
+//					$bloc->createMatrix($bloc);
+//					//print '<th class="linecoldescription">'.$b->label."id : ".$b->id.'</th>';
+//				}
+//				print '</tr></thead>';
+//------------------------------------------------------------------------------------------------------
+//    print'<tbody></tbody></table>';
+
 
 
 }
@@ -311,7 +324,7 @@ if (($id || $ref) && $action == 'edit') {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
-    var_dump('here');
+	var_dump('here');
 	$head = blocPrepareHead($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("Bloc"), -1, $object->picto);

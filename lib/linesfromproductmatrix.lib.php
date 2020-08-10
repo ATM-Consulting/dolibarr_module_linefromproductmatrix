@@ -52,7 +52,12 @@ function linesfromproductmatrixAdminPrepareHead()
 	$head[$h][2] = 'about';
 	$h++;
 
-	// Show more tabs from modules
+
+}
+
+
+
+// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
 	//	'entity:+tabname:Title:@linesfromproductmatrix:/linesfromproductmatrix/mypage.php?id=__ID__'

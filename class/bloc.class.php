@@ -109,6 +109,7 @@ class Bloc extends CommonObject
 	public $fk_rank;
 	public $fk_user_creat;
 	public $fk_user_modif;
+	public $matrix = array();
 
 	// END MODULEBUILDER PROPERTIES
 
@@ -1017,7 +1018,36 @@ class Bloc extends CommonObject
 
 		return $error;
 	}
+
+	public function createMatrix(Bloc $bloc){
+		$tempMatrix = array();
+
+			var_dump($bloc->id);
+			$headLines = new BlocHead($this->db);
+			$headCols = new BlocHead($this->db);
+
+			$headCols->fetchall('', '', '', '', array('customsql' => 'fk_bloc = '. $bloc->id .' AND type = 0'), '');
+		    var_dump($headCols);
+			//var_dump($headCols);
+			$headLines->fetchall('', '', '', '', array('customsql' => 'fk_bloc = '. $bloc->id.' AND type = 1'), '');
+			var_dump($headLines);
+
+
+
+		//$headCols->
+//		foreach ($headCols as $key => $c){
+//			print $key."<br>";
+//		}
+
+
+	return $tempMatrix;
+
+	}
+
+
+
 }
+
 
 /**
  * Class BlocLine. You can also remove this and generate a CRUD class for lines objects.

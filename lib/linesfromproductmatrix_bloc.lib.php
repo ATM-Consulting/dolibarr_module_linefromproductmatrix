@@ -69,6 +69,14 @@ function blocPrepareHead($object)
 	$head[$h][2] = 'agenda';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/custom/linesfromproductmatrix/indexMatrix.php';
+	$head[$h][1] = $langs->trans('Matrix');
+
+	//if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+	$head[$h][2] = 'matrix';
+
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
