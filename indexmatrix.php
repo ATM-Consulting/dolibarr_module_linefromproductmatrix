@@ -207,7 +207,7 @@ if ($blocs) {
 
 	foreach ($blocs as $b){
 		//var_dump($b->id);
-		$ret = $bloc->createMatrix($b);
+		$bloc->createMatrix($b);
 		//print '<th class="linecoldescription">'.$b->label."id : ".$b->id.'</th>';
 	}
 

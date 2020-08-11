@@ -357,7 +357,7 @@ class BlocHead extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				print $key;
+				//print $key;
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
 				}

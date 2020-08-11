@@ -24,6 +24,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/linesfromproductmatrix/class/matrix.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -110,6 +111,8 @@ class Bloc extends CommonObject
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $matrix = array();
+	public $currentBloc;
+	public $selectdBlockHead = Array(0);
 
 	// END MODULEBUILDER PROPERTIES
 
@@ -1020,33 +1023,116 @@ class Bloc extends CommonObject
 	}
 
 	public function createMatrix(Bloc $bloc){
-		$tempMatrix = array();
 
-			var_dump($bloc->id);
+			$this->currentBloc = $bloc->id;
 			$headLines = new BlocHead($this->db);
 			$headCols = new BlocHead($this->db);
 
-			$headCols->fetchall('', '', '', '', array('customsql' => 'fk_bloc = '. $bloc->id .' AND type = 0'), '');
-		    var_dump($headCols);
-			//var_dump($headCols);
-			$headLines->fetchall('', '', '', '', array('customsql' => 'fk_bloc = '. $bloc->id.' AND type = 1'), '');
-			var_dump($headLines);
+			$hC = $headCols->fetchall('ASC', 'fk_rank', '', '', array('customsql' => 'fk_bloc = '. $bloc->id .' AND type = 0'), '');
+			$hc2 = $headCols->db->getRows("select * from ".MAIN_DB_PREFIX."linesfromproductmatrix_blochead WHERE fk_bloc = ".$this->currentBloc ." order by fk_rank, rowid");
+			var_dump($hc2);
+			//$nbCols = count($hC) + 1 ;
+			$hL =$headLines->fetchall('ASC', 'fk_rank', '', '', array('customsql' => 'fk_bloc = '. $bloc->id.' AND type = 1'), '');
+			$nbRows = count($hL) + 1;
+   $tm =
+			$this->matrix = $this->setMatrix($nbRows,$nbCols);
+			$this->printMatrix($nbRows,$nbCols,$this->matrix);
 
 
-
-		//$headCols->
-//		foreach ($headCols as $key => $c){
-//			print $key."<br>";
-//		}
-
-
-	return $tempMatrix;
+	//return $this->matrix;
 
 	}
 
+	/**
+	 * @param $nbRows
+	 * @param $nbCols
+	 * @return mixed
+	 */
+	function setMatrix($nbRows,$nbCols){
+
+		for($row = 0 ;$row < $nbRows;$row++){
+			for($col = 0 ;$col < $nbCols;$col++){
+
+				if ($row == 0  && $col > 0){
+					$tempMatrix[$row][$col] = $this->setHeader($row,$col);
+				}
+
+				if ($row > 0 && $col == 0){
+					$tempMatrix[$row][$col] = $this->setHeader($row,$col,1);
+				}
+
+				if ($row == 0  && $col == 0){
+					$tempMatrix[$row][$col] = '[  --  ]';
+				}else{
+					if($row > 0 && $col > 0)  $tempMatrix[$row][$col] = $this->setProductToMatrix($row,$col);
+				}
+			}
+		}
+		return $tempMatrix;
+	}
+	/**
+	 * @param $nbRows
+	 * @param .')')$nbCols
+	 * @param $tempMatrix
+	 */
+	function printMatrix($nbRows,$nbCols,$tempMatrix){
+		print '<table>';
+		for($row = 0 ;$row < $nbRows;$row++){
+			print '<tr>';
+			for($col = 0 ;$col < $nbCols;$col++){
+				print '<td>'.$tempMatrix[$row][$col].'</td>';
+			}
+			print '</tr>';
+		}
+		print '</table>';
+	}
+	/**
+	 * @param $col
+	 * @param $row
+	 */
+	function setProductToMatrix($row,$col){
+		//var_dump($col,$row);
+		$bh = new BlocHead($this->db);
+		// à copier pour renseigner les entêtes
+
+		$objCol = $bh->db->getRow('select * from '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$this->currentBloc. ' AND type = 0 AND fk_rank = '.$col );
+		$objRow = $bh->db->getRow('select *  from '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$this->currentBloc. ' AND type = 1 AND fk_rank = '.$row );
+
+
+		if ($objCol && $objRow){
+
+			//array_push($this->selectdBlockHead,$objCol->rowid);
+			//array_push($this->selectdBlockHead,$objRow->rowid);
+			$m = new Matrix($this->db);
+			$mm = $m->db->getRow('select * from '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix WHERE fk_bloc = '.$this->currentBloc.' AND fk_blochead_row = '.$objRow->rowid.'  AND fk_blochead_column = '.$objCol->rowid);
+			if ($mm){
+				return $mm->fk_product; //TODO provisoire envoyer une listeBox linkée ...
+			}
+		}
+		return 'Product values';
+	}
+	/**
+	 * @param $row  current Row
+	 * @param $col  current col
+	 * @param int $type  0 col  /  1 row
+	 * @return string label header
+	 */
+	function setHeader($row,$col,$type = 0){
+		$bh = new BlocHead($this->db);
+		// à copier pour renseigner les entêtes
+
+
+		$objCol = $bh->db->getRow('select * from '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$this->currentBloc. ' AND type = '.intval($type).' AND fk_rank = '.$col );
+		if ($objCol ) {
+			return $objCol->label;
+		}
+
+		return  false;
+	}
 
 
 }
+
 
 
 /**
