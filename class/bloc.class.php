@@ -110,9 +110,11 @@ class Bloc extends CommonObject
 	public $fk_rank;
 	public $fk_user_creat;
 	public $fk_user_modif;
-	public $matrix = array();
+	public $displayMatrix = array();
 	public $currentBloc;
-	public $selectdBlockHead = Array(0);
+	public $THCols = array();
+	public $THRows = array();
+
 
 	// END MODULEBUILDER PROPERTIES
 
@@ -1022,117 +1024,129 @@ class Bloc extends CommonObject
 		return $error;
 	}
 
-	public function createMatrix(Bloc $bloc){
-
-			$this->currentBloc = $bloc->id;
-			$headLines = new BlocHead($this->db);
-			$headCols = new BlocHead($this->db);
-
-			$hC = $headCols->fetchall('ASC', 'fk_rank', '', '', array('customsql' => 'fk_bloc = '. $bloc->id .' AND type = 0'), '');
-			$hc2 = $headCols->db->getRows("select * from ".MAIN_DB_PREFIX."linesfromproductmatrix_blochead WHERE fk_bloc = ".$this->currentBloc ." order by fk_rank, rowid");
-			var_dump($hc2);
-			//$nbCols = count($hC) + 1 ;
-			$hL =$headLines->fetchall('ASC', 'fk_rank', '', '', array('customsql' => 'fk_bloc = '. $bloc->id.' AND type = 1'), '');
-			$nbRows = count($hL) + 1;
-   $tm =
-			$this->matrix = $this->setMatrix($nbRows,$nbCols);
-			$this->printMatrix($nbRows,$nbCols,$this->matrix);
-
-
-	//return $this->matrix;
-
-	}
-
 	/**
-	 * @param $nbRows
-	 * @param $nbCols
-	 * @return mixed
+	 *  Récupère les infos sur un bloc en db et crée la matrice de données.
+	 * @param Bloc $bloc
 	 */
-	function setMatrix($nbRows,$nbCols){
+	public function fetchMatrix(Bloc $bloc){
+		$this->currentBloc = $bloc->id;
+		$headBloc = new BlocHead($this->db);
+		// récupèration de tous les éléments de la matrice de produit (ou autre obj ...)
+		$m = new Matrix($this->db);
+		$mm = $m->db->getRows('select * from '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix WHERE fk_bloc = '.$this->currentBloc);
+		// classement des elements dans un array
+		$Tmatrix = array();
+		foreach ($mm as $key => $val){
+			$Tmatrix[$val->fk_blochead_row][$val->fk_blochead_column] = $val->fk_product;
+		}
 
+		// chargement des headers col type : 0
+		$this->THCols = $headBloc->db->getRows("SELECT rowid,fk_bloc,label,type,fk_rank FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_blochead WHERE fk_bloc = ".$this->currentBloc ." AND type = '0' ORDER BY fk_rank ASC, rowid");
+
+		// chargement des headers row type : 1
+		$this->THRows = $headBloc->db->getRows("SELECT rowid,fk_bloc,label,type,fk_rank FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_blochead WHERE fk_bloc = ".$this->currentBloc ." AND type = 1 ORDER BY fk_rank ASC, rowid");
+
+		// on ajoute 1 pour tenir compte des [header col] et [header row]
+		$nbCols = count($this->THCols) + 1;
+		$nbRows = count($this->THRows) + 1;
+
+		// on remplie la matrice d'affichage ( $this->displayMatrix ) sans formatage visuel.
 		for($row = 0 ;$row < $nbRows;$row++){
-			for($col = 0 ;$col < $nbCols;$col++){
+			for($col = 0 ;$col < $nbCols; $col++){
 
+				$matrixCell = new stdClass();
+				$matrixCell->label = '';
+				$matrixCell->type = -1;
+				$matrixCell->fk_product = 0;
+
+				// col label
 				if ($row == 0  && $col > 0){
-					$tempMatrix[$row][$col] = $this->setHeader($row,$col);
+					$matrixCell->label = $this->THCols[$col-1]->label;
+					$matrixCell->type = $this->THCols[$col-1]->type;
 				}
-
+				// row label
 				if ($row > 0 && $col == 0){
-					$tempMatrix[$row][$col] = $this->setHeader($row,$col,1);
+					$matrixCell->label = $this->THRows[$row-1]->label;
+					$matrixCell->type = $this->THRows[$row-1]->type;
 				}
+				// on tient compte du décalage dûe à la
+				$rowMatrixKey = $row - 1;
+				$colMatrixKey = $col - 1;
 
 				if ($row == 0  && $col == 0){
-					$tempMatrix[$row][$col] = '[  --  ]';
+					$matrixCell->label = '&nbsp;';
+					$matrixCell->type = '';
 				}else{
-					if($row > 0 && $col > 0)  $tempMatrix[$row][$col] = $this->setProductToMatrix($row,$col);
+						$matrixCell->fk_product = false;
+						if(isset($this->THRows[$rowMatrixKey]) && isset($this->THCols[$colMatrixKey])){
+							$matrixCell->fk_product = $Tmatrix[$this->THRows[$rowMatrixKey]->rowid][$this->THCols[$colMatrixKey]->rowid];
+							$matrixCell->type = -1;
+					}
 				}
+				$this->displayMatrix[$row][$col] = $matrixCell;
 			}
 		}
-		return $tempMatrix;
+		//------------------------------------------------------------------------------
+
+		// TODO add hook
+
+		//------------------------------------------------------------------
+
+		//--------------------------------------------------------------------
+
 	}
+
 	/**
-	 * @param $nbRows
-	 * @param .')')$nbCols
-	 * @param $tempMatrix
+	 * affiche la matrice
 	 */
-	function printMatrix($nbRows,$nbCols,$tempMatrix){
-		print '<table>';
-		for($row = 0 ;$row < $nbRows;$row++){
-			print '<tr>';
-			for($col = 0 ;$col < $nbCols;$col++){
-				print '<td>'.$tempMatrix[$row][$col].'</td>';
+	public function printMatrix(){
+
+		$nbCols = count($this->THCols) + 1;
+		$nbRows = count($this->THRows) + 1;
+		$output = '';
+
+		if ($this->THCols && $this->THRows) {
+			$output  .= '<div class="bloc-table">';
+			for ($row = 0; $row < $nbRows; $row++) {
+				$output  .= '<div class="bloc-table-row">';
+				for ($col = 0; $col < $nbCols; $col++) {
+
+					$matrixCell = $this->displayMatrix[$row][$col];
+					if ($matrixCell->type == 0 && $row == 0){
+						$output  .='<div class="bloc-table-cell bloc-table-head">';
+					}else{
+						$output  .='<div class="bloc-table-cell">';
+					}
+
+
+					if (!empty($matrixCell->overrideHtmlOutput)) {
+						// probablement issue de la modification par un hook
+						$output  .= $matrixCell->overrideHtmlOutput;
+					} else {
+
+						if ($matrixCell->type < 0) {
+							$output  .= $matrixCell->fk_product;
+						} else { // '' TopCorner et -1 TopCOrner
+							$output  .=$matrixCell->label;
+						}
+						// la affichage produit, headr etc...
+					}
+					$output  .='</div>';
+				}
+				$output  .='</div>';
 			}
-			print '</tr>';
-		}
-		print '</table>';
-	}
-	/**
-	 * @param $col
-	 * @param $row
-	 */
-	function setProductToMatrix($row,$col){
-		//var_dump($col,$row);
-		$bh = new BlocHead($this->db);
-		// à copier pour renseigner les entêtes
-
-		$objCol = $bh->db->getRow('select * from '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$this->currentBloc. ' AND type = 0 AND fk_rank = '.$col );
-		$objRow = $bh->db->getRow('select *  from '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$this->currentBloc. ' AND type = 1 AND fk_rank = '.$row );
-
-
-		if ($objCol && $objRow){
-
-			//array_push($this->selectdBlockHead,$objCol->rowid);
-			//array_push($this->selectdBlockHead,$objRow->rowid);
-			$m = new Matrix($this->db);
-			$mm = $m->db->getRow('select * from '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix WHERE fk_bloc = '.$this->currentBloc.' AND fk_blochead_row = '.$objRow->rowid.'  AND fk_blochead_column = '.$objCol->rowid);
-			if ($mm){
-				return $mm->fk_product; //TODO provisoire envoyer une listeBox linkée ...
-			}
-		}
-		return 'Product values';
-	}
-	/**
-	 * @param $row  current Row
-	 * @param $col  current col
-	 * @param int $type  0 col  /  1 row
-	 * @return string label header
-	 */
-	function setHeader($row,$col,$type = 0){
-		$bh = new BlocHead($this->db);
-		// à copier pour renseigner les entêtes
-
-
-		$objCol = $bh->db->getRow('select * from '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$this->currentBloc. ' AND type = '.intval($type).' AND fk_rank = '.$col );
-		if ($objCol ) {
-			return $objCol->label;
+			$output  .='</div>';
 		}
 
-		return  false;
+  		return $output;
+
 	}
+
+
+
 
 
 }
-
 
 
 /**
