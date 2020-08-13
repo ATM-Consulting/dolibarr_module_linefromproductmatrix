@@ -1099,7 +1099,7 @@ class Bloc extends CommonObject
 	/**
 	 * affiche la matrice
 	 */
-	public function printMatrix(){
+	public function display(){
 
 		$nbCols = count($this->THCols) + 1;
 		$nbRows = count($this->THRows) + 1;
@@ -1112,7 +1112,7 @@ class Bloc extends CommonObject
 				for ($col = 0; $col < $nbCols; $col++) {
 
 					$matrixCell = $this->displayMatrix[$row][$col];
-					if ($matrixCell->type == 0 && $row == 0){
+					if ($matrixCell->type == 0 ){
 						$output  .='<div class="bloc-table-cell bloc-table-head">';
 					}else{
 						$output  .='<div class="bloc-table-cell">';
