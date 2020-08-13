@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
+dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"));
@@ -184,6 +185,7 @@ print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
 		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
 		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
 
+
 // Part to create
 if ($action == 'preparecreate') {
 	// New Block Form
@@ -217,78 +219,47 @@ if ($action == 'preparecreate') {
 // End block form
 
 // Lister les blocs existants et les afficher sous la partie "Ajout d'un bloc"
-$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "linesfromproductmatrix_bloc";
-$resql = $db->query($sql);
+$bloc = new Bloc($db);
+$blocs =  $bloc->fetchAll('ASC','fk_rank');
 
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
+print '<div class="matrix-wrap">
+				 <div class="matrix-container">';
+if ($blocs) {
+	foreach ($blocs as $b){
+		$bloc->fetchMatrix($b);
+			print '<div class="matrix-item">
+						<div class="matrix-head">
+									<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $b->id . '" value="' . $b->label . '">
+										<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
+											<span class="fas fa-pencil-alt" title="Modifier"></span>
+											<span class="fa fa-check" style="color:lightgrey; display: none" ></span>
+										</a>
+										<a id="matrix-delete-' . $b->id . '">
+											<span data-id="'.$b->id.'" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
+										</a>
+						</div>';
 
-//		$monobjet->fetchMatrix();
-
-		print '<div class="matrix-box"> <!--Squelette du bloc-->
-
-					<div class="matrix-head"> <!--Bandeau du bloc (label, modification, suppression)-->
-								<input id="bloc-label-' . $obj->rowid . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $obj->rowid . '" value="' . $obj->label . '">
-									<a class="editfielda reposition" data-id="' . $obj->rowid . '" href="#bloc-label-' . $obj->rowid . '">
-										<span class="fas fa-pencil-alt" title="Modifier"></span>
-										<span class="fa fa-check" style="color:lightgrey; display: none" ></span>
-									</a>
-									<a class="reposition" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?id=' . $obj->rowid . '&action=delete', 1) . '">
-										<span class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
-									</a>
-					</div>
-
-					<!--Contenu du bloc-->
-
-					<div class="matrix-footer">+ ajouter colonne ,  </div>
-			</div>';
-
+					print $bloc->printMatrix();
+					print '<div class="matrix-footer">
+								<a class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
+							</div>
+					</div>';
 
 	}
+
 }
+
+print '</div>
+	</div>';
+
 
 if (!empty($conf->use_javascript_ajax)) {
 	include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 }
 ?>
 
-// Example : Adding jquery code
-<script type="text/javascript" language="javascript">
-$(document).ready(function(){
-    $(document).on("click", ".fa-pencil-alt", function (){
-        var pencil = $(this);
-        var check = $(this).next(".fa-check");
-        check.toggle(0);
-        pencil.toggle(0);
-    });
-
-    $(document).on("change", ".inputBloc", function () {
-	    var labelBloc = $(this).val(); // On récupère la valeur de l\'input
-  		var idBloc = $(this).data("id");  // On récupère l\'id de l\'input
-  		var self = $(this);
-		var parentBlocTitle = $(this).closest("div");
-	        $.ajax({
-		        url: "scripts/interface.php",
-		        method: "POST",
-		        dataType : "json",  // format de réponse attendu
-		        data: {id: idBloc,
-		               label:labelBloc}
-	    	})
-	    	.done(function() {
-	    	    alert("OK");  // TODO fonction JS à faire
-	    	    parentBlocTitle.css("background-color", "green");
-
-		var pencilToShow = self.next().children(".fa-pencil-alt");
-        var check = self.next().children(".fa-check");
-
-				check.toggle(0);
-        		pencilToShow.toggle(0);
-
-
-		});
-	});
-});
-</script>;
+<!--Example : Adding jquery code-->
+<script type="text/javascript" language="javascript"></script>
 
 <?php
 // End of page

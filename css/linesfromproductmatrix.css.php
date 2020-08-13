@@ -70,41 +70,48 @@ else header('Cache-Control: no-cache');
 
 ?>
 
-.bloc {
+
+input.inputBloc {
+	font-size: 1.1em;
 	width: 30%;
-	display: inline-block;
-	margin-top: 20px;
-	margin-right: 25px;
-	margin-bottom: 25px;
-	box-sizing: border-box;
-	border: 1px solid grey;
 }
-.bloc-title {
-	background: var(--colorbacktitle1);
-	width: 100%;
-	transition: 1s ease-in-out;
+
+.matrix-wrap {
+	display: block;
+	margin-top: 50px;
+	margin-bottom: 25px;
+	margin-left: 10px;
+}
+.matrix-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+.matrix-head {
+	border: 1px solid #e0e0e0;
+	transition: 0.5s ease-in-out;
+}
+.matrix-item {
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: auto;
+	width: 350px;
+	margin-bottom: 25px;
+	margin-right: 15px;
+	box-shadow: 1px 1px 5px rgba(0,0,0, 0.5);
+
 }
 .pictodelete {
 	padding-top: 6px;
 	padding-right: 10px;
 }
-.bloc-row {
-	border: 1px solid green;
-}
-.bloc-cell{
-	border: 1px solid lightgrey;
-}
+
 .editfielda {
 	margin-left: 10px;
 	padding-right: 15px;
 }
 
-
-/*Contenu du bloc*/
-.bloc-table{
-	display: table;
-	width: 100%;
-}
+/*Matrice*/
 .bloc-table-row {
 	display: table-row;
 }
@@ -116,18 +123,5 @@ else header('Cache-Control: no-cache');
 .bloc-table-head {
 	background-color: #EEE;
 	font-weight:bold;
-}
-.bloc-heading {
-	background-color: #EEE;
-	display: table-header-group;
-	font-weight: bold;
-}
-.bloc-table-foot {
-	background-color: #EEE;
-	display: table-footer-group;
-	font-weight: bold;
-}
-.bloc-table-body {
-	display: table-row-group;
 }
 
