@@ -70,40 +70,64 @@ else header('Cache-Control: no-cache');
 
 ?>
 
-.divTableRow {
-	width: 100%;
-}
-.divTableHeading {
-	background-color: #EEE;
-	display: table-header-group;
-}
-.divTableCell, .divTableHead {
-	border: 1px solid #999999;
-	display: table-cell;
-	width: 100%;
-	padding: 3px 10px;
-}
-.divTableHeading {
-	background-color: #EEE;
-	display: table-header-group;
-	font-weight: bold;
-}
-.divTableFoot {
-	background-color: #EEE;
-	display: table-footer-group;
-	font-weight: bold;
-}
-.divTableBody {
-	display: inline-block;
+.bloc {
 	width: 30%;
-	margin-right: 5px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-right: 25px;
+	margin-bottom: 25px;
+	box-sizing: border-box;
+	border: 1px solid grey;
+}
+.bloc-title {
+	background: var(--colorbacktitle1);
+	width: 100%;
+	transition: 1s ease-in-out;
+}
+.pictodelete {
+	padding-top: 6px;
+	padding-right: 10px;
+}
+.bloc-row {
+	border: 1px solid green;
+}
+.bloc-cell{
+	border: 1px solid lightgrey;
 }
 .editfielda {
 	margin-left: 10px;
 	padding-right: 15px;
 }
-.liste_titre {
-	background: var(--colorbacktitle1);
-}
 
+
+/*Contenu du bloc*/
+.bloc-table{
+	display: table;
+	width: 100%;
+}
+.bloc-table-row {
+	display: table-row;
+}
+.bloc-table-cell, .bloc-table-head {
+	border: 1px solid #999999;
+	display: table-cell;
+	padding: 3px 10px;
+}
+.bloc-table-head {
+	background-color: #EEE;
+	font-weight:bold;
+}
+.bloc-heading {
+	background-color: #EEE;
+	display: table-header-group;
+	font-weight: bold;
+}
+.bloc-table-foot {
+	background-color: #EEE;
+	display: table-footer-group;
+	font-weight: bold;
+}
+.bloc-table-body {
+	display: table-row-group;
+}
 

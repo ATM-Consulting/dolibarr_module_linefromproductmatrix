@@ -23,12 +23,17 @@ $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"
 
 $label = GETPOST('label');
 $idBloc = GETPOST('id');
+$jsonResponse = new stdClass();
 
-if (!empty($idBloc) && !empty($label)) {
+if (isset($idBloc) && isset($label)) {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_bloc SET label = ".'"' .$label. '"'." WHERE rowid = $idBloc";
-//	var_dump($sql);
 	$resql = $db->query($sql);
+
 }
+
+print json_encode($jsonResponse, JSON_PRETTY_PRINT);
+
+$db->close();    // Close $db database opened handler
 
 $activateDebugLog = GETPOST('activatedebug','int');
 
