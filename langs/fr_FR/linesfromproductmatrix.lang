@@ -23,6 +23,9 @@ ModuleLinesFromProductMatrixName = Ajout produits rapide
 # Module description 'ModuleLinesFromProductMatrixDesc'
 ModuleLinesFromProductMatrixDesc = Description de LinesFromProductMatrix
 AddANewBlock = Ajout d'un bloc
+DeleteABlock = Supprimer
+ModifyABlock = Modifier
+confirmBlocModified = Modification effectuée avec succès
 
 #
 # Page d'administration

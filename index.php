@@ -98,6 +98,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be incl
 
 $permissiontoadd = $user->rights->linesfromproductmatrix->bloc->write;
 $permissiontoread = $user->rights->linesfromproductmatrix->bloc->read;
+$permissiontodelete = $user->rights->linesfromproductmatrix->bloc->delete;
 $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -109,15 +110,15 @@ $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->enti
 if (!$permissiontoread)
 	accessforbidden();
 
-
 /*
  * Actions
  */
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0)
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessage($object->error, "errors");
+};
 
 if (empty($reshook)) {
 	$error = 0;
@@ -169,7 +170,6 @@ if (empty($reshook)) {
  * Put here all code to build page
  */
 
-
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
@@ -178,445 +178,119 @@ $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 llxHeader('', $title, $help_url);
-print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), '', 'linesfromproductmatrix.png@linesfromproductmatrix');
-
-// Section "add a new block"
-print '<table id="tablelines" class="noborder noshadow" width="100%">
-<thead>
-<tr class="liste_titre nodrag nodrop">
-<td class="linecoldescription">'.$langs->trans("AddANewBlock").'</td>
-<td class="linecolht right">
-	<a class="btnTitle btnTitlePlus" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?action=preparecreate', 1) . '">
+print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
+	'<a class="btnTitle btnTitlePlus" style="background-color:white" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?action=preparecreate', 1) . '">
 		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
 		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
-	</a>
-</td>
-</td></tr>
-</thead>';
+		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
+
+// Part to create
+if ($action == 'preparecreate') {
+	// New Block Form
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<input type="hidden" name="action" value="add">';
+	if ($backtopage)
+		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+	if ($backtopageforcancel)
+		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
+
+	print '<table class="border centpercent">' . "\n";
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+	print '</table>' . "\n";
+
+	dol_fiche_end();
 
 
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="create" value="' . dol_escape_htmltag($langs->trans("Create")) . '"' . $_SERVER["PHP_SELF"] . '>';
+	print '&nbsp; ';
+	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="javascript:history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
+	print '</div>';
+
+	print '</form>';
+}
+
+// End block form
 
 // Lister les blocs existants et les afficher sous la partie "Ajout d'un bloc"
 $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "linesfromproductmatrix_bloc";
 $resql = $db->query($sql);
 
 if ($resql) {
-
 	while ($obj = $db->fetch_object($resql)) {
-		print '<table id="tablelines" class="noborder noshadow" width="50%">
-			<thead>
-			<tr class="liste_titre nodrag nodrop">
-			<td class="linecoldescription">'.$obj->label.'</td>
-			</tr>
-			</thead>
-			</table>';
+
+//		$monobjet->fetchMatrix();
+
+		print '<div class="matrix-box"> <!--Squelette du bloc-->
+
+					<div class="matrix-head"> <!--Bandeau du bloc (label, modification, suppression)-->
+								<input id="bloc-label-' . $obj->rowid . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $obj->rowid . '" value="' . $obj->label . '">
+									<a class="editfielda reposition" data-id="' . $obj->rowid . '" href="#bloc-label-' . $obj->rowid . '">
+										<span class="fas fa-pencil-alt" title="Modifier"></span>
+										<span class="fa fa-check" style="color:lightgrey; display: none" ></span>
+									</a>
+									<a class="reposition" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?id=' . $obj->rowid . '&action=delete', 1) . '">
+										<span class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
+									</a>
+					</div>
+
+					<!--Contenu du bloc-->
+
+					<div class="matrix-footer">+ ajouter colonne ,  </div>
+			</div>';
+
+
 	}
-
-
 }
+
+if (!empty($conf->use_javascript_ajax)) {
+	include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+}
+?>
 
 // Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
+<script type="text/javascript" language="javascript">
+$(document).ready(function(){
+    $(document).on("click", ".fa-pencil-alt", function (){
+        var pencil = $(this);
+        var check = $(this).next(".fa-check");
+        check.toggle(0);
+        pencil.toggle(0);
+    });
+
+    $(document).on("change", ".inputBloc", function () {
+	    var labelBloc = $(this).val(); // On récupère la valeur de l\'input
+  		var idBloc = $(this).data("id");  // On récupère l\'id de l\'input
+  		var self = $(this);
+		var parentBlocTitle = $(this).closest("div");
+	        $.ajax({
+		        url: "scripts/interface.php",
+		        method: "POST",
+		        dataType : "json",  // format de réponse attendu
+		        data: {id: idBloc,
+		               label:labelBloc}
+	    	})
+	    	.done(function() {
+	    	    alert("OK");  // TODO fonction JS à faire
+	    	    parentBlocTitle.css("background-color", "green");
+
+		var pencilToShow = self.next().children(".fa-pencil-alt");
+        var check = self.next().children(".fa-check");
+
+				check.toggle(0);
+        		pencilToShow.toggle(0);
+
+
+		});
 	});
 });
-</script>';
+</script>;
 
-
-// Part to create
-if ($action == 'preparecreate') {
-
-	// New Block Form
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-
-	print '<table class="border centpercent">'."\n";
-	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
-	print '</table>'."\n";
-
-	dol_fiche_end();
-
-
-	print '<table>'."\n";
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.$_SERVER["PHP_SELF"].'>';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
-	print '</table>'."\n";
-
-	print '</form>';
-
-	// End block form
-
-}
-
-
-// Potential new action after submit add-new-form submit
-if ($action == 'viewblocs') {
-	// code ...
-	// ....
-}
-
-
-
-// Part to edit record
-if (($id || $ref) && $action == 'edit') {
-	print load_fiche_titre($langs->trans("Bloc"), '', 'object_' . $object->picto);
-
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-	print '<input type="hidden" name="token" value="' . newToken() . '">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="id" value="' . $object->id . '">';
-	if ($backtopage)
-		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
-	if ($backtopageforcancel)
-		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
-
-	dol_fiche_head();
-
-	print '<table class="border centpercent tableforfieldedit">' . "\n";
-
-	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
-
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
-
-	print '</table>';
-
-	dol_fiche_end();
-
-	print '<div class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Save") . '">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
-	print '</div>';
-
-	print '</form>';
-}
-
-// Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$res = $object->fetch_optionals();
-    var_dump('here');
-	$head = blocPrepareHead($object);
-
-	dol_fiche_head($head, 'card', $langs->trans("Bloc"), -1, $object->picto);
-
-	$formconfirm = '';
-
-	// Confirmation to delete
-	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteBloc'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	}
-	// Confirmation to delete line
-	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
-	}
-	// Clone confirmation
-	if ($action == 'clone') {
-		// Create an array for form
-		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
-	}
-
-	// Confirmation of action xxxx
-	if ($action == 'xxx') {
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
-	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
-	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook))
-		$formconfirm .= $hookmanager->resPrint;
-	elseif ($reshook > 0)
-		$formconfirm = $hookmanager->resPrint;
-
-	// Print form confirm
-	print $formconfirm;
-
-
-	// Object card
-	// ------------------------------------------------------------
-	$linkback = '<a href="' . dol_buildpath('/linesfromproductmatrix/bloc_list.php', 1) . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
-	$morehtmlref = '<div class="refidno">';
-	/*
-	 // Ref customer
-	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
-	 // Thirdparty
-	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
-	 // Project
-	 if (! empty($conf->projet->enabled))
-	 {
-	 $langs->load("projects");
-	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	 if ($permissiontoadd)
-	 {
-	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
-	 $morehtmlref.=' : ';
-	 if ($action == 'classify') {
-	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	 $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	 $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-	 $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	 $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	 $morehtmlref.='</form>';
-	 } else {
-	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	 }
-	 } else {
-	 if (! empty($object->fk_project)) {
-	 $proj = new Project($db);
-	 $proj->fetch($object->fk_project);
-	 $morehtmlref .= ': '.$proj->getNomUrl();
-	 } else {
-	 $morehtmlref .= '';
-	 }
-	 }
-	 }*/
-	$morehtmlref .= '</div>';
-
-
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
-
-	print '<div class="fichecenter">';
-	print '<div class="fichehalfleft">';
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent tableforfield">' . "\n";
-
-	// Common attributes
-	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
-	//unset($object->fields['fk_project']);				// Hide field already shown in banner
-	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
-
-	// Other attributes. Fields from hook formObjectOptions and Extrafields.
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-
-	print '</table>';
-	print '</div>';
-	print '</div>';
-
-	print '<div class="clearboth"></div>';
-
-	dol_fiche_end();
-
-
-	/*
-	 * Lines
-	 */
-
-	if (!empty($object->table_element_line)) {
-		// Show object lines
-		$result = $object->getLinesArray();
-
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#addline' : '#line_' . GETPOST('lineid', 'int')) . '" method="POST">
-		<input type="hidden" name="token" value="' . newToken() . '">
-		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
-		<input type="hidden" name="mode" value="">
-		<input type="hidden" name="id" value="' . $object->id . '">
-		';
-
-		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
-			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
-		}
-
-		print '<div class="div-table-responsive-no-min">';
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
-		}
-
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
-		}
-
-		// Form to add new line
-		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
-			if ($action != 'editline') {
-				// Add products/services form
-				$object->formAddObjectLine(1, $mysoc, $soc);
-
-				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			}
-		}
-
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '</table>';
-		}
-		print '</div>';
-
-		print "</form>\n";
-	}
-
-
-	// Buttons for actions
-
-	if ($action != 'presend' && $action != 'editline') {
-		print '<div class="tabsAction">' . "\n";
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0)
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-		if (empty($reshook)) {
-			// Send
-			if (empty($user->socid)) {
-				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>' . "\n";
-			}
-
-			// Back to draft
-			if ($object->status == $object::STATUS_VALIDATED) {
-				if ($permissiontoadd) {
-					print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=confirm_setdraft&confirm=yes">' . $langs->trans("SetToDraft") . '</a>';
-				}
-			}
-
-			// Modify
-			if ($permissiontoadd) {
-				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit">' . $langs->trans("Modify") . '</a>' . "\n";
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotEnoughPermissions")) . '">' . $langs->trans('Modify') . '</a>' . "\n";
-			}
-
-			// Validate
-			if ($object->status == $object::STATUS_DRAFT) {
-				if ($permissiontoadd) {
-					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-						print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=confirm_validate&confirm=yes">' . $langs->trans("Validate") . '</a>';
-					} else {
-						$langs->load("errors");
-						print '<a class="butActionRefused" href="" title="' . $langs->trans("ErrorAddAtLeastOneLineFirst") . '">' . $langs->trans("Validate") . '</a>';
-					}
-				}
-			}
-
-			// Clone
-			if ($permissiontoadd) {
-				print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&socid=' . $object->socid . '&action=clone&object=bloc">' . $langs->trans("ToClone") . '</a>' . "\n";
-			}
-
-			/*
-			if ($permissiontoadd)
-			{
-				if ($object->status == $object::STATUS_ENABLED)
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("Disable").'</a>'."\n";
-				}
-				else
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("Enable").'</a>'."\n";
-				}
-			}
-			if ($permissiontoadd)
-			{
-				if ($object->status == $object::STATUS_VALIDATED)
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close">'.$langs->trans("Cancel").'</a>'."\n";
-				}
-				else
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans("Re-Open").'</a>'."\n";
-				}
-			}
-			*/
-
-			// Delete (need delete permission, or if draft, just need create/modify permission)
-			if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd)) {
-				print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a>' . "\n";
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotEnoughPermissions")) . '">' . $langs->trans('Delete') . '</a>' . "\n";
-			}
-		}
-		print '</div>' . "\n";
-	}
-
-
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
-
-	if ($action != 'presend') {
-		print '<div class="fichecenter"><div class="fichehalfleft">';
-		print '<a name="builddoc"></a>'; // ancre
-
-		$includedocgeneration = 0;
-
-		// Documents
-		if ($includedocgeneration) {
-			$objref = dol_sanitizeFileName($object->ref);
-			$relativepath = $objref . '/' . $objref . '.pdf';
-			$filedir = $conf->linesfromproductmatrix->dir_output . '/' . $object->element . '/' . $objref;
-			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-			$genallowed = $user->rights->linesfromproductmatrix->bloc->read;    // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->linesfromproductmatrix->bloc->write;    // If you can create/edit, you can remove a file on card
-			print $formfile->showdocuments('linesfromproductmatrix:Bloc', $object->element . '/' . $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-		}
-
-		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('bloc'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-		$MAXEVENT = 10;
-
-		$morehtmlright = '<a href="' . dol_buildpath('/linesfromproductmatrix/bloc_agenda.php', 1) . '?id=' . $object->id . '">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
-
-		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
-
-		print '</div></div></div>';
-	}
-
-	//Select mail models is same action as presend
-	if (GETPOST('modelselected'))
-		$action = 'presend';
-
-	// Presend form
-	$modelmail = 'bloc';
-	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->linesfromproductmatrix->dir_output;
-	$trackid = 'bloc' . $object->id;
-
-	include DOL_DOCUMENT_ROOT . '/core/tpl/card_presend.tpl.php';
-}
-
+<?php
 // End of page
 llxFooter();
 $db->close();
