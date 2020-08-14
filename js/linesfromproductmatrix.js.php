@@ -105,19 +105,24 @@ $(document).ready(function(){
 	});
 
 	$(document).on("click", ".fa-grip-lines", function () {
-			$.ajax({
-				url: "scripts/interface.php",
-				method: "POST",
-				dataType: "json",  // format de réponse attendu
-				data: {
-					idMatrix: idMatrix,
-					action: 'addLineMatrix',
-				}
-			})
-				.done(function() {
-					location.reload();
-				});
+		alert("là");
+		var idBloc = $(this).data("id");
+		var blocheadType = $(this).data("type");
+		$.ajax({
+			url: "scripts/interface.php",
+			method: "POST",
+			dataType: "json",  // format de réponse attendu
+			data: {
+				id: idBloc,
+				action: 'addLineMatrix',
+				type: blocheadType
+			}
+		})
+			.done(function() {
+				location.reload();
+			});
 	});
+
 
 	$(document).on("change", ".inputBloc", function () {
 		var labelBloc = $(this).val(); // On récupère la valeur de l\'input
