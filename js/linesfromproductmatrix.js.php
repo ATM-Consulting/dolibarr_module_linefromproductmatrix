@@ -63,12 +63,25 @@ $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix","other")
 
 /* Javascript library of module linesfromproductmatrix */
 $(document).ready(function(){
-	$(document).on("click", ".fa-pencil-alt", function (){
-		var pencil = $(this);
-		var check = $(this).next(".fa-check");
+	$(document).on("click", ".fa-pencil-alt, .inputBloc", function (){
+		if ($(this).is("input")) {
+			// var pencilDisplay TODO faire une condition sur deuxième clic de l'input (si le display du pencil est none, on ne toggle pas)
+			var input = $(this);
+			var check = $(this).next("a").children("span.fa-check");
+			var pencil = $(this).next("a").children("span.fa-pencil-alt");
+
+			console.log(input.val());
+		}
+		else if ($(this).is("span")) {
+			var pencil = $(this);
+			var check = $(this).next("span");
+			var input = $(this).closest("input");
+
+		}
 		check.toggle(0);
 		pencil.toggle(0);
 	});
+
 
 	$(document).on("click", ".pictodelete", function () {
 		var idMatrix = $(this).data("id");
@@ -105,7 +118,6 @@ $(document).ready(function(){
 					location.reload();
 				});
 	});
-
 
 	$(document).on("change", ".inputBloc", function () {
 		var labelBloc = $(this).val(); // On récupère la valeur de l\'input

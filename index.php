@@ -230,8 +230,8 @@ if ($blocs) {
 						<div class="matrix-head">
 									<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $b->id . '" value="' . $b->label . '">
 										<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
-											<span class="fas fa-pencil-alt" title="Modifier"></span>
-											<span class="fa fa-check" style="color:lightgrey; display: none" ></span>
+											<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
+											<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
 										</a>
 										<a id="matrix-delete-' . $b->id . '">
 											<span data-id="'.$b->id.'" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>

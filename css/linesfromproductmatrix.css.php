@@ -95,7 +95,7 @@ input.inputBloc {
 	flex-grow: 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-	width: 350px;
+	width: auto;
 	margin-bottom: 25px;
 	margin-right: 15px;
 	box-shadow: 1px 1px 5px rgba(0,0,0, 0.5);
