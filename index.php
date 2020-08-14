@@ -218,6 +218,7 @@ if ($action == 'preparecreate') {
 // End block form
 
 
+
 $bloc = new Bloc($db);
 $blocs =  $bloc->fetchAll('ASC','fk_rank');
 

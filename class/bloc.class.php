@@ -1041,13 +1041,9 @@ class Bloc extends CommonObject
 	 *
 	 * @param $id
 	 */
-	public function getBloc($id){
-
+	public function fetchBloc($id){
 		$b = new Bloc($this->db);
-		$sql = "select * from ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix WHERE fk_bloc = ".$id;
-		$resql = $this->db->query($sql);
-		$b = $this->db->fetch_row($resql);
-		var_dump($b);
+		$b->fetch($id);
 		$this->fetchMatrix($b);
 	}
 

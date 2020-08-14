@@ -105,7 +105,8 @@ $(document).ready(function(){
 	});
 
 	$(document).on("click", ".fa-grip-lines", function () {
-		alert("là");
+		var $currentBloc = $(this);
+		//var $currentTable = $currentBloc.parent().prev());
 		var idBloc = $(this).data("id");
 		var blocheadType = $(this).data("type");
 		$.ajax({
@@ -118,7 +119,7 @@ $(document).ready(function(){
 				type: blocheadType
 			}
 		})
-			.done(function() {
+			.done(function () {
 				location.reload();
 			});
 	});

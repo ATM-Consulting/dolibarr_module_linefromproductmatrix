@@ -64,17 +64,26 @@ if (isset($idBloc) && isset($action) && $action == 'addLineMatrix' ) {
 	$result = $db->fetch_row($resql);  // $resql = $db->getRow($sql)   c'est la même chose en méthode simplifiée
 	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
 
-
 	// On insert une ligne avec le bon type (1) et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
-	$sql2 = 'INSERT INTO '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead (fk_bloc, date_creation, fk_user_creat, type, fk_rank) VALUES ('.$idBloc.', datetime NOT NULL, 1, 1, '.$fk_rank_increment.')';
+	$sql2 = 'INSERT INTO '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead (fk_bloc, date_creation, fk_user_creat, type, fk_rank) VALUES ('.$idBloc.', NOW(), 1, 1, '.$fk_rank_increment.')';
 	$resql2 = $db->query($sql2);
 
 	$lastBlocheadId = $db->last_insert_id(MAIN_DB_PREFIX.'linesfromproductmatrix_blochead');
-	var_dump($lastBlocheadId);
+
+/*	// Insertion dans la matrice
+	// Sélectionner toutes les colonnes de la matrice
+	$sql3 = 'SELECT * FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 0 AND fk_bloc = '.$idBloc;
+	$resql3 = $db->query($sql3);
+	while ($obj = $db->fetch_object($resql3)) {
+		$sqlinsert = 'INSERT INTO '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix (fk_bloc, fk_blochead_row, fk_blochead_column) VALUES ('.$idBloc.', '.$lastBlocheadId.', '.$obj->rowid.')';
+		$resqlinsert = $db->query($sqlinsert);
+		var_dump($resqlinsert);
+	}*/
+
+
 
 	$b = new Bloc($db);
-	$bloc =  $b->getBloc($idBloc);
-	$b->fetchMatrix($b);
+	$b->fetchBloc($idBloc);
 
 }
 
