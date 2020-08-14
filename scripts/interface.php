@@ -17,7 +17,7 @@ dol_include_once('discountrules/class/discountrule.class.php');
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-
+require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/matrix.class.php';
 // Load traductions files requiredby by page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other", 'main'));
 
@@ -71,8 +71,19 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
 
 //***  UPDATE SELECT PRODUCT   ***//
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselect' ) {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix SET FK_PRODUCT = ". $idproduct . " WHERE fk_bloc = $idBloc AND fk_blochead_column = $headerColId  AND fk_blochead_row = $headerRowId";
-	$resql = $db->query($sql);
+
+	// BLOCHEAD COL AND BLOCHEAD ROW AND BLOC ID
+	$m = new Matrix($db);
+	$res = $m->db->getRow("SELECT COUNT(*) as c FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix"." WHERE fk_bloc = $idBloc AND fk_blochead_column = $headerColId  AND fk_blochead_row = $headerRowId");
+
+	// resultset exist in db
+	if ($res->c > 0){
+		$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix SET FK_PRODUCT = ". $idproduct . " WHERE fk_bloc = $idBloc AND fk_blochead_column = $headerColId  AND fk_blochead_row = $headerRowId";
+		$resql = $db->query($sql);
+	}else{
+		// create matrix for this cell
+	}
+
 }
 
 
