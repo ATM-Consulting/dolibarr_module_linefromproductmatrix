@@ -169,17 +169,7 @@ $(document).ready(function(){
 		let bhr = $(this).data("blocheaderrowid");
 		let bid =$(this).data("blocid");
 		let idproduct = $(this).val();
-
-		console.log($(this).data("blocheadercolid"));
-		console.log($(this).data("blocheaderrowid"));
-		console.log($(this).data("blocid"));
-		console.log($(this).val());
-
-
 		let self = $(this);
-		var parentBlocTitle = $(this).closest("div");
-
-		//parentBlocTitle.css("background-color", "green");
 
 		let data =
 			{	id: bid,
@@ -195,9 +185,12 @@ $(document).ready(function(){
 			dataType : "json",
 			data: data
 		})
-			.done(function() {
-
-			});
+		.done(function() {
+			self.css("background-color", "green");
+			setTimeout(function(){
+				self.css("background-color",'#fff');
+			}, 800);
+		});
 
 
 	});

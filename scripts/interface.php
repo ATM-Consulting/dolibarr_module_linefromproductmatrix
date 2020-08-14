@@ -35,8 +35,8 @@ $idHead = GETPOST('idhead');
 $idBloc = GETPOST('id');
 $idproduct = GETPOST('idproduct');
 $action = GETPOST('action');
-$headerColId = GETPOST('bhc');
-$headerRowId = GETPOST('bhr');
+$headerColId = GETPOST('blocheadercolid');
+$headerRowId = GETPOST('blocheaderrowid');
 $idMatrix = GETPOST('idMatrix');
 $addLineMatrix = GETPOST('addLineMatrix');
 $jsonResponse = new stdClass();
@@ -71,8 +71,7 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
 
 //***  UPDATE SELECT PRODUCT   ***//
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselect' ) {
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix SET label = ".'"' .$label. '"'." WHERE rowid = $idHead";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix SET FK_PRODUCT = ". $idproduct . " WHERE fk_bloc = $idBloc AND fk_blochead_column = $headerColId  AND fk_blochead_row = $headerRowId";
 	$resql = $db->query($sql);
 }
 
