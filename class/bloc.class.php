@@ -1194,7 +1194,8 @@ class Bloc extends CommonObject
 
 	public function getSelectElement($idproduct = 0,$headerColId,$headerRowId){
 		global $langs;
-
+		//var_dump($headerColId,$headerRowId);
+		//linesfromproductmatrix_
 		$p = new Product($this->db);
 		$res = $p->db->getRows('SELECT rowid,label FROM '. MAIN_DB_PREFIX .'product');
 		$output = '<select id="product-select-'. rand(0,200000) . '" data-blocheadercolid="'.$headerColId.'"data-blocheaderrowid="'.$headerRowId.'" data-blocid="'.$this->currentBloc.'" >';

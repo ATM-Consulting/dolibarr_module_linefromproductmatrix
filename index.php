@@ -240,7 +240,7 @@ if ($blocs) {
 
 					print $bloc->display();
 					print '<div class="matrix-footer">
-								<a class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
+								<a data-type="1" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
 							</div>
 					</div>';
 
