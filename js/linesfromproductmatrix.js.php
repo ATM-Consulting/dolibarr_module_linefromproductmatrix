@@ -135,4 +135,71 @@ $(document).ready(function(){
 			});
 	});
 
+	$(document).on("change",".inputBlocHeader",function(){
+
+		let idBlocHead = $(this).data("idhead");  // On récupère l\'id de l\'input
+		let self = $(this);
+		let label = $(this).val();
+		var parentBlocTitle = $(this).closest("div");
+
+		parentBlocTitle.css("background-color", "green");
+
+		let data =
+			{	idhead: idBlocHead,
+				label:label,
+				action : "updatelabelHeader"
+			}
+		$.ajax({
+			url: "scripts/interface.php",
+			method: "POST",
+			dataType : "json",
+			data: data
+		})
+			.done(function() {
+				parentBlocTitle.css("background-color", "green");
+				setTimeout(function(){
+					parentBlocTitle.css("background-color",'#EEE');
+				}, 1000);
+			});
+	});
+
+	$(document).on("change","select",function(){
+
+		let bhc = $(this).data("blocheadercolid");
+		let bhr = $(this).data("blocheaderrowid");
+		let bid =$(this).data("blocid");
+		let idproduct = $(this).val();
+
+		console.log($(this).data("blocheadercolid"));
+		console.log($(this).data("blocheaderrowid"));
+		console.log($(this).data("blocid"));
+		console.log($(this).val());
+
+
+		let self = $(this);
+		var parentBlocTitle = $(this).closest("div");
+
+		//parentBlocTitle.css("background-color", "green");
+
+		let data =
+			{	id: bid,
+				blocheadercolid : bhc,
+				blocheaderrowid :bhr,
+				idproduct :idproduct,
+				action : "updateselect"
+			}
+
+		$.ajax({
+			url: "scripts/interface.php",
+			method: "POST",
+			dataType : "json",
+			data: data
+		})
+			.done(function() {
+
+			});
+
+
+	});
+
 });

@@ -17,18 +17,26 @@ dol_include_once('discountrules/class/discountrule.class.php');
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other", 'main'));
 
-global $db;
 
-$form = new Form($db);
+
+
+
+//---------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------
+
 $label = GETPOST('label');
+$idHead = GETPOST('idhead');
 $idBloc = GETPOST('id');
+$idproduct = GETPOST('idproduct');
 $action = GETPOST('action');
+$headerColId = GETPOST('bhc');
+$headerRowId = GETPOST('bhr');
 $idMatrix = GETPOST('idMatrix');
 $addLineMatrix = GETPOST('addLineMatrix');
 $jsonResponse = new stdClass();
@@ -37,7 +45,9 @@ $jsonResponse = new stdClass();
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabelBloc' ) {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_bloc SET label = ".'"' .$label. '"'." WHERE rowid = $idBloc";
 	$resql = $db->query($sql);
+
 }
+
 
 // Delete a bloc
 if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
@@ -51,11 +61,26 @@ if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 		$resql = $db->query($sql);*/
 }
 
-print json_encode($jsonResponse, JSON_PRETTY_PRINT);
+
+// MODIFICATION LABEL HEADERS
+if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabelHeader' ) {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_blochead SET label = ".'"' .$label. '"'." WHERE rowid = $idHead";
+	$resql = $db->query($sql);
+}
+
+
+//***  UPDATE SELECT PRODUCT   ***//
+if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselect' ) {
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix SET label = ".'"' .$label. '"'." WHERE rowid = $idHead";
+	$resql = $db->query($sql);
+}
+
 
 $db->close();    // Close $db database opened handler
 
 $activateDebugLog = GETPOST('activatedebug','int');
 
+print json_encode($jsonResponse, JSON_PRETTY_PRINT);
 
 

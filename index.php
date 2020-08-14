@@ -185,7 +185,6 @@ print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
 		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
 		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
 
-
 // Part to create
 if ($action == 'preparecreate') {
 	// New Block Form
@@ -218,7 +217,7 @@ if ($action == 'preparecreate') {
 
 // End block form
 
-// Lister les blocs existants et les afficher sous la partie "Ajout d'un bloc"
+
 $bloc = new Bloc($db);
 $blocs =  $bloc->fetchAll('ASC','fk_rank');
 
@@ -239,7 +238,7 @@ if ($blocs) {
 										</a>
 						</div>';
 
-					print $bloc->printMatrix();
+					print $bloc->display();
 					print '<div class="matrix-footer">
 								<a class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
 							</div>

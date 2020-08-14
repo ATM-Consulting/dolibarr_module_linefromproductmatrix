@@ -184,29 +184,32 @@ if ($blocs) {
 
 	foreach ($blocs as $b){
 		$bloc->fetchMatrix($b);
-		print $bloc->printMatrix();
+		print $bloc->display();
 	}
 
 }
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
+?>
+<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
 	function init_myfunc()
 	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
+		jQuery("#myid").removeAttr('disabled');
+		jQuery("#myid").attr('disabled','disabled');
+		//jQuery(".bloc-table").mouseover(function(){
+			alert('r');
+		})
 	}
 	init_myfunc();
 	jQuery("#mybutton").click(function() {
 		init_myfunc();
 	});
 });
-</script>';
+</script>
 
 
 
-
+<?php
 
 // End of page
 llxFooter();
