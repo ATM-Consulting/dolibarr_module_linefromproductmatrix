@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
+dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"));
@@ -214,37 +215,34 @@ if ($action == 'preparecreate') {
 	print '</form>';
 }
 
-// End block form
 
-// Lister les blocs existants et les afficher sous la partie "Ajout d'un bloc"
-$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "linesfromproductmatrix_bloc";
-$resql = $db->query($sql);
 
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
+$bloc = new Bloc($db);
+$blocs =  $bloc->fetchAll('ASC','fk_rank');
 
-//		$monobjet->fetchMatrix();
+if ($blocs) {
+	foreach ($blocs as $b){
+		$bloc->fetchMatrix($b);
 
 		print '<div class="matrix-box"> <!--Squelette du bloc-->
-
-					<div class="matrix-head"> <!--Bandeau du bloc (label, modification, suppression)-->
-								<input id="bloc-label-' . $obj->rowid . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $obj->rowid . '" value="' . $obj->label . '">
-									<a class="editfielda reposition" data-id="' . $obj->rowid . '" href="#bloc-label-' . $obj->rowid . '">
+				<div class="matrix-head"> <!--Bandeau du bloc (label, modification, suppression)-->
+								<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $b->id . '" value="' . $b->label . '">
+									<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
 										<span class="fas fa-pencil-alt" title="Modifier"></span>
 										<span class="fa fa-check" style="color:lightgrey; display: none" ></span>
 									</a>
-									<a class="reposition" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?id=' . $obj->rowid . '&action=delete', 1) . '">
-										<span class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
-									</a>
-					</div>
+									<!--<span id="bloc-span-delete-' . $b->id . '"  class="reposition" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?id=' . $b->id . '&action=delete', 1) . '"> -->
+										<span id="bloc-span-delete-' . $b->id .  '" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
+									<!-- </span> -->
+					</div>';
 
-					<!--Contenu du bloc-->
+					print $bloc->display();
 
-					<div class="matrix-footer">+ ajouter colonne ,  </div>
+					print '<div class="matrix-footer"> + ajouter colonne ,  </div>
 			</div>';
 
-
 	}
+
 }
 
 if (!empty($conf->use_javascript_ajax)) {
@@ -252,7 +250,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 ?>
 
-// Example : Adding jquery code
+
 <script type="text/javascript" language="javascript">
 $(document).ready(function(){
     $(document).on("click", ".fa-pencil-alt", function (){
@@ -263,23 +261,29 @@ $(document).ready(function(){
     });
 
     $(document).on("change", ".inputBloc", function () {
-	    var labelBloc = $(this).val(); // On récupère la valeur de l\'input
-  		var idBloc = $(this).data("id");  // On récupère l\'id de l\'input
-  		var self = $(this);
-		var parentBlocTitle = $(this).closest("div");
+	    let labelBloc = $(this).val(); // On récupère la valeur de l\'input
+		console.log(labelBloc);
+  		let idBloc = $(this).data("id");  // On récupère l\'id de l\'input
+  		let self = $(this);
+		let parentBlocTitle = $(this).closest("div");
+
 	        $.ajax({
 		        url: "scripts/interface.php",
 		        method: "POST",
 		        dataType : "json",  // format de réponse attendu
-		        data: {id: idBloc,
-		               label:labelBloc}
+		        data: {
+		        	id: idBloc,
+		            label:labelBloc,
+					action : 'updatelabelBloc'
+		        }
 	    	})
 	    	.done(function() {
+	    		//console.log('data : ' + data);
 	    	    alert("OK");  // TODO fonction JS à faire
 	    	    parentBlocTitle.css("background-color", "green");
 
-		var pencilToShow = self.next().children(".fa-pencil-alt");
-        var check = self.next().children(".fa-check");
+				let pencilToShow = self.next().children(".fa-pencil-alt");
+        		let check = self.next().children(".fa-check");
 
 				check.toggle(0);
         		pencilToShow.toggle(0);
@@ -287,6 +291,77 @@ $(document).ready(function(){
 
 		});
 	});
+
+
+
+    $(document).on("change",".inputBlocHeader",function(){
+
+    	let idBlocHead = $(this).data("idhead");  // On récupère l\'id de l\'input
+		let self = $(this);
+		let label = $(this).val();
+		var parentBlocTitle = $(this).closest("div");
+
+		parentBlocTitle.css("background-color", "green");
+
+    	let data =
+		{	idhead: idBlocHead,
+			label:label,
+			action : "updatelabelHeader"
+		}
+		$.ajax({
+			url: "scripts/interface.php",
+			method: "POST",
+			dataType : "json",
+			data: data
+		})
+		.done(function() {
+				parentBlocTitle.css("background-color", "green");
+				setTimeout(function(){
+						parentBlocTitle.css("background-color",'#EEE');
+					}, 1000);
+		});
+	});
+
+
+	$(document).on("change","select",function(){
+
+		let bhc = $(this).data("blocheadercolid");
+		let bhr = $(this).data("blocheaderrowid");
+		let bid =$(this).data("blocid");
+		let idproduct = $(this).val();
+
+		console.log($(this).data("blocheadercolid"));
+		console.log($(this).data("blocheaderrowid"));
+		console.log($(this).data("blocid"));
+		console.log($(this).val());
+
+
+		let self = $(this);
+		var parentBlocTitle = $(this).closest("div");
+
+		//parentBlocTitle.css("background-color", "green");
+
+		let data =
+			{	id: bid,
+				blocheadercolid : bhc,
+				blocheaderrowid :bhr,
+				idproduct :idproduct,
+				action : "updateselect"
+			}
+
+		$.ajax({
+			url: "scripts/interface.php",
+			method: "POST",
+			dataType : "json",
+			data: data
+		})
+			.done(function() {
+
+			});
+
+
+	});
+
 });
 </script>;
 

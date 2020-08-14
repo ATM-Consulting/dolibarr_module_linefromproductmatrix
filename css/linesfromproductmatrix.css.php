@@ -70,7 +70,7 @@ else header('Cache-Control: no-cache');
 
 ?>
 
-.bloc {
+.matrix-box {
 	width: 30%;
 	display: inline-block;
 	margin-top: 20px;
@@ -104,14 +104,20 @@ else header('Cache-Control: no-cache');
 .bloc-table{
 	display: table;
 	width: 100%;
+	border:1px solid red;
 }
 .bloc-table-row {
 	display: table-row;
 }
 .bloc-table-cell, .bloc-table-head {
+
 	border: 1px solid #999999;
 	display: table-cell;
 	padding: 3px 10px;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
 }
 .bloc-table-head {
 	background-color: #EEE;

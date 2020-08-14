@@ -26,7 +26,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/linesfromproductmatrix/class/matrix.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for Bloc
@@ -433,8 +433,21 @@ class Bloc extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+
+		$bh = new Blochead($this->db);
+		$res1 = $bh->db->query('DELETE FROM ' . MAIN_DB_PREFIX . 'linesfromproductmatrix_blochead' . ' WHERE ' . $this->fk_bloc . ' = ' . $this->id);
+		// Delete record in child table
+
+        $m = new Matrix($this->db);
+		$res2 = $bh->db->query('DELETE FROM ' . MAIN_DB_PREFIX . 'linesfromproductmatrix_matrix' . ' WHERE ' . $this->fk_bloc . ' = ' . $this->id);
+
+
 		return $this->deleteCommon($user, $notrigger);
+
+
 		//return $this->deleteCommon($user, $notrigger, 1);
+
+
 	}
 
 	/**
@@ -1025,6 +1038,18 @@ class Bloc extends CommonObject
 	}
 
 	/**
+	 *
+	 * @param $id
+	 */
+	public function getBloc($id){
+
+		$b = new Bloc($this->db);
+		$bloc =  $b->db->getRow("select * from ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix WHERE fk_bloc = ".$id);
+		$this->fetchMatrix($bloc);
+	}
+
+	/**
+	 *
 	 *  Récupère les infos sur un bloc en db et crée la matrice de données.
 	 * @param Bloc $bloc
 	 */
@@ -1058,14 +1083,20 @@ class Bloc extends CommonObject
 				$matrixCell->label = '';
 				$matrixCell->type = -1;
 				$matrixCell->fk_product = 0;
+				$matrixCell->fk_blocHeaderCol = 0;
+				$matrixCell->fk_blocHeaderRow = 0;
+
+
 
 				// col label
 				if ($row == 0  && $col > 0){
+					$matrixCell->headId =  $this->THCols[$col-1]->rowid;
 					$matrixCell->label = $this->THCols[$col-1]->label;
 					$matrixCell->type = $this->THCols[$col-1]->type;
 				}
 				// row label
 				if ($row > 0 && $col == 0){
+					$matrixCell->headId =  $this->THRows[$row-1]->rowid;
 					$matrixCell->label = $this->THRows[$row-1]->label;
 					$matrixCell->type = $this->THRows[$row-1]->type;
 				}
@@ -1081,6 +1112,9 @@ class Bloc extends CommonObject
 						if(isset($this->THRows[$rowMatrixKey]) && isset($this->THCols[$colMatrixKey])){
 							$matrixCell->fk_product = $Tmatrix[$this->THRows[$rowMatrixKey]->rowid][$this->THCols[$colMatrixKey]->rowid];
 							$matrixCell->type = -1;
+							//- stockage des ids headers
+							$matrixCell->fk_blocHeaderCol = $this->THCols[$rowMatrixKey]->rowid;
+							$matrixCell->fk_blocHeaderRow = $this->THRows[$rowMatrixKey]->rowid;
 					}
 				}
 				$this->displayMatrix[$row][$col] = $matrixCell;
@@ -1101,33 +1135,45 @@ class Bloc extends CommonObject
 	 */
 	public function display(){
 
+
 		$nbCols = count($this->THCols) + 1;
 		$nbRows = count($this->THRows) + 1;
 		$output = '';
 
 		if ($this->THCols && $this->THRows) {
 			$output  .= '<div class="bloc-table">';
+
 			for ($row = 0; $row < $nbRows; $row++) {
+
 				$output  .= '<div class="bloc-table-row">';
+
 				for ($col = 0; $col < $nbCols; $col++) {
 
 					$matrixCell = $this->displayMatrix[$row][$col];
+
 					if ($matrixCell->type == 0 ){
 						$output  .='<div class="bloc-table-cell bloc-table-head">';
 					}else{
 						$output  .='<div class="bloc-table-cell">';
 					}
 
-
 					if (!empty($matrixCell->overrideHtmlOutput)) {
 						// probablement issue de la modification par un hook
 						$output  .= $matrixCell->overrideHtmlOutput;
 					} else {
-
+						// AFFICHAGE PRODUIT
 						if ($matrixCell->type < 0) {
-							$output  .= $matrixCell->fk_product;
-						} else { // '' TopCorner et -1 TopCOrner
-							$output  .=$matrixCell->label;
+							$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
+
+						} else { // AFFICHAGE HEADER
+								// col label
+								if ($matrixCell->type  == 0){
+									$output  .= '<input id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader" onfocus="this.select();"  type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="' . $matrixCell->label . '">';
+								}
+								// row label
+								if ($matrixCell->type > 0){
+									$output  .= '<input id="blocHead-label-' .$this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader" onfocus="this.select();" type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="' . $matrixCell->label . '">';
+								}
 						}
 						// la affichage produit, headr etc...
 					}
@@ -1140,6 +1186,34 @@ class Bloc extends CommonObject
 
   		return $output;
 
+	}
+
+	public function getSelectElement($idproduct = 0,$headerColId,$headerRowId){
+
+		//var_dump($headerColId,$headerRowId);
+		//linesfromproductmatrix_
+		$p = new Product($this->db);
+		$res = $p->db->getRows('SELECT rowid,label FROM '. MAIN_DB_PREFIX .'product');
+		$output = '<select id="product-select-'. rand(0,10000) . '" data-blocheadercolid="'.$headerColId.'"data-blocheaderrowid="'.$headerRowId.'" data-blocid="'.$this->currentBloc.'" >';
+		$output .= '<option value="">--Please choose an option--</option>';
+		if ($res){
+			foreach ($res as $element){
+				$output .= '<option value="'.$element->rowid;
+
+				if ($idproduct == $element->rowid){
+					$output .= '" selected>'.$element->label.'</option>';
+				}else{
+					$output .= '">'.$element->label.'</option>';
+				}
+
+			}
+			$output .='</select>';
+			//var_dump($output);
+		}
+
+		//$p->db->close();
+
+		return $output;
 	}
 
 
