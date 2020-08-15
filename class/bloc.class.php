@@ -1113,7 +1113,7 @@ class Bloc extends CommonObject
 							$matrixCell->fk_product = $Tmatrix[$this->THRows[$rowMatrixKey]->rowid][$this->THCols[$colMatrixKey]->rowid];
 							$matrixCell->type = -1;
 							//- stockage des ids headers
-							$matrixCell->fk_blocHeaderCol = $this->THCols[$rowMatrixKey]->rowid;
+							$matrixCell->fk_blocHeaderCol = $this->THCols[$colMatrixKey]->rowid;
 							$matrixCell->fk_blocHeaderRow = $this->THRows[$rowMatrixKey]->rowid;
 					}
 				}

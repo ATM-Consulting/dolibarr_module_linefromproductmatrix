@@ -100,19 +100,32 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
 
 //***  UPDATE SELECT PRODUCT   ***//
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselect' ) {
-
+    global $user;
 	// BLOCHEAD COL AND BLOCHEAD ROW AND BLOC ID
 	$m = new Matrix($db);
-	$res = $m->db->getRow("SELECT COUNT(*) as c FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix"." WHERE fk_bloc = $idBloc AND fk_blochead_column = $headerColId  AND fk_blochead_row = $headerRowId");
+	$res = $m->db->getRow("SELECT rowid  FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix"." WHERE fk_bloc = $idBloc AND fk_blochead_column = $headerColId  AND fk_blochead_row = $headerRowId");
 
-	// resultset exist in db
-	if ($res->c > 0){
-		$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix SET FK_PRODUCT = ". $idproduct . " WHERE fk_bloc = $idBloc AND fk_blochead_column = $headerColId  AND fk_blochead_row = $headerRowId";
-		$resql = $db->query($sql);
-	}else{
-		// create matrix for this cell
-	}
 
+    $m->fk_bloc = $idBloc;
+    $m->fk_blochead_column = $headerColId;
+    $m->fk_blochead_row = $headerRowId;
+    $m->fk_product =$idproduct;
+    $m->id = !is_null($res->rowid) ? $res->rowid : '';
+
+    if (is_null($res->rowid)){
+        $object = $m->create($user);
+    }else if (!is_null($res->rowid) && !empty($idproduct) ){
+        $m->update($user);
+    }else{
+        $m->delete($user);
+    }
+
+
+
+
+
+    //$db->close();
+    //return $error;
 }
 
 
