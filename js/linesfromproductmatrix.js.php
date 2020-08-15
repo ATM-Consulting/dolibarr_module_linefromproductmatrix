@@ -147,11 +147,13 @@ $(document).ready(function(){
 				label:labelBloc}
 		})
 			.done(function() {
-				alert("OK");  // TODO fonction JS à faire
+
 				parentBlocTitle.css("background-color", "green");
+
 				setTimeout(function () {
 					parentBlocTitle.css("background-color", "white");
 				}, 700)
+
 				var pencilToShow = self.next().children(".fa-pencil-alt");
 				var check = self.next().children(".fa-check");
 

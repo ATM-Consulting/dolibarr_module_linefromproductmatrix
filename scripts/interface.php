@@ -48,8 +48,11 @@ $jsonResponse = new stdClass();
 
 // Modify a bloc's label
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabelBloc' ) {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."linesfromproductmatrix_bloc SET label = ".'"' .$label. '"'." WHERE rowid = $idBloc";
-	$resql = $db->query($sql);
+
+    $b = new Bloc($db);
+    $b->fetch($idBloc);
+    $b->label = $label;
+    $b->update($user);
 
 }
 
@@ -82,23 +85,23 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	// On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
     $h = new BlocHead($db);
     $h->fk_bloc = $idBloc;
-    $h->date_creation = 'NOW()';
+    $h->date_creation = date('Y-m-d H:m:s');
     $h->fk_user_creat = 1;
     $h->fk_rank = $fk_rank_increment;
     $h->type = intval($type);
-    //var_dump($h);
     $h->create($user);
-
 
 }
 
 
 // MODIFICATION LABEL HEADERS
 if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabelHeader' ) {
+
     $h = new BlocHead($db);
-    $h->id = $idHead;
+    $h->fetch($idHead);
     $h->label = $label;
     $h->update($user);
+
 }
 
 
