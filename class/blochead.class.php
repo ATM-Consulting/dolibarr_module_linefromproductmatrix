@@ -101,7 +101,8 @@ class BlocHead extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'fk_bloc' => array('type'=>'integer', 'label'=>'fk_bloc', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"fk_bloc"),
-		'fk_rank' => array('type'=>'integer', 'label'=>'fk_rank', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"fk_rank"),
+		'fk_rank' => array('type'=>'integer', 'label'=>'fk_rank', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"display order"),
+        'type' => array('type'=>'integer', 'label'=>'type', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"0 for Col, 1 for Row"),
 		);
 	public $rowid;
 	public $fk_bloc;

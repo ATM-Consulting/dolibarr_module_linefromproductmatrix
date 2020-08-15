@@ -63,6 +63,7 @@ $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix","other")
 
 /* Javascript library of module linesfromproductmatrix */
 $(document).ready(function(){
+
 	$(document).on("click", ".fa-pencil-alt, .inputBloc", function (){
 		if ($(this).is("input")) {
 			// var pencilDisplay TODO faire une condition sur deuxième clic de l'input (si le display du pencil est none, on ne toggle pas)
@@ -104,19 +105,23 @@ $(document).ready(function(){
 
 	});
 
+	/**
+     * Ajout colonne / ligne dans la matrice active
+     */
 	$(document).on("click", ".fa-grip-lines", function () {
 		var $currentBloc = $(this);
 		//var $currentTable = $currentBloc.parent().prev());
 		var idBloc = $(this).data("id");
 		var blocheadType = $(this).data("type");
+		console.log(blocheadType);
 		$.ajax({
 			url: "scripts/interface.php",
 			method: "POST",
 			dataType: "json",  // format de réponse attendu
 			data: {
 				id: idBloc,
-				action: 'addLineMatrix',
-				type: blocheadType
+				action: 'addHeaderMatrix',
+                blocheadType: blocheadType
 			}
 		})
 			.done(function () {
@@ -125,7 +130,10 @@ $(document).ready(function(){
 	});
 
 
-	$(document).on("change", ".inputBloc", function () {
+    /**
+     * Modification  label entête Block
+     */
+    $(document).on("change", ".inputBloc", function () {
 		var labelBloc = $(this).val(); // On récupère la valeur de l\'input
 		var idBloc = $(this).data("id");  // On récupère l\'id de l\'input
 		var self = $(this);
@@ -153,6 +161,10 @@ $(document).ready(function(){
 			});
 	});
 
+
+    /**
+     * Modification des entêtes label HEADERS
+     */
 	$(document).on("change",".inputBlocHeader",function(){
 
 		let idBlocHead = $(this).data("idhead");  // On récupère l\'id de l\'input
@@ -181,6 +193,9 @@ $(document).ready(function(){
 			});
 	});
 
+	/**
+     * Modification des PRODUITS
+     */
 	$(document).on("change","select",function(){
 
 		let bhc = $(this).data("blocheadercolid");
