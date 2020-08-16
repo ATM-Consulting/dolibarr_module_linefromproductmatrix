@@ -216,7 +216,8 @@ $(document).ready(function(){
 						}
 					})
 						.done(function() {
-							$("#notification").fadeIn("slow").delay(2000).append('Suppression réalisée avec succès');
+							$("#notification").fadeIn("slow").append('Suppression réalisée avec succès');
+							setTimeout(function(){location.reload()},500);
 							$(".dismiss").click(function(){
 								$("#notification").fadeOut("slow");
 							});
