@@ -124,7 +124,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/linesfromproductmatrix/index.php?&action=viewblocs', 1);
+	$backurlforlist = dol_buildpath('/linesfromproductmatrix/index.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -185,6 +185,8 @@ print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
 		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
 		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
 
+
+
 // Part to create
 if ($action == 'preparecreate') {
 	// New Block Form
@@ -238,6 +240,16 @@ if ($blocs) {
 											<span data-id="'.$b->id.'" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
 										</a>
 						</div>';
+
+					print '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
+								<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>
+							</div>';
+
+					// Part to display a notification
+					print '<div id="notification" style="display:none; float:left; margin:12px 12px 20px 0;">
+						<span class="dismiss"><a title="Masquer ce message">x</a></span>
+					</div>';
+
 
 					print $bloc->display();
 					print '<div class="matrix-footer">
