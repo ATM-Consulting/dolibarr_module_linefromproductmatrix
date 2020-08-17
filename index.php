@@ -252,8 +252,13 @@ if ($blocs) {
 								<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>
 							</div>';
 
-					// Part to display a notification
-					print '<div id="notification" style="display:none; float:left; margin:12px 12px 20px 0;">
+					// Part to display a delete success notification
+					print '<div id="notification" style="display:none;float:left;margin:12px 12px 20px 0;">
+						<span class="dismiss"><a title="Masquer ce message">x</a></span>
+					</div>';
+
+					// Part to display a blloc create success notification
+					print '<div id="create-notification" style="display:none;float:left;margin:12px 12px 20px 0;">
 						<span class="dismiss"><a title="Masquer ce message">x</a></span>
 					</div>';
 
