@@ -1166,8 +1166,8 @@ class Bloc extends CommonObject
 						if ($matrixCell->type === -1 ) {
 
 							$psp = $matrixCell->fk_product ? $matrixCell->fk_product :'';
-							$output .= $this->select_produits($psp, 'idprod_'.rand(0,150000), '', 20, 0, 1, 2 );
-							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
+							// $output .= $this->select_produits($psp, 'idprod_'.rand(0,150000), '', 20, 0, 1, 2 );
+							$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
 
 						} else { // AFFICHAGE HEADER
 								// COl/ROW label
