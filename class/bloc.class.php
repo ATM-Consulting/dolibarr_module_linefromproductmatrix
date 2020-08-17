@@ -1048,6 +1048,47 @@ class Bloc extends CommonObject
 		$this->fetchMatrix($b);
 	}
 
+	public function displayBloc(Bloc $b){
+
+		$out = '';
+		$out = '<div class="matrix-item">
+			<div class="matrix-head">
+			<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $b->id . '" value="' . $b->label . '">
+			<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
+			<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
+			<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
+			</a>
+			<a id="matrix-delete-' . $b->id . '">
+			<span data-id="'.$b->id.'" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
+			</a>
+			</div>';
+
+			$out .= '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
+			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>
+			</div>';
+
+			// Part to display a delete success notification
+			$out .= '<div id="notification" style="display:none;float:left;margin:12px 12px 20px 0;">
+			<span class="dismiss"><a title="Masquer ce message">x</a></span>
+			</div>';
+
+			// Part to display a blloc create success notification
+			$out .= '<div id="create-notification" style="display:none;float:left;margin:12px 12px 20px 0;">
+			<span class="dismiss"><a title="Masquer ce message">x</a></span>
+			</div>';
+
+					$b->fetchMatrix($b);
+			$out .= $b->display();
+			$out .= '<div class="matrix-footer">
+			<a data-type="1" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
+			<a data-type="0" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une Colonne</a>
+			</div>
+			</div>';
+		$jsonResponse = new stdClass();
+		$jsonResponse->html = $out;
+
+		return $jsonResponse;
+	}
 	/**
 	 *
 	 *  Récupère les infos sur un bloc en db et crée la matrice de données.
@@ -1165,9 +1206,9 @@ class Bloc extends CommonObject
 						// AFFICHAGE PRODUIT
 						if ($matrixCell->type === -1 ) {
 
-							$psp = $matrixCell->fk_product ? $matrixCell->fk_product :'';
-							// $output .= $this->select_produits($psp, 'idprod_'.rand(0,150000), '', 20, 0, 1, 2 );
-							$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
+							$fkproduct= $matrixCell->fk_product ? $matrixCell->fk_product :'';
+							 $output .= $this->select_produits($matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow,$fkproduct, 'idprod_'.rand(0,150000), '', 20, 0, 1, 2 );
+							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
 
 						} else { // AFFICHAGE HEADER
 								// COl/ROW label
@@ -1239,18 +1280,23 @@ class Bloc extends CommonObject
 	 *										            'warehouseclosed' = count products from closed warehouses,
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param       int        	$headerColId            id du header Col actif
+	 * @param 		int 		$headerRowId			id du header Row actif
 	 *  @return		void
 	 */
-	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
+	public function select_produits($headerColId, $headerRowId, $selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
 		$conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS = 1;
-		//var_dump($conf);
+
 		$out = '';
 		// check parameters
 		$price_level = (!empty($price_level) ? $price_level : 0);
-		if (is_null($ajaxoptions)) $ajaxoptions = array();
+		if (is_null($ajaxoptions)) {
+			$ajaxoptions = array();
+		}
 
 		if (strval($filtertype) === '' && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
 			if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
@@ -1270,6 +1316,8 @@ class Bloc extends CommonObject
 				$producttmpselect = new Product($this->db);
 				$producttmpselect->fetch($selected);
 				$selected_input_value = $producttmpselect->ref;
+
+
 				unset($producttmpselect);
 			}
 			// handle case where product or service module is disabled + no filter specified
@@ -1312,6 +1360,7 @@ class Bloc extends CommonObject
 							jQuery.getJSON("'.dol_buildpath('/variants/ajax/getCombinations.php', 2).'", {
 								id: jQuery(this).val()
 							}, function (data) {
+							console.log("1312");
 								jQuery(\'div#attributes_box\').empty();
 
 								// select option
@@ -1343,6 +1392,7 @@ class Bloc extends CommonObject
 
 										if (selected[val.fk_product_attribute] == val.id) {
 											tag.attr(\'selected\', \'selected\');
+
 										}
 
 										html.append(tag);
@@ -1364,7 +1414,7 @@ class Bloc extends CommonObject
 					print img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			$out.=  '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out.=  '<input type="text" class="minwidth100 inputproductmatric"  data-idproduct="'.$var.'" name="search_'.$htmlname.  '" data-blocheadercolid="'.$headerColId.'"data-blocheaderrowid="'.$headerRowId.'" data-blocid="'.$this->currentBloc.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
 				$out.=  img_picto($langs->trans("Search"), 'search');
 			}

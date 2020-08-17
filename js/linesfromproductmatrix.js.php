@@ -235,6 +235,37 @@ $(document).ready(function(){
 
 	});
 
+	$(document).on("change",".inputproductmatric",function(){
+		alert($(this).data("idproduct"));
+		let bhc = $(this).data("blocheadercolid");
+		let bhr = $(this).data("blocheaderrowid");
+		let idProduct = $(this).data("idproduct");
+		let bid =$(this).data("blocid");
+		let self = $(this);
+		console.log(bhc+'--'+bhr+'--'+bid+'--'+idProduct)
+		let data =
+			{	id: bid,
+				blocheadercolid : bhc,
+				blocheaderrowid :bhr,
+				idproduct :idProduct,
+				action : "InputproductMatric"
+			}
+
+		$.ajax({
+			url: "scripts/interface.php",
+			method: "POST",
+			dataType : "json",
+			data: data
+		})
+			.done(function() {
+				self.css("background-color", "green");
+				setTimeout(function(){
+					self.css("background-color",'#fff');
+				}, 800);
+			});
+
+
+	});
 
 
 	function deleteConfirmation() {
