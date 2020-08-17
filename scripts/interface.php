@@ -84,29 +84,30 @@ if (isset($action) && $action == 'createBloc' ) {
 // Delete a bloc
 if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 
-	// must handling cascade delete blockhead and matrix before deleting block !!!
+    // must handling cascade delete blockhead and matric before deleting block !!!
 	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$idMatrix;
 	$resql = $db->query($sql);
+
 	while ($obj = $db->fetch_object($resql)){
 		$bh = new BlocHead($db);
-		// hydrate object = peupler l'objet
+		// peupler
 		$bh->fetch($obj->rowid);
-		$bh->delete($user);
+		$bh->delete();
 	}
 
 	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix WHERE fk_bloc = '.$idMatrix;
 	$resql = $db->query($sql);
 	while ($obj = $db->fetch_object($resql)){
 		$bh = new Matrix($db);
-		// hydrate object = peupler l'objet
+		// peupler
 		$bh->fetch($obj->rowid);
-		$bh->delete($user);
+		$bh->delete();
 	}
-
 
     $b = new Bloc($db);
     $b->id = $idMatrix;
     $b->delete($user);
+
 
 }
 

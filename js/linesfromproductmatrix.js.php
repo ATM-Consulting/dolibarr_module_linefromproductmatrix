@@ -105,6 +105,11 @@ $(document).ready(function(){
 
 
 	// DELETE A BLOC AND HIS CHILDREN
+	/**
+	 * DELETE BLOCK
+	 *
+	 *
+	 */
 	$(document).on("click", ".pictodelete", deleteConfirmation);
 
 
