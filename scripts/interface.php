@@ -80,40 +80,7 @@ if (isset($action) && $action == 'createBloc' ) {
 	$bh->type = 0;
 	$bh->create($user);
 
-	$out = '';
-	$out = '<div class="matrix-item">
-				<div class="matrix-head">
-					<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $b->id . '" value="' . $b->label . '">
-						<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
-							<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
-							<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
-						</a>
-						<a id="matrix-delete-' . $b->id . '">
-							<span data-id="'.$b->id.'" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
-						</a>
-				</div>';
-
-	$out .= '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
-				<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>
-			 </div>';
-
-	// Part to display a delete success notification
-	$out .= '<div id="notification" style="display:none;float:left;margin:12px 12px 20px 0;">
-				<span class="dismiss"><a title="Masquer ce message">x</a></span>
-			</div>';
-
-	// Part to display a blloc create success notification
-	$out .= '<div id="create-notification" style="display:none;float:left;margin:12px 12px 20px 0;">
-				<span class="dismiss"><a title="Masquer ce message">x</a></span>
-			</div>';
-
-	$b->fetchMatrix($b);
-	$out .= $b->display();
-	$out .= '<div class="matrix-footer">
-					<a data-type="1" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
-					<a data-type="0" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une Colonne</a>
-				</div>
-			 </div>';
+	$out = $b->displayBloc($b);
 
 	$jsonResponse->data = $out;
 

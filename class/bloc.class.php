@@ -1048,6 +1048,12 @@ class Bloc extends CommonObject
 		$this->fetchMatrix($b);
 	}
 
+	/**
+	 *
+	 * Retourne le template html d'un bloc et de sa matrice.
+	 * @param Bloc $b
+	 * @return string
+	 */
 	public function displayBloc(Bloc $b){
 
 		$out = '';
@@ -1084,10 +1090,8 @@ class Bloc extends CommonObject
 			<a data-type="0" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une Colonne</a>
 			</div>
 			</div>';
-		$jsonResponse = new stdClass();
-		$jsonResponse->html = $out;
 
-		return $jsonResponse;
+		return $out;
 	}
 	/**
 	 *
@@ -1207,8 +1211,8 @@ class Bloc extends CommonObject
 						if ($matrixCell->type === -1 ) {
 
 							$fkproduct= $matrixCell->fk_product ? $matrixCell->fk_product :'';
-							 $output .= $this->select_produits($matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow,$fkproduct, 'idprod_'.rand(0,150000), '', 20, 0, 1, 2 );
-							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
+							 //$output .= $this->select_produits($matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow,$fkproduct, 'idprod_'.rand(0,150000), '', 20, 0, 1, 2 );
+							$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
 
 						} else { // AFFICHAGE HEADER
 								// COl/ROW label
