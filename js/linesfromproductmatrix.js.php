@@ -61,49 +61,29 @@ else header('Cache-Control: no-cache');
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix","other"));
 ?>
 
+
+
 /* Javascript library of module linesfromproductmatrix */
 $(document).ready(function(){
-
 	$(document).on("click", ".fa-pencil-alt, .inputBloc", function (){
 		if ($(this).is("input")) {
-			// var pencilDisplay TODO faire une condition sur deuxième clic de l'input (si le display du pencil est none, on ne toggle pas)
 			var input = $(this);
 			var check = $(this).next("a").children("span.fa-check");
 			var pencil = $(this).next("a").children("span.fa-pencil-alt");
-
-			console.log(input.val());
 		}
 		else if ($(this).is("span")) {
 			var pencil = $(this);
 			var check = $(this).next("span");
 			var input = $(this).closest("input");
-
 		}
-		check.toggle(0);
-		pencil.toggle(0);
+		check.css("display", "inline-block");
+		pencil.css("display", "none");
 	});
 
 
-	$(document).on("click", ".pictodelete", function () {
-		var idMatrix = $(this).data("id");
-		var result = confirm("Êtes-vous certain de vouloir supprimer tout le bloc ?")
-		if (result) {
-			$.ajax({
-				url: "scripts/interface.php",
-				method: "POST",
-				dataType: "json",  // format de réponse attendu
-				data: {
-					idMatrix: idMatrix,
-					action: 'deleteMatrix',
-				}
-			})
-				.done(function() {
-					location.reload();
-					alert("Le bloc a bien été supprimé");
-				});
-		}
 
-	});
+	$(document).on("click", ".pictodelete", deleteConfirmation);
+
 
 	/**
      * Ajout colonne / ligne dans la matrice active
@@ -113,7 +93,6 @@ $(document).ready(function(){
 		//var $currentTable = $currentBloc.parent().prev());
 		var idBloc = $(this).data("id");
 		var blocheadType = $(this).data("type");
-		console.log(blocheadType);
 		$.ajax({
 			url: "scripts/interface.php",
 			method: "POST",
@@ -149,11 +128,9 @@ $(document).ready(function(){
 			.done(function() {
 
 				parentBlocTitle.css("background-color", "green");
-
 				setTimeout(function () {
 					parentBlocTitle.css("background-color", "white");
 				}, 700)
-
 				var pencilToShow = self.next().children(".fa-pencil-alt");
 				var check = self.next().children(".fa-check");
 
@@ -229,5 +206,44 @@ $(document).ready(function(){
 
 
 	});
+
+
+
+	function deleteConfirmation() {
+		var idMatrix = $(this).data("id");
+
+		$("#dialog-confirm").dialog({
+			resizable: true,
+			height: "auto",
+			width: 400,
+			modal: true,
+			buttons: {
+				"Supprimer": function() {
+					$(this).dialog("close");
+					$.ajax({
+						url: "scripts/interface.php",
+						method: "POST",
+						dataType: "json",  // format de réponse attendu
+						data: {
+							idMatrix: idMatrix,
+							action: 'deleteMatrix',
+						}
+					})
+						.done(function() {
+							$("#notification").fadeIn("slow").append('Suppression réalisée avec succès');
+							setTimeout(function(){location.reload()},500);
+							$(".dismiss").click(function(){
+								$("#notification").fadeOut("slow");
+							});
+						});
+				},
+				"Annuler": function() {
+					$(this).dialog("close");
+				}
+			}
+
+		});
+	}
+
 
 });
