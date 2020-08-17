@@ -194,9 +194,9 @@ $(document).ready(function(){
 		})
 			.done(function() {
 				parentBlocTitle.css("background-color", "green");
-				setTimeout(function(){
-					parentBlocTitle.css("background-color",'#EEE');
-				}, 1000);
+				setTimeout(function () {
+					parentBlocTitle.css("background-color", "white");
+				}, 700)
 			});
 	});
 
@@ -268,6 +268,22 @@ $(document).ready(function(){
 	});
 
 
+	/**
+	 * Ajout d'une ligne ou colonne
+	 */
+	$(".bloc-table").on({
+		mouseenter: function () {
+			var footer = $(this).next();
+			console.log($(this).next());
+			footer.toggle("slow");
+		},
+		mouseleave: function () {
+			footer.hide();
+		}
+	});
+
+
+
 	function deleteConfirmation() {
 		var idMatrix = $(this).data("id");
 		var currentBloc = $(this).closest("div.matrix-item");
@@ -320,7 +336,7 @@ $(document).ready(function(){
 			}
 		})
 			.done(function(data) {
-				console.log(data);
+				$(".label-form").hide();
 				$(".matrix-container").append(data.data);
 				$("#create-notification").fadeIn("slow").append('Le bloc a bien été enregistré');
 				setTimeout(function () {

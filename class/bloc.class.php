@@ -1069,27 +1069,27 @@ class Bloc extends CommonObject
 			</a>
 			</div>';
 
-			$out .= '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
-			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>
-			</div>';
+		$out .= '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>
+		</div>';
 
-			// Part to display a delete success notification
-			$out .= '<div id="notification" style="display:none;float:left;margin:12px 12px 20px 0;">
-			<span class="dismiss"><a title="Masquer ce message">x</a></span>
-			</div>';
+		// Part to display a delete success notification
+		$out .= '<div id="notification" style="display:none;float:left;margin:12px 12px 20px 0;">
+		<span class="dismiss"><a title="Masquer ce message">x</a></span>
+		</div>';
 
-			// Part to display a blloc create success notification
-			$out .= '<div id="create-notification" style="display:none;float:left;margin:12px 12px 20px 0;">
-			<span class="dismiss"><a title="Masquer ce message">x</a></span>
-			</div>';
+		// Part to display a blloc create success notification
+		$out .= '<div id="create-notification" style="display:none;float:left;margin:12px 12px 20px 0;">
+		<span class="dismiss"><a title="Masquer ce message">x</a></span>
+		</div>';
 
-					$b->fetchMatrix($b);
-			$out .= $b->display();
-			$out .= '<div class="matrix-footer">
-			<a data-type="1" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
-			<a data-type="0" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une Colonne</a>
-			</div>
-			</div>';
+				$b->fetchMatrix($b);
+		$out .= $b->display();
+		$out .= '<div class="matrix-footer" style="display:none;">
+		<a data-type="1" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a><br>
+		<a data-type="0" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une Colonne</a>
+		</div>
+		</div>';
 
 		return $out;
 	}

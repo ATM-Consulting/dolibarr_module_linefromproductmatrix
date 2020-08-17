@@ -92,7 +92,6 @@ input.inputBloc {
 	transition: 0.5s ease-in-out;
 }
 .matrix-item {
-	flex-grow: 1;
 	flex-shrink: 1;
 	flex-basis: auto;
 	width: auto;
