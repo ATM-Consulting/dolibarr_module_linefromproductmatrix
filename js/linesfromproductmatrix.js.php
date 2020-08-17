@@ -81,7 +81,11 @@ $(document).ready(function(){
 	});
 
 
-
+	/**
+	 * DELETE BLOCK
+	 *
+	 *
+	 */
 	$(document).on("click", ".pictodelete", deleteConfirmation);
 
 

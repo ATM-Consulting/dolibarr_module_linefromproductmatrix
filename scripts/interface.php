@@ -60,14 +60,30 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabel
 if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 
     // must handling cascade delete blockhead and matric before deleting block !!!
+	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$idMatrix;
+	$resql = $db->query($sql);
 
-    //
+	while ($obj = $db->fetch_object($resql)){
+		$bh = new BlocHead($db);
+		// peupler
+		$bh->fetch($obj->rowid);
+		$bh->delete();
+	}
+
+	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix WHERE fk_bloc = '.$idMatrix;
+	$resql = $db->query($sql);
+	while ($obj = $db->fetch_object($resql)){
+		$bh = new Matrix($db);
+		// peupler
+		$bh->fetch($obj->rowid);
+		$bh->delete();
+	}
+
     $b = new Bloc($db);
     $b->id = $idMatrix;
     $b->delete($user);
 
-	//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_bloc WHERE rowid = '.$idMatrix;
-	//$resql = $db->query($sql);
+
 }
 
 // Add a Matrix Line or Col
@@ -81,7 +97,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
 
 
-    
+
 	// On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
     $h = new BlocHead($db);
     $h->fk_bloc = $idBloc;
@@ -128,6 +144,7 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
     }
 
 }
+
 
 
 $db->close();    // Close $db database opened handler
