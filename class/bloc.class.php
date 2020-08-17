@@ -1106,7 +1106,7 @@ class Bloc extends CommonObject
 
 				if ($row == 0  && $col == 0){
 					$matrixCell->label = '&nbsp;';
-					$matrixCell->type = '';
+					$matrixCell->type = -2;
 				}else{
 						$matrixCell->fk_product = false;
 						if(isset($this->THRows[$rowMatrixKey]) && isset($this->THCols[$colMatrixKey])){
@@ -1161,19 +1161,17 @@ class Bloc extends CommonObject
 						// probablement issue de la modification par un hook
 						$output  .= $matrixCell->overrideHtmlOutput;
 					} else {
+
 						// AFFICHAGE PRODUIT
-						if ($matrixCell->type < 0) {
-							$form = new Form($this->db);
-							$output = $this->select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array());
+						if ($matrixCell->type === -1 ) {
+
+							$psp = $matrixCell->fk_product ? $matrixCell->fk_product :'';
+							$output .= $this->select_produits($psp, 'idprod_'.rand(0,150000), '', 20, 0, 1, 2 );
 							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
-							//$output .= 	$form->select_produits('','','','','',-1);
+
 						} else { // AFFICHAGE HEADER
-								// col label
-								if ($matrixCell->type  == 0){
-									$output  .= '<input id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader" onfocus="this.select();"  type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="' . $matrixCell->label . '">';
-								}
-								// row label
-								if ($matrixCell->type > 0){
+								// COl/ROW label
+								if ($matrixCell->type >= 0){
 									$output  .= '<input id="blocHead-label-' .$this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader" onfocus="this.select();" type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="' . $matrixCell->label . '">';
 								}
 						}
@@ -1243,10 +1241,12 @@ class Bloc extends CommonObject
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @return		void
 	 */
-	public function select_produits($form = '', $selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
+	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
 	{
 		// phpcs:enable
 		global $langs, $conf;
+		$conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS = 1;
+		//var_dump($conf);
 		$out = '';
 		// check parameters
 		$price_level = (!empty($price_level) ? $price_level : 0);
@@ -1291,8 +1291,7 @@ class Bloc extends CommonObject
 			$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 
 			if (!empty($conf->variants->enabled)) {
-				$out.= '
-				<script>
+				$out.= '<script>
 					selected = '.json_encode($selected_combinations).';
 					combvalues = {};
 					jQuery(document).ready(function () {
@@ -1315,6 +1314,7 @@ class Bloc extends CommonObject
 							}, function (data) {
 								jQuery(\'div#attributes_box\').empty();
 
+								// select option
 								jQuery.each(data, function (key, val) {
 
 									combvalues[val.id] = val.values;
@@ -1325,7 +1325,7 @@ class Bloc extends CommonObject
 
 									span.append(
 										jQuery(document.createElement(\'div\')).text(val.label).css({
-											"font-weight": "bold",
+											"fon-weight": "bold",
 											"display": "table-cell",
 											"text-align": "right"
 										})

@@ -120,6 +120,9 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
 
 }
 
+if (isset($idHead) && isset($label) && isset($action) && $action == 'deleteHeader' ) {
+
+}
 
 //***  CRUD SELECT PRODUCT   ***//
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselect' ) {
@@ -145,6 +148,11 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
 
 }
 
+
+if (isset($action) && $action == 'createBloc' ) {
+
+
+}
 
 
 $db->close();    // Close $db database opened handler
