@@ -180,49 +180,55 @@ $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 llxHeader('', $title, $help_url);
 print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
-	'<a class="btnTitle btnTitlePlus" style="background-color:white" href="' . dol_buildpath('/custom/linesfromproductmatrix/index.php?action=preparecreate', 1) . '">
+	'<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
 		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
 		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
 		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
 
+print '<div class="label-form" style="display:none;margin:12px 12px 20px 25px;">
+  			<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">
+  			<button type="submit" class="create-button" style="margin-left: 10px;margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Valider</button>
+  			<button type="submit" class="cancel-button" style="margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Annuler</button>
+		</div>';
 
 
 // Part to create
-if ($action == 'preparecreate') {
-	// New Block Form
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-	print '<input type="hidden" name="token" value="' . newToken() . '">';
-	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage)
-		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
-	if ($backtopageforcancel)
-		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
-
-	print '<table class="border centpercent">' . "\n";
-	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
-	print '</table>' . "\n";
-
-	dol_fiche_end();
-
-
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="create" value="' . dol_escape_htmltag($langs->trans("Create")) . '"' . $_SERVER["PHP_SELF"] . '>';
-	print '&nbsp; ';
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="javascript:history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
-
-	print '</form>';
-}
-
-// End block form
+//if ($action == 'preparecreate') {
+//	// New Block Form
+//	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+//	print '<input type="hidden" name="token" value="' . newToken() . '">';
+//	print '<input type="hidden" name="action" value="add">';
+//	if ($backtopage)
+//		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+//	if ($backtopageforcancel)
+//		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
+//
+//	print '<table class="border centpercent">' . "\n";
+//	// Common attributes
+//	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
+//	// Other attributes
+//	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+//	print '</table>' . "\n";
+//
+//	dol_fiche_end();
+//
+//
+//	print '<div class="center">';
+//	print '<input type="submit" class="button" name="create" value="' . dol_escape_htmltag($langs->trans("Create")) . '"' . $_SERVER["PHP_SELF"] . '>';
+//	print '&nbsp; ';
+//	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="javascript:history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
+//	print '</div>';
+//
+//	print '</form>';
+//}
+//
+//// End block form
 
 
 
 $bloc = new Bloc($db);
 $blocs =  $bloc->fetchAll('ASC','fk_rank');
+
 
 print '<div class="matrix-wrap">
 				 <div class="matrix-container">';
@@ -240,6 +246,7 @@ if ($blocs) {
 											<span data-id="'.$b->id.'" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
 										</a>
 						</div>';
+
 
 					print '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
 								<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>

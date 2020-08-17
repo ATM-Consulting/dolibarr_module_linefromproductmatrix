@@ -56,18 +56,58 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabel
 
 }
 
+// Create a bloc
+if (isset($action) && $action == 'createBloc' ) {
+	$b = new Bloc($db);
+	$b->label = $label;
+	$b->create($user);
+
+	$bh = new BlocHead($db);
+	$bh->fk_bloc = $b->id;
+	$bh->date_creation = date('Y-m-d H:m:s');
+	$bh->fk_user_creat = 1;
+	$bh->fk_rank = 1;
+	$bh->type = 1;
+	$bh->label = "labelrow";
+	$bh->create($user);
+
+	$bh = new BlocHead($db);
+	$bh->fk_bloc = $b->id;
+	$bh->date_creation = date('Y-m-d H:m:s');
+	$bh->fk_user_creat = 1;
+	$bh->fk_rank = 1;
+	$bh->label = "labelcol";
+	$bh->type = 0;
+	$bh->create($user);
+}
+
 // Delete a bloc
 if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 
-    // must handling cascade delete blockhead and matric before deleting block !!!
+	// must handling cascade delete blockhead and matrix before deleting block !!!
+	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$idMatrix;
+	$resql = $db->query($sql);
+	while ($obj = $db->fetch_object($resql)){
+		$bh = new BlocHead($db);
+		// hydrate object = peupler l'objet
+		$bh->fetch($obj->rowid);
+		$bh->delete($user);
+	}
 
-    //
+	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix WHERE fk_bloc = '.$idMatrix;
+	$resql = $db->query($sql);
+	while ($obj = $db->fetch_object($resql)){
+		$bh = new Matrix($db);
+		// hydrate object = peupler l'objet
+		$bh->fetch($obj->rowid);
+		$bh->delete($user);
+	}
+
+
     $b = new Bloc($db);
     $b->id = $idMatrix;
     $b->delete($user);
 
-	//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_bloc WHERE rowid = '.$idMatrix;
-	//$resql = $db->query($sql);
 }
 
 // Add a Matrix Line or Col
@@ -81,7 +121,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
 
 
-    
+
 	// On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
     $h = new BlocHead($db);
     $h->fk_bloc = $idBloc;

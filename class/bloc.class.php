@@ -1170,7 +1170,7 @@ class Bloc extends CommonObject
 							//$output .= 	$form->select_produits('','','','','',-1);
 						} else { // AFFICHAGE HEADER
 								// col label
-								if ($matrixCell->type  == 0){
+								if ($matrixCell->type  === 0){
 									$output  .= '<input id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader" onfocus="this.select();"  type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="' . $matrixCell->label . '">';
 								}
 								// row label

@@ -82,6 +82,29 @@ $(document).ready(function(){
 
 
 
+	/**
+	 * Création des blocs en renseignant le label
+	 */
+	// START OF CREATE A BLOC EVENTS
+	$(document).on("click", ".btnTitle", function (e) {
+		e.preventDefault();
+		var textarea = $("#inputPlaceholderEx");
+		$(".label-form").show();
+		textarea.select();
+	});
+
+	$(document).on("keypress", "#inputPlaceholderEx", function (e) {
+		if(e.which == 13) {
+			createABloc();
+		}
+	});
+
+	$(document).on("click", ".create-button", createABloc);
+	// END OF CREATE BLOC EVENTS
+
+
+
+	// DELETE A BLOC AND HIS CHILDREN
 	$(document).on("click", ".pictodelete", deleteConfirmation);
 
 
@@ -243,6 +266,26 @@ $(document).ready(function(){
 			}
 
 		});
+	}
+
+	function createABloc() {
+		var label = $("#inputPlaceholderEx").val();
+		$.ajax({
+			url: "scripts/interface.php",
+			method: "POST",
+			dataType: "json",  // format de réponse attendu
+			data: {
+				label: label,
+				action: 'createBloc',
+			}
+		})
+			.done(function() {
+				$("#notification").fadeIn("slow").append('Création réalisée avec succès');
+				setTimeout(function(){location.reload()},500);
+				$(".dismiss").click(function(){
+					$("#notification").fadeOut("slow");
+				});
+			});
 	}
 
 
