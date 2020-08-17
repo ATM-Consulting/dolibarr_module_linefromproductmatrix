@@ -1244,133 +1244,133 @@ class Bloc extends CommonObject
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @return		void
 	 */
-//	public function select_produits($form = '', $selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
-//	{
-//		// phpcs:enable
-//		global $langs, $conf;
-//		$out = '';
-//		// check parameters
-//		$price_level = (!empty($price_level) ? $price_level : 0);
-//		if (is_null($ajaxoptions)) $ajaxoptions = array();
-//
-//		if (strval($filtertype) === '' && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
-//			if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
-//				$filtertype = '0';
-//			}
-//			elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) {
-//				$filtertype = '1';
-//			}
-//		}
-//
-//
-//			$placeholder = '';
-//
-//			if ($selected && empty($selected_input_value))
-//			{
-//				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-//				$producttmpselect = new Product($this->db);
-//				$producttmpselect->fetch($selected);
-//				$selected_input_value = $producttmpselect->ref;
-//				unset($producttmpselect);
-//			}
-//			// handle case where product or service module is disabled + no filter specified
-//			if ($filtertype == '')
-//			{
-//				if (empty($conf->product->enabled)) { // when product module is disabled, show services only
-//					$filtertype = 1;
-//				}
-//				elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
-//					$filtertype = 0;
-//				}
-//			}
-//			// mode=1 means customers products
-//			$urloption = 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
-//			//Price by customer
-//			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
-//				$urloption .= '&socid='.$socid;
-//			}
-//			$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-//
-//			if (!empty($conf->variants->enabled)) {
-//				$out.= '
-//				<script>
-//					selected = '.json_encode($selected_combinations).';
-//					combvalues = {};
-//					jQuery(document).ready(function () {
-//
-//						jQuery("input[name=\'prod_entry_mode\']").change(function () {
-//							if (jQuery(this).val() == \'free\') {
-//								jQuery(\'div#attributes_box\').empty();
-//							}
-//						});
-//
-//						jQuery("input#'.$htmlname. '").change(function () {
-//
-//							if (!jQuery(this).val()) {
-//								jQuery(\'div#attributes_box\').empty();
-//								return;
-//							}
-//
-//							jQuery.getJSON("'.dol_buildpath('/variants/ajax/getCombinations.php', 2).'", {
-//								id: jQuery(this).val()
-//							}, function (data) {
-//								jQuery(\'div#attributes_box\').empty();
-//
-//								jQuery.each(data, function (key, val) {
-//
-//									combvalues[val.id] = val.values;
-//
-//									var span = jQuery(document.createElement(\'div\')).css({
-//										\'display\': \'table-row\'
-//									});
-//
-//									span.append(
-//										jQuery(document.createElement(\'div\')).text(val.label).css({
-//											"font-weight": "bold",
-//											"display": "table-cell",
-//											"text-align": "right"
-//										})
-//									);
-//
-//									var html = jQuery(document.createElement(\'select\')).attr(\'name\', \'combinations[\' + val.id + \']\').css({
-//										\'margin-left\': \'15px\',
-//										\'white-space\': \'pre\'
-//									}).append(
-//										jQuery(document.createElement(\'option\')).val(\'\')
-//									);
-//
-//									jQuery.each(combvalues[val.id], function (key, val) {
-//										var tag = jQuery(document.createElement(\'option\')).val(val.id).html(val.value);
-//
-//										if (selected[val.fk_product_attribute] == val.id) {
-//											tag.attr(\'selected\', \'selected\');
-//										}
-//
-//										html.append(tag);
-//									});
-//
-//									span.append(html);
-//									jQuery(\'div#attributes_box\').append(span);
-//								});
-//							})
-//						})  if ($selected):
-/*						jQuery("input#<?php echo $htmlname ?>").change()*/
-//
-//					});</script>\';';
-//			}
-//			if (empty($hidelabel)) $out.=  $langs->trans("RefOrLabel").' : ';
-//			elseif ($hidelabel > 1) {
-//				$placeholder = ' placeholder="'.$langs->trans("RefOrLabel").'"';
-//				if ($hidelabel == 2) {
-//					print img_picto($langs->trans("Search"), 'search');
-//				}
-//			}
-//			$out.=  '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
-//			if ($hidelabel == 3) {
-//				$out.=  img_picto($langs->trans("Search"), 'search');
-//			}
-//
-//	}
+	public function select_produits($form = '', $selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
+	{
+		// phpcs:enable
+		global $langs, $conf;
+		$out = '';
+		// check parameters
+		$price_level = (!empty($price_level) ? $price_level : 0);
+		if (is_null($ajaxoptions)) $ajaxoptions = array();
+
+		if (strval($filtertype) === '' && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+			if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+				$filtertype = '0';
+			}
+			elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$filtertype = '1';
+			}
+		}
+
+
+			$placeholder = '';
+
+			if ($selected && empty($selected_input_value))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				$producttmpselect = new Product($this->db);
+				$producttmpselect->fetch($selected);
+				$selected_input_value = $producttmpselect->ref;
+				unset($producttmpselect);
+			}
+			// handle case where product or service module is disabled + no filter specified
+			if ($filtertype == '')
+			{
+				if (empty($conf->product->enabled)) { // when product module is disabled, show services only
+					$filtertype = 1;
+				}
+				elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+					$filtertype = 0;
+				}
+			}
+			// mode=1 means customers products
+			$urloption = 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
+			//Price by customer
+			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
+				$urloption .= '&socid='.$socid;
+			}
+			$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+
+			if (!empty($conf->variants->enabled)) {
+				$out.= '
+				<script>
+					selected = '.json_encode($selected_combinations).';
+					combvalues = {};
+					jQuery(document).ready(function () {
+
+						jQuery("input[name=\'prod_entry_mode\']").change(function () {
+							if (jQuery(this).val() == \'free\') {
+								jQuery(\'div#attributes_box\').empty();
+							}
+						});
+
+						jQuery("input#'.$htmlname. '").change(function () {
+
+							if (!jQuery(this).val()) {
+								jQuery(\'div#attributes_box\').empty();
+								return;
+							}
+
+							jQuery.getJSON("'.dol_buildpath('/variants/ajax/getCombinations.php', 2).'", {
+								id: jQuery(this).val()
+							}, function (data) {
+								jQuery(\'div#attributes_box\').empty();
+
+								jQuery.each(data, function (key, val) {
+
+									combvalues[val.id] = val.values;
+
+									var span = jQuery(document.createElement(\'div\')).css({
+										\'display\': \'table-row\'
+									});
+
+									span.append(
+										jQuery(document.createElement(\'div\')).text(val.label).css({
+											"font-weight": "bold",
+											"display": "table-cell",
+											"text-align": "right"
+										})
+									);
+
+									var html = jQuery(document.createElement(\'select\')).attr(\'name\', \'combinations[\' + val.id + \']\').css({
+										\'margin-left\': \'15px\',
+										\'white-space\': \'pre\'
+									}).append(
+										jQuery(document.createElement(\'option\')).val(\'\')
+									);
+
+									jQuery.each(combvalues[val.id], function (key, val) {
+										var tag = jQuery(document.createElement(\'option\')).val(val.id).html(val.value);
+
+										if (selected[val.fk_product_attribute] == val.id) {
+											tag.attr(\'selected\', \'selected\');
+										}
+
+										html.append(tag);
+									});
+
+									span.append(html);
+									jQuery(\'div#attributes_box\').append(span);
+								});
+							})
+						})  if ($selected)
+						jQuery("input#'.$htmlname.'").change()
+
+					});</script>';
+			}
+			if (empty($hidelabel)) $out.=  $langs->trans("RefOrLabel").' : ';
+			elseif ($hidelabel > 1) {
+				$placeholder = ' placeholder="'.$langs->trans("RefOrLabel").'"';
+				if ($hidelabel == 2) {
+					print img_picto($langs->trans("Search"), 'search');
+				}
+			}
+			$out.=  '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			if ($hidelabel == 3) {
+				$out.=  img_picto($langs->trans("Search"), 'search');
+			}
+
+	}
 
 
 
