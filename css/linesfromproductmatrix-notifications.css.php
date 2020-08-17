@@ -71,7 +71,7 @@ else header('Cache-Control: no-cache');
 ?>
 
 
-#notification {
+#notification, #create-notification {
 	position:fixed;
 	top:55px;
 	right: 20px;
@@ -85,14 +85,14 @@ else header('Cache-Control: no-cache');
 	background-color:#0ac354;
 	padding:10px;
 }
-#notification span.dismiss {
+#notification span.dismiss, #create-notification span.dismiss {
 	border:2px solid #FFF;
 	padding:0 5px;
 	cursor:pointer;
 	float:right;
 	margin-right:10px;
 }
-#notification a {
+#notification a, #create-notification a {
 	color:white;
 	text-decoration:none;
 	font-weight:bold

@@ -270,6 +270,7 @@ $(document).ready(function(){
 
 	function deleteConfirmation() {
 		var idMatrix = $(this).data("id");
+		var currentBloc = $(this).closest("div.matrix-item");
 
 		$("#dialog-confirm").dialog({
 			resizable: true,
@@ -289,8 +290,11 @@ $(document).ready(function(){
 						}
 					})
 						.done(function() {
+							currentBloc.hide();
 							$("#notification").fadeIn("slow").append('Suppression réalisée avec succès');
-							setTimeout(function(){location.reload()},500);
+							setTimeout(function () {
+								$("#notification").fadeOut("slow");
+							}, 1200)
 							$(".dismiss").click(function(){
 								$("#notification").fadeOut("slow");
 							});
@@ -315,11 +319,15 @@ $(document).ready(function(){
 				action: 'createBloc',
 			}
 		})
-			.done(function() {
-				$("#notification").fadeIn("slow").append('Création réalisée avec succès');
-				setTimeout(function(){location.reload()},500);
+			.done(function(data) {
+				console.log(data);
+				$(".matrix-container").append(data.data);
+				$("#create-notification").fadeIn("slow").append('Le bloc a bien été enregistré');
+				setTimeout(function () {
+					$("#create-notification").fadeOut("slow");
+				}, 1500)
 				$(".dismiss").click(function(){
-					$("#notification").fadeOut("slow");
+					$("#create-notification").fadeOut("slow");
 				});
 			});
 	}
