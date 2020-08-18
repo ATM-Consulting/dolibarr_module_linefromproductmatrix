@@ -153,7 +153,9 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@linesfromproductmatrix:$user->rights->linesfromproductmatrix->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
+		 $this->tabs[] = array('order:+tabMatrix:TitleMatrixProduct:mylangfile@linesfromproductmatrix:$user->rights->linesfromproductmatrix->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
+		 $this->tabs[] = array('propal:+tabMatrix:TitleMatrixProduct:mylangfile@linesfromproductmatrix:$user->rights->linesfromproductmatrix->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
+		 // To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@linesfromproductmatrix:$user->rights->othermodule->read:/linesfromproductmatrix/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
 		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
 		//
