@@ -231,18 +231,18 @@ $(document).ready(function(){
 				self.css("background-color",'#fff');
 			}, 800);
 		});
-
-
 	});
 
 	$(document).on("change",".inputproductmatric",function(){
-		alert($(this).data("idproduct"));
+		//alert($(this).data("idproduct"));
+
 		let bhc = $(this).data("blocheadercolid");
 		let bhr = $(this).data("blocheaderrowid");
-		let idProduct = $(this).data("idproduct");
+		var idProduct = $(this).data("idproduct");
 		let bid =$(this).data("blocid");
 		let self = $(this);
 		console.log(bhc+'--'+bhr+'--'+bid+'--'+idProduct)
+		console.log($(this).attr('id'));
 		let data =
 			{	id: bid,
 				blocheadercolid : bhc,
@@ -268,6 +268,21 @@ $(document).ready(function(){
 	});
 
 
+	/**
+	 * test event dynamique input
+	 */
+
+	//$(document).find("input[name^='search_idprod_']").live('change', function(){
+	//	var num = this.id.split('_')[2];
+	//	var num2 = this.id.split('_')[1];
+	//	alert('num : '+num);
+	//	console.log('num : '+num+num2);
+	//	//$('#sublike-form-' + num).toggle();
+	//});
+
+	/**
+	 *  delete confirmation
+	 */
 	function deleteConfirmation() {
 		var idMatrix = $(this).data("id");
 		var currentBloc = $(this).closest("div.matrix-item");
@@ -308,6 +323,10 @@ $(document).ready(function(){
 		});
 	}
 
+	/**
+	 *  création bloc
+	 *
+	 */
 	function createABloc() {
 		var label = $("#inputPlaceholderEx").val();
 		$.ajax({
@@ -331,6 +350,7 @@ $(document).ready(function(){
 				});
 			});
 	}
+
 
 
 });
