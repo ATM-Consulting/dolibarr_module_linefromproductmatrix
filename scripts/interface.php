@@ -43,6 +43,8 @@ $headerColId = GETPOST('blocheadercolid');
 $headerRowId = GETPOST('blocheaderrowid');
 $idMatrix = GETPOST('idMatrix');
 $addLineMatrix = GETPOST('addLineMatrix');
+$currentHead = GETPOST('currentHead');
+$currentType = GETPOST('currentType');
 $jsonResponse = new stdClass();
 
 
@@ -89,7 +91,7 @@ if (isset($action) && $action == 'createBloc' ) {
 // Delete a bloc
 if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 
-    // must handling cascade delete blockhead and matric before deleting block !!!
+    // must handling cascade delete blockhead and matrix before deleting block !!!
 	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$idMatrix;
 	$resql = $db->query($sql);
 
@@ -115,6 +117,31 @@ if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 
 
 }
+
+// Delete a Head (Line OR Col) AND Matrix LINKS
+if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
+	if ($currentType == 0) {
+		$nameCOL = 'fk_blochead_column';
+	}else{
+		$nameCOL = 'fk_blochead_row';
+	}
+	$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix WHERE '.$nameCOL.'  = '.$currentHead;
+	$resql = $db->query($sql);
+
+	while ($obj = $db->fetch_object($resql)) {
+		$bh = new Matrix($db);
+		// peupler / HYDRATER !!!!! = FETCH
+		$bh->fetch($obj->rowid);
+		$bh->delete($user);
+	}
+
+	$bh = new BlocHead($db);
+	$bh->fetch($currentHead);
+	$bh->delete($user);
+
+}
+
+
 
 // Add a Matrix Line or Col
 if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
