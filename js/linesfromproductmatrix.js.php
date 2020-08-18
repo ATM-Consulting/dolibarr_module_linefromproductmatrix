@@ -350,6 +350,10 @@ $(document).ready(function() {
 		});
 	}
 
+	/**
+	 *  création bloc
+	 *
+	 */
 	function createABloc() {
 		var $out = "Le bloc a bien été enregistré";
 		var label = $("#inputPlaceholderEx").val();
