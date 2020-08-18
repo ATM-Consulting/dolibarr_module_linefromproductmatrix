@@ -109,9 +109,9 @@ $(document).ready(function() {
 	$(document).on("click", ".pictodelete", deleteConfirmation);
 
 
-	// DELETE A LINE
+	// DELETE A BLOCHEAD
 	/**
-	 * DELETE LINE
+	 * DELETE HEADLINE OR HEADCOL
 	 *
 	 */
 	$(document).on("click", ".fas.fa-trash.deleteHead", function () {
