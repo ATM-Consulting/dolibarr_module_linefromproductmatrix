@@ -274,12 +274,12 @@ $(document).ready(function() {
 	/**
 	 * Modification des PRODUITS
 	 */
-	$(document).on("change", "select", function () {
-
+	$(document).on("change", ".inputproductmatric", function () {
+		var element  = $(this).parent().children('input');
+		let idproduct  = element.val();
 		let bhc = $(this).data("blocheadercolid");
 		let bhr = $(this).data("blocheaderrowid");
 		let bid = $(this).data("blocid");
-		let idproduct = $(this).val();
 		let self = $(this);
 
 		let data =
@@ -289,44 +289,6 @@ $(document).ready(function() {
 				blocheaderrowid: bhr,
 				idproduct: idproduct,
 				action: "updateselect"
-			}
-
-		$.ajax({
-			url: "scripts/interface.php",
-			method: "POST",
-			dataType: "json",
-			data: data,
-			success: function (data) {
-				if(!data.error) {
-					self.css("background-color", "green");
-					setTimeout(function () {
-						self.css("background-color", '#fff');
-					}, 800);
-				}else {
-					matrixSetMessage(data.error, "error");
-				}
-			},
-			error: function (err) {
-				matrixSetMessage(err.responseText, "error");
-			}
-		})
-	});
-
-	$(document).on("change", ".inputproductmatric", function () {
-		alert($(this).data("idproduct"));
-		let bhc = $(this).data("blocheadercolid");
-		let bhr = $(this).data("blocheaderrowid");
-		let idProduct = $(this).data("idproduct");
-		let bid = $(this).data("blocid");
-		let self = $(this);
-		console.log(bhc + '--' + bhr + '--' + bid + '--' + idProduct)
-		let data =
-			{
-				id: bid,
-				blocheadercolid: bhc,
-				blocheaderrowid: bhr,
-				idproduct: idProduct,
-				action: "InputproductMatric"
 			}
 
 		$.ajax({

@@ -1215,8 +1215,8 @@ class Bloc extends CommonObject
 							// htmlname en premier
 							$fkproduct= $matrixCell->fk_product ? $matrixCell->fk_product :'';
 
-							//$output .= $this->select_produits($matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow,$fkproduct, 'idprod_'.$matrixCell->fk_blocHeaderCol.'_'.$matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2 );
-							$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
+							$output .= $this->select_produits($matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow,$fkproduct, 'idprod_'.$matrixCell->fk_blocHeaderCol.'_'.$matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2 );
+							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
 
 						} else { // AFFICHAGE HEADER
 								// COl/ROW label
@@ -1238,6 +1238,14 @@ class Bloc extends CommonObject
 
 	}
 
+	/**
+	 *  DEPRECATED
+	 *
+	 * @param int $idproduct
+	 * @param $headerColId
+	 * @param $headerRowId
+	 * @return string
+	 */
 	public function getSelectElement($idproduct = 0,$headerColId,$headerRowId){
 		global $langs;
 		//var_dump($headerColId,$headerRowId);
