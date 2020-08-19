@@ -192,90 +192,21 @@ print '<div class="label-form" style="display:none;margin:12px 12px 20px 25px;">
 		</div>';
 
 
-// Part to create
-//if ($action == 'preparecreate') {
-//	// New Block Form
-//	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-//	print '<input type="hidden" name="token" value="' . newToken() . '">';
-//	print '<input type="hidden" name="action" value="add">';
-//	if ($backtopage)
-//		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
-//	if ($backtopageforcancel)
-//		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
-//
-//	print '<table class="border centpercent">' . "\n";
-//	// Common attributes
-//	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
-//	// Other attributes
-//	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
-//	print '</table>' . "\n";
-//
-//	dol_fiche_end();
-//
-//
-//	print '<div class="center">';
-//	print '<input type="submit" class="button" name="create" value="' . dol_escape_htmltag($langs->trans("Create")) . '"' . $_SERVER["PHP_SELF"] . '>';
-//	print '&nbsp; ';
-//	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="javascript:history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
-//	print '</div>';
-//
-//	print '</form>';
-//}
-//
-//// End block form
-
-
 
 $bloc = new Bloc($db);
 $blocs =  $bloc->fetchAll('ASC','fk_rank');
 
-
 print '<div class="matrix-wrap">
-				 <div class="matrix-container">';
+			<div class="matrix-container">';
 if ($blocs) {
 	foreach ($blocs as $b){
-		$bloc->fetchMatrix($b);
-			print '<div class="matrix-item">
-						<div class="matrix-head">
-									<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $b->id . '" value="' . $b->label . '">
-										<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
-											<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
-											<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
-										</a>
-										<a id="matrix-delete-' . $b->id . '">
-											<span data-id="'.$b->id.'" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
-										</a>
-						</div>';
-
-
-					print '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
-								<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>
-							</div>';
-
-					// Part to display a delete success notification
-					print '<div id="notification" style="display:none;float:left;margin:12px 12px 20px 0;">
-						<span class="dismiss"><a title="Masquer ce message">x</a></span>
-					</div>';
-
-					// Part to display a blloc create success notification
-					print '<div id="create-notification" style="display:none;float:left;margin:12px 12px 20px 0;">
-						<span class="dismiss"><a title="Masquer ce message">x</a></span>
-					</div>';
-
-
-					print $bloc->displayMatrix();
-					print '<div class="matrix-footer">
-								<a data-type="1" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
-								<a data-type="0" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une Colonne</a>
-							</div>
-					</div>';
-
+		print $bloc->displayBloc($b);
 	}
 
 }
-
 print '</div>
 	</div>';
+
 
 
 if (!empty($conf->use_javascript_ajax)) {

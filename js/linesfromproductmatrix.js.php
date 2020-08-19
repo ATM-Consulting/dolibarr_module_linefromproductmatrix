@@ -64,14 +64,13 @@ $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix","other")
 
 
 /* Javascript library of module linesfromproductmatrix */
-$(document).ready(function(){
-	$(document).on("click", ".fa-pencil-alt, .inputBloc", function (){
+$(document).ready(function() {
+	$(document).on("click", ".fa-pencil-alt, .inputBloc", function () {
 		if ($(this).is("input")) {
 			var input = $(this);
 			var check = $(this).next("a").children("span.fa-check");
 			var pencil = $(this).next("a").children("span.fa-pencil-alt");
-		}
-		else if ($(this).is("span")) {
+		} else if ($(this).is("span")) {
 			var pencil = $(this);
 			var check = $(this).next("span");
 			var input = $(this).closest("input");
@@ -79,7 +78,6 @@ $(document).ready(function(){
 		check.css("display", "inline-block");
 		pencil.css("display", "none");
 	});
-
 
 
 	/**
@@ -94,7 +92,7 @@ $(document).ready(function(){
 	});
 
 	$(document).on("keypress", "#inputPlaceholderEx", function (e) {
-		if(e.which == 13) {
+		if (e.which == 13) {
 			createABloc();
 		}
 	});
@@ -103,19 +101,61 @@ $(document).ready(function(){
 	// END OF CREATE BLOC EVENTS
 
 
-
 	// DELETE A BLOC AND HIS CHILDREN
 	/**
 	 * DELETE BLOCK
-	 *
 	 *
 	 */
 	$(document).on("click", ".pictodelete", deleteConfirmation);
 
 
+	// DELETE A LINE
 	/**
-     * Ajout colonne / ligne dans la matrice active
-     */
+	 * DELETE LINE
+	 *
+	 */
+	$(document).on("click", ".fas.fa-trash.deleteHead", function () {
+		var $out = "Suppression réalisée avec succès";
+		var currentHead = $(this).parent().data("id");
+		var currentType = $(this).parent().data("type");
+		if (currentType == 1) {var currentDiv = $(this).parent().parent().parent();}
+
+		$("#deleteHead-confirm").dialog({
+			resizable: true,
+			height: "auto",
+			width: 400,
+			modal: true,
+			buttons: {
+				"Supprimer": function () {
+					$(this).dialog("close");
+					$.ajax({
+						url: "scripts/interface.php",
+						method: "POST",
+						dataType: "json",  // format de réponse attendu
+						data: {
+							currentHead: currentHead,
+							currentType: currentType,
+							action: 'deleteHead',
+						}
+					})
+						.done(function () {
+							currentDiv.hide();
+							matrixSetMessage($out);
+						});
+				},
+				"Annuler": function () {
+					$(this).dialog("close");
+				}
+			}
+
+		});
+	});
+
+
+
+	/**
+	 * Ajout colonne / ligne dans la matrice active
+	 */
 	$(document).on("click", ".fa-grip-lines", function () {
 		var $currentBloc = $(this);
 		//var $currentTable = $currentBloc.parent().prev());
@@ -128,7 +168,7 @@ $(document).ready(function(){
 			data: {
 				id: idBloc,
 				action: 'addHeaderMatrix',
-                blocheadType: blocheadType
+				blocheadType: blocheadType
 			}
 		})
 			.done(function () {
@@ -137,10 +177,10 @@ $(document).ready(function(){
 	});
 
 
-    /**
-     * Modification  label entête Block
-     */
-    $(document).on("change", ".inputBloc", function () {
+	/**
+	 * Modification  label entête Block
+	 */
+	$(document).on("change", ".inputBloc", function () {
 		var labelBloc = $(this).val(); // On récupère la valeur de l\'input
 		var idBloc = $(this).data("id");  // On récupère l\'id de l\'input
 		var self = $(this);
@@ -148,12 +188,14 @@ $(document).ready(function(){
 		$.ajax({
 			url: "scripts/interface.php",
 			method: "POST",
-			dataType : "json",  // format de réponse attendu
-			data: {id: idBloc,
+			dataType: "json",  // format de réponse attendu
+			data: {
+				id: idBloc,
 				action: 'updateLabelBloc',
-				label:labelBloc}
+				label: labelBloc
+			}
 		})
-			.done(function() {
+			.done(function () {
 
 				parentBlocTitle.css("background-color", "green");
 				setTimeout(function () {
@@ -169,10 +211,10 @@ $(document).ready(function(){
 	});
 
 
-    /**
-     * Modification des entêtes label HEADERS
-     */
-	$(document).on("change",".inputBlocHeader",function(){
+	/**
+	 * Modification des entêtes label HEADERS
+	 */
+	$(document).on("change", ".inputBlocHeader", function () {
 
 		let idBlocHead = $(this).data("idhead");  // On récupère l\'id de l\'input
 		let self = $(this);
@@ -182,86 +224,88 @@ $(document).ready(function(){
 		parentBlocTitle.css("background-color", "green");
 
 		let data =
-			{	idhead: idBlocHead,
-				label:label,
-				action : "updatelabelHeader"
+			{
+				idhead: idBlocHead,
+				label: label,
+				action: "updatelabelHeader"
 			}
 		$.ajax({
 			url: "scripts/interface.php",
 			method: "POST",
-			dataType : "json",
+			dataType: "json",
 			data: data
 		})
-			.done(function() {
+			.done(function () {
 				parentBlocTitle.css("background-color", "green");
-				setTimeout(function(){
-					parentBlocTitle.css("background-color",'#EEE');
-				}, 1000);
+				setTimeout(function () {
+					parentBlocTitle.css("background-color", "white");
+				}, 700)
 			});
 	});
 
 	/**
-     * Modification des PRODUITS
-     */
-	$(document).on("change","select",function(){
+	 * Modification des PRODUITS
+	 */
+	$(document).on("change", "select", function () {
 
 		let bhc = $(this).data("blocheadercolid");
 		let bhr = $(this).data("blocheaderrowid");
-		let bid =$(this).data("blocid");
+		let bid = $(this).data("blocid");
 		let idproduct = $(this).val();
 		let self = $(this);
 
 		let data =
-			{	id: bid,
-				blocheadercolid : bhc,
-				blocheaderrowid :bhr,
-				idproduct :idproduct,
-				action : "updateselect"
+			{
+				id: bid,
+				blocheadercolid: bhc,
+				blocheaderrowid: bhr,
+				idproduct: idproduct,
+				action: "updateselect"
 			}
 
 		$.ajax({
 			url: "scripts/interface.php",
 			method: "POST",
-			dataType : "json",
+			dataType: "json",
 			data: data
 		})
-		.done(function(data) {
+			.done(function () {
+				self.css("background-color", "green");
+				setTimeout(function () {
+					self.css("background-color", '#fff');
+				}, 800);
+			});
 
-			self.css("background-color", "green");
-			setTimeout(function(){
-				self.css("background-color",'#fff');
-			}, 800);
-		});
+
 	});
 
-	$(document).on("change",".inputproductmatric",function(){
-		//alert($(this).data("idproduct"));
-
+	$(document).on("change", ".inputproductmatric", function () {
+		alert($(this).data("idproduct"));
 		let bhc = $(this).data("blocheadercolid");
 		let bhr = $(this).data("blocheaderrowid");
-		var idProduct = $(this).data("idproduct");
-		let bid =$(this).data("blocid");
+		let idProduct = $(this).data("idproduct");
+		let bid = $(this).data("blocid");
 		let self = $(this);
-		console.log(bhc+'--'+bhr+'--'+bid+'--'+idProduct)
-		console.log($(this).attr('id'));
+		console.log(bhc + '--' + bhr + '--' + bid + '--' + idProduct)
 		let data =
-			{	id: bid,
-				blocheadercolid : bhc,
-				blocheaderrowid :bhr,
-				idproduct :idProduct,
-				action : "InputproductMatric"
+			{
+				id: bid,
+				blocheadercolid: bhc,
+				blocheaderrowid: bhr,
+				idproduct: idProduct,
+				action: "InputproductMatric"
 			}
 
 		$.ajax({
 			url: "scripts/interface.php",
 			method: "POST",
-			dataType : "json",
+			dataType: "json",
 			data: data
 		})
-			.done(function() {
+			.done(function () {
 				self.css("background-color", "green");
-				setTimeout(function(){
-					self.css("background-color",'#fff');
+				setTimeout(function () {
+					self.css("background-color", '#fff');
 				}, 800);
 			});
 
@@ -269,22 +313,13 @@ $(document).ready(function(){
 	});
 
 
-	/**
-	 * test event dynamique input
-	 */
 
-	//$(document).find("input[name^='search_idprod_']").live('change', function(){
-	//	var num = this.id.split('_')[2];
-	//	var num2 = this.id.split('_')[1];
-	//	alert('num : '+num);
-	//	console.log('num : '+num+num2);
-	//	//$('#sublike-form-' + num).toggle();
-	//});
 
 	/**
 	 *  delete confirmation
 	 */
 	function deleteConfirmation() {
+		var $out = "Le bloc a bien été supprimé";
 		var idMatrix = $(this).data("id");
 		var currentBloc = $(this).closest("div.matrix-item");
 
@@ -294,7 +329,7 @@ $(document).ready(function(){
 			width: 400,
 			modal: true,
 			buttons: {
-				"Supprimer": function() {
+				"Supprimer": function () {
 					$(this).dialog("close");
 					$.ajax({
 						url: "scripts/interface.php",
@@ -305,18 +340,12 @@ $(document).ready(function(){
 							action: 'deleteMatrix',
 						}
 					})
-						.done(function() {
+						.done(function () {
 							currentBloc.hide();
-							$("#notification").fadeIn("slow").append('Suppression réalisée avec succès');
-							setTimeout(function () {
-								$("#notification").fadeOut("slow");
-							}, 1200)
-							$(".dismiss").click(function(){
-								$("#notification").fadeOut("slow");
-							});
+							matrixSetMessage($out);
 						});
 				},
-				"Annuler": function() {
+				"Annuler": function () {
 					$(this).dialog("close");
 				}
 			}
@@ -329,30 +358,47 @@ $(document).ready(function(){
 	 *
 	 */
 	function createABloc() {
+		var $out = "Le bloc a bien été enregistré";
 		var label = $("#inputPlaceholderEx").val();
 		$.ajax({
 			url: "scripts/interface.php",
+
 			method: "POST",
+
 			dataType: "json",  // format de réponse attendu
+
 			data: {
 				label: label,
 				action: 'createBloc',
-			}
+			},
+
+			success : function(data) {
+				if (!data.error){
+							$(".label-form").hide();
+							$(".matrix-container").append(data.data);
+							matrixSetMessage($out);
+						}else{
+							matrixSetMessage(data.error,'error')
+						}
+			},
+			error :function() {},
 		})
-		.success(function(data){})
-			.done(function(data) {
-				console.log(data);
-				$(".matrix-container").append(data.data);
-				$("#create-notification").fadeIn("slow").append('Le bloc a bien été enregistré');
-				setTimeout(function () {
-					$("#create-notification").fadeOut("slow");
-				}, 1500)
-				$(".dismiss").click(function(){
-					$("#create-notification").fadeOut("slow");
-				});
-			});
+		//.done(function (data) {
+		//	if (!data.error){
+		//		$(".label-form").hide();
+		//		$(".matrix-container").append(data.data);
+		//		matrixSetMessage($out);
+		//	}else{
+		//		matrixSetMessage(data.error,'error')
+		//	}
+		//
+		//});
+
 	}
 
-
+	function matrixSetMessage($out,$type ='success') {
+		$.jnotify($out,$type, 2000);
+	}
 
 });
+

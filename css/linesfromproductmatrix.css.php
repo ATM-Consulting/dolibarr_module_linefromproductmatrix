@@ -92,7 +92,6 @@ input.inputBloc {
 	transition: 0.5s ease-in-out;
 }
 .matrix-item {
-	flex-grow: 1;
 	flex-shrink: 1;
 	flex-basis: auto;
 	width: auto;
@@ -118,10 +117,19 @@ input.inputBloc {
 .bloc-table-cell, .bloc-table-head {
 	border: 1px solid #999999;
 	display: table-cell;
-	padding: 3px 10px;
+	padding: 5px 5px;
 }
 .bloc-table-head {
 	background-color: #EEE;
 	font-weight:bold;
 }
 
+.matrix-footer {
+	display:none;
+}
+.matrix-item:hover .matrix-footer {
+	display: block;
+}
+.bloc-table-cell.bloc-table-head {
+	text-align: center;
+}
