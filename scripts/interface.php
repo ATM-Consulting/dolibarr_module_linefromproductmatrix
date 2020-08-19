@@ -20,7 +20,7 @@ require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/matrix.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/bloc.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/blochead.class.php';
-
+require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 // Load traductions files requiredby by page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other", 'main'));
 
@@ -45,6 +45,7 @@ $idMatrix = GETPOST('idMatrix');
 $addLineMatrix = GETPOST('addLineMatrix');
 $currentHead = GETPOST('currentHead');
 $currentType = GETPOST('currentType');
+$reloadBlocView = GETPOST('reloadBlocView');
 $errormysql = -1;
 $jsonResponse = new stdClass();
 
@@ -63,7 +64,7 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabel
 if (isset($action) && $action == 'createBloc' ) {
 	$b = new Bloc($db);
 	$b->label = $label;
-
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 	$res  = $b->create($user);
 	if ($res < 0){
 		$jsonResponse->error = $langs->trans("errorCreateBloc");
@@ -172,7 +173,7 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 
 	$bloc = new Bloc($db);
 	$bloc->fetch($idBloc);
-	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc);
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc,$reloadBlocView ? $reloadBlocView : false);
 
 
 }
@@ -204,7 +205,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 
 	$bloc = new Bloc($db);
 	$bloc->fetch($idBloc);
-	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc);
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc,$reloadBlocView ? $reloadBlocView : false );
 
 }
 
