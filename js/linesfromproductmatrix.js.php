@@ -384,7 +384,7 @@ $(document).ready(function() {
 		var $out = "Le bloc a bien été enregistré";
 		var label = $("#inputPlaceholderEx").val();
 		$.ajax({
-			url: "scripts/interface2.php",
+			url: "scripts/interface.php",
 			method: "POST",
 			dataType: "json",  // format de réponse attendu
 			data: {
