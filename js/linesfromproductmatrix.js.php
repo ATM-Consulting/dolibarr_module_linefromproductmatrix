@@ -254,7 +254,7 @@ $(document).ready(function() {
 			url: "scripts/interface.php",
 			method: "POST",
 			dataType: "json",
-			data: data
+			data: data,
 			success: function (data) {
 				if(!data.error) {
 					parentBlocTitle.css("background-color", "green");
@@ -295,7 +295,7 @@ $(document).ready(function() {
 			url: "scripts/interface.php",
 			method: "POST",
 			dataType: "json",
-			data: data
+			data: data,
 			success: function (data) {
 				if(!data.error) {
 					self.css("background-color", "green");
@@ -333,7 +333,7 @@ $(document).ready(function() {
 			url: "scripts/interface.php",
 			method: "POST",
 			dataType: "json",
-			data: data
+			data: data,
 			success: function (data) {
 				if(!data.error) {
 					self.css("background-color", "green");
