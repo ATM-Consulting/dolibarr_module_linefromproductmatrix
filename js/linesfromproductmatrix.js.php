@@ -116,9 +116,11 @@ $(document).ready(function() {
 	 */
 	$(document).on("click", ".fas.fa-trash.deleteHead", function () {
 		var $out = "Suppression réalisée avec succès";
-		var currentHead = $(this).parent().data("id");
+		var idBloc = $(this).parent().data("blocid");
 		var currentType = $(this).parent().data("type");
-		if (currentType == 1) {var currentDiv = $(this).parent().parent().parent();}
+		var currentBloc = $(this).parent().parent().parent().parent().parent();
+		var currentHead = $(this).parent().data("id");
+
 
 		$("#deleteHead-confirm").dialog({
 			resizable: true,
@@ -133,16 +135,18 @@ $(document).ready(function() {
 						method: "POST",
 						dataType: "json",  // format de réponse attendu
 						data: {
+							id: idBloc,
 							currentHead: currentHead,
 							currentType: currentType,
 							action: 'deleteHead',
 						},
 						success: function (data) {
 							if(!data.error) {
-								currentDiv.hide();
+								currentBloc.html(data.currentDisplayedBloc);
 								matrixSetMessage($out);
 							}else {
 								matrixSetMessage(data.error, "error");
+								console.log(data.error);
 							}
 						},
 						error: function (err) {
@@ -164,8 +168,7 @@ $(document).ready(function() {
 	 * Ajout colonne / ligne dans la matrice active
 	 */
 	$(document).on("click", ".fa-grip-lines", function () {
-		var $currentBloc = $(this);
-		//var $currentTable = $currentBloc.parent().prev());
+		var currentBloc = $(this).parent().parent();
 		var $out = "Nouvelle référence ajoutée avec succès"
 		var idBloc = $(this).data("id");
 		var blocheadType = $(this).data("type");
@@ -180,7 +183,7 @@ $(document).ready(function() {
 			},
 			success: function (data) {
 				if(!data.error) {
-					location.reload();
+					currentBloc.html(data.currentDisplayedBloc);
 					matrixSetMessage($out);
 				}else {
 					matrixSetMessage(data.error, "error");
