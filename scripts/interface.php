@@ -46,7 +46,8 @@ $addLineMatrix = GETPOST('addLineMatrix');
 $currentHead = GETPOST('currentHead');
 $currentType = GETPOST('currentType');
 $jsonResponse = new stdClass();
-
+$jsonResponse->result = false;
+$jsonResponse->log = array();
 
 // Modify a bloc's label
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabelBloc' ) {
@@ -62,7 +63,9 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabel
 if (isset($action) && $action == 'createBloc' ) {
 	$b = new Bloc($db);
 	$b->label = $label;
-	$b->create($user);
+
+	$result = $b->create($user);
+	if ($result < 0){$jsonResponse->error = "Problème création de bloc";}
 
 	$bh = new BlocHead($db);
 	$bh->fk_bloc = $b->id;
@@ -70,7 +73,6 @@ if (isset($action) && $action == 'createBloc' ) {
 	$bh->fk_user_creat = 1;
 	$bh->fk_rank = 1;
 	$bh->type = 1;
-//	$bh->label = "";
 	$bh->create($user);
 
 	$bh = new BlocHead($db);
@@ -78,7 +80,6 @@ if (isset($action) && $action == 'createBloc' ) {
 	$bh->date_creation = date('Y-m-d H:m:s');
 	$bh->fk_user_creat = 1;
 	$bh->fk_rank = 1;
-//	$bh->label = "";
 	$bh->type = 0;
 	$bh->create($user);
 

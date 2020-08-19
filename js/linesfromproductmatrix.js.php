@@ -136,12 +136,19 @@ $(document).ready(function() {
 							currentHead: currentHead,
 							currentType: currentType,
 							action: 'deleteHead',
+						},
+						success: function (data) {
+							if(!data.error) {
+								currentDiv.hide();
+								matrixSetMessage($out);
+							}else {
+								matrixSetMessage(data.error, "error");
+							}
+						},
+						error: function (err) {
+							matrixSetMessage(err.responseText, "error");
 						}
 					})
-						.done(function () {
-							currentDiv.hide();
-							matrixSetMessage($out);
-						});
 				},
 				"Annuler": function () {
 					$(this).dialog("close");
@@ -159,6 +166,7 @@ $(document).ready(function() {
 	$(document).on("click", ".fa-grip-lines", function () {
 		var $currentBloc = $(this);
 		//var $currentTable = $currentBloc.parent().prev());
+		var $out = "Nouvelle référence ajoutée avec succès"
 		var idBloc = $(this).data("id");
 		var blocheadType = $(this).data("type");
 		$.ajax({
@@ -169,11 +177,19 @@ $(document).ready(function() {
 				id: idBloc,
 				action: 'addHeaderMatrix',
 				blocheadType: blocheadType
+			},
+			success: function (data) {
+				if(!data.error) {
+					location.reload();
+					matrixSetMessage($out);
+				}else {
+					matrixSetMessage(data.error, "error");
+				}
+			},
+			error: function (err) {
+				matrixSetMessage(err.responseText, "error");
 			}
 		})
-			.done(function () {
-				location.reload();
-			});
 	});
 
 
@@ -314,7 +330,10 @@ $(document).ready(function() {
 
 
 
-
+	/**
+	 *  Box de confirmation avant suppression
+	 *
+	 */
 	function deleteConfirmation() {
 		var $out = "Le bloc a bien été supprimé";
 		var idMatrix = $(this).data("id");
@@ -335,12 +354,19 @@ $(document).ready(function() {
 						data: {
 							idMatrix: idMatrix,
 							action: 'deleteMatrix',
+						},
+						success: function (data) {
+							if(!data.error) {
+								currentBloc.hide();
+								matrixSetMessage($out);
+							}else {
+								matrixSetMessage(data.error, "error");
+							}
+						},
+						error: function (err) {
+							matrixSetMessage(err.responseText, "error");
 						}
 					})
-						.done(function () {
-							currentBloc.hide();
-							matrixSetMessage($out);
-						});
 				},
 				"Annuler": function () {
 					$(this).dialog("close");
@@ -358,23 +384,30 @@ $(document).ready(function() {
 		var $out = "Le bloc a bien été enregistré";
 		var label = $("#inputPlaceholderEx").val();
 		$.ajax({
-			url: "scripts/interface.php",
+			url: "scripts/interface2.php",
 			method: "POST",
 			dataType: "json",  // format de réponse attendu
 			data: {
 				label: label,
 				action: 'createBloc',
+			},
+			success: function (data) {
+				if(!data.error) {
+					$(".label-form").hide();
+					$(".matrix-container").append(data.data);
+					matrixSetMessage($out);
+				}else {
+					matrixSetMessage(data.error, "error");
+				}
+			},
+			error: function (err) {
+				matrixSetMessage(err.responseText, "error");
 			}
-		})
-			.done(function (data) {
-				$(".label-form").hide();
-				$(".matrix-container").append(data.data);
-				matrixSetMessage($out);
-			});
+		});
 	}
 
-	function matrixSetMessage($out) {
-		$.jnotify($out, 2000);
+	function matrixSetMessage($out, $type = "success") {
+		$.jnotify($out, $type, 3000);
 	}
 
 });
