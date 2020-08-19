@@ -51,3 +51,19 @@ MyPageName = Nom de ma page
 #
 MyWidget = Mon widget
 MyWidgetDescription = Description de mon widget
+
+#
+#errors
+#
+#
+
+errorCreateBloc         = erreur création de bloc
+errorCreateBlocHeadRow  = erreur création blochead row.
+errorCreateBlocHeadCol  = erreur création blochead col.
+errorCreateBlocHead     = erreur création blochead.
+errorDeleteBlocHead     = erreur suppression blochead.
+errorDeleteBloc         = erreur suppression bloc.
+errorDeleteMatrix       = erreur suppression matrice.
+errorUpdateBlocHead     = erreur mise à jour label blochead.
+errorUpdateProduct      = erreur affectation Produit.
+errorDeleteProduct      = erreur suppression Produit.

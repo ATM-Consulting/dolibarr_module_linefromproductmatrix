@@ -45,6 +45,7 @@ $idMatrix = GETPOST('idMatrix');
 $addLineMatrix = GETPOST('addLineMatrix');
 $currentHead = GETPOST('currentHead');
 $currentType = GETPOST('currentType');
+$errormysql = -1;
 $jsonResponse = new stdClass();
 
 
@@ -65,7 +66,7 @@ if (isset($action) && $action == 'createBloc' ) {
 
 	$res  = $b->create($user);
 	if ($res < 0){
-		$jsonResponse->error = "pb création bloc.";
+		$jsonResponse->error = $langs->trans("errorCreateBloc");
 
 	}else{
 		$bh = new BlocHead($db);
@@ -75,8 +76,8 @@ if (isset($action) && $action == 'createBloc' ) {
 		$bh->fk_rank = 1;
 		$bh->type = 1;
 		$res = $bh->create($user);
-		if ($res < 0) {
-			$jsonResponse->error = "pb création blochead row.";
+		if ($res == $errormysql) {
+			$jsonResponse->error =$langs->trans("errorCreateBlocHeadRow");
 		}else{
 			$bh = new BlocHead($db);
 			$bh->fk_bloc = $b->id;
@@ -85,8 +86,8 @@ if (isset($action) && $action == 'createBloc' ) {
 			$bh->fk_rank = 1;
 			$bh->type = 0;
 			$res = $bh->create($user);
-			if ($res < 0 ){
-				$jsonResponse->error = "pb création blochead col.";
+			if ($res == $errormysql ){
+				$jsonResponse->error =$langs->trans("errorCreateBlocHeadCol");
 			}
 		}
 
@@ -111,8 +112,8 @@ if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 		// peupler
 		$bh->fetch($obj->rowid);
 		$res = $bh->delete($user);
-		if ($res < 0){
-			$jsonResponse->error = "pb suppression blochead.";
+		if ($res == $errormysql){
+			$jsonResponse->error = $langs->trans("errorDeleteBlocHead");
 			break;
 		}
 	}
@@ -124,8 +125,8 @@ if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 		// peupler
 		$bh->fetch($obj->rowid);
 		$res = $bh->delete($user);
-		if ($res < 0){
-			$jsonResponse->error = "pb suppression blochead.";
+		if ($res == $errormysql){
+			$jsonResponse->error = $langs->trans("errorDeleteBlocHead");
 			break;
 		}
 	}
@@ -134,8 +135,8 @@ if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
     $b->id = $idMatrix;
 
     $res = $b->delete($user);
-	if ($res < 0){
-		$jsonResponse->error = "pb suppression bloc.";
+	if ($res == $errormysql){
+		$jsonResponse->error = $langs->trans("errorDeleteBloc");
 	}
 
 
@@ -156,8 +157,8 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 		// peupler / HYDRATER !!!!! = FETCH
 		$bh->fetch($obj->rowid);
 		$res = $bh->delete($user);
-		if ($res < 0){
-			$jsonResponse->error = "pb suppression matrice.";
+		if ($res == $errormysql){
+			$jsonResponse->error = $langs->trans("errorDeleteMatrix");
 			break;
 		}
 	}
@@ -165,8 +166,8 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 	$bh = new BlocHead($db);
 	$bh->fetch($currentHead);
 	$res= $bh->delete($user);
-	if ($res < 0){
-		$jsonResponse->error = "pb suppression blochead.";
+	if ($res == $errormysql){
+		$jsonResponse->error = $langs->trans("errorDeleteBlocHead");
 	}
 
 }
@@ -193,8 +194,8 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
     $h->fk_rank = $fk_rank_increment;
     $h->type = intval($type);
    $res =  $h->create($user);
-	if ($res < 0){
-		$jsonResponse->error = "pb création blochead.";
+	if ($res == $errormysql){
+		$jsonResponse->error =  $langs->trans("errorCreateBlocHead");
 	}
 
 }
@@ -207,8 +208,8 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
     $h->fetch($idHead);
     $h->label = $label;
     $res = $h->update($user);
-	if ($res < 0){
-		$jsonResponse->error = "pb mise à jour label blochead.";
+	if ($res == $errormysql){
+		$jsonResponse->error = $langs->trans("errorUpdateBlocHead");
 	}
 
 }
@@ -230,19 +231,19 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
 
     if (is_null($res->rowid)){
         $res = $m->create($user);
-		if ($res < 0){
-			$jsonResponse->error = "pb affectation Produit.";
+		if ($res == $errormysql){
+			$jsonResponse->error = $langs->trans("errorUpdateProduct");
 		}
     }else if (!is_null($res->rowid) && !empty($idproduct) ){
         $res = $m->update($user);
-		if ($res < 0){
-			$jsonResponse->error = "pb affectation Produit.";
+		if ($res == $errormysql){
+			$jsonResponse->error = $langs->trans("errorUpdateProduct");
 		}
 
     }else{
         $res = $m->delete($user);
-		if ($res < 0){
-			$jsonResponse->error = "pb suppression Produit.";
+		if ($res == $errormysql){
+			$jsonResponse->error = $langs->trans("errorDeleteProduct");
 		}
     }
 
