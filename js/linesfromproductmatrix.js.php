@@ -209,21 +209,26 @@ $(document).ready(function() {
 				id: idBloc,
 				action: 'updateLabelBloc',
 				label: labelBloc
+			},
+			success: function (data) {
+				if(!data.error) {
+					parentBlocTitle.css("background-color", "green");
+					setTimeout(function () {
+						parentBlocTitle.css("background-color", "white");
+					}, 700)
+					var pencilToShow = self.next().children(".fa-pencil-alt");
+					var check = self.next().children(".fa-check");
+
+					check.toggle(0);
+					pencilToShow.toggle(0);
+				}else {
+					matrixSetMessage(data.error, "error");
+				}
+			},
+			error: function (err) {
+				matrixSetMessage(err.responseText, "error");
 			}
 		})
-			.done(function () {
-
-				parentBlocTitle.css("background-color", "green");
-				setTimeout(function () {
-					parentBlocTitle.css("background-color", "white");
-				}, 700)
-				var pencilToShow = self.next().children(".fa-pencil-alt");
-				var check = self.next().children(".fa-check");
-
-				check.toggle(0);
-				pencilToShow.toggle(0);
-
-			});
 	});
 
 
@@ -250,13 +255,20 @@ $(document).ready(function() {
 			method: "POST",
 			dataType: "json",
 			data: data
+			success: function (data) {
+				if(!data.error) {
+					parentBlocTitle.css("background-color", "green");
+					setTimeout(function () {
+						parentBlocTitle.css("background-color", "white");
+					}, 700)
+				}else {
+					matrixSetMessage(data.error, "error");
+				}
+			},
+			error: function (err) {
+				matrixSetMessage(err.responseText, "error");
+			}
 		})
-			.done(function () {
-				parentBlocTitle.css("background-color", "green");
-				setTimeout(function () {
-					parentBlocTitle.css("background-color", "white");
-				}, 700)
-			});
 	});
 
 	/**
@@ -284,15 +296,20 @@ $(document).ready(function() {
 			method: "POST",
 			dataType: "json",
 			data: data
+			success: function (data) {
+				if(!data.error) {
+					self.css("background-color", "green");
+					setTimeout(function () {
+						self.css("background-color", '#fff');
+					}, 800);
+				}else {
+					matrixSetMessage(data.error, "error");
+				}
+			},
+			error: function (err) {
+				matrixSetMessage(err.responseText, "error");
+			}
 		})
-			.done(function () {
-				self.css("background-color", "green");
-				setTimeout(function () {
-					self.css("background-color", '#fff');
-				}, 800);
-			});
-
-
 	});
 
 	$(document).on("change", ".inputproductmatric", function () {
@@ -317,15 +334,20 @@ $(document).ready(function() {
 			method: "POST",
 			dataType: "json",
 			data: data
+			success: function (data) {
+				if(!data.error) {
+					self.css("background-color", "green");
+					setTimeout(function () {
+						self.css("background-color", '#fff');
+					}, 800);
+				}else {
+					matrixSetMessage(data.error, "error");
+				}
+			},
+			error: function (err) {
+				matrixSetMessage(err.responseText, "error");
+			}
 		})
-			.done(function () {
-				self.css("background-color", "green");
-				setTimeout(function () {
-					self.css("background-color", '#fff');
-				}, 800);
-			});
-
-
 	});
 
 
