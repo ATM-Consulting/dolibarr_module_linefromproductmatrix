@@ -261,6 +261,11 @@ class modLinesFromProductMatrix extends DolibarrModules
 		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$r++;
+		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Modify qty of object of LinesFromProductMatrix'; // Permission label
+		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
+		$this->rights[$r][5] = 'update'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
+		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add

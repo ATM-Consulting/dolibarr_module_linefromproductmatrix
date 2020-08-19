@@ -205,11 +205,13 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 		$jsonResponse->error =  $langs->trans("errorCreateBlocHead");
 	}
 
+
 	$bloc = new Bloc($db);
 	$bloc->fetch($idBloc);
-	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc,$reloadBlocView ? $reloadBlocView : false );
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false);
 
 }
+
 
 
 // MODIFICATION LABEL HEADERS
