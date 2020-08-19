@@ -170,6 +170,11 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 		$jsonResponse->error = $langs->trans("errorDeleteBlocHead");
 	}
 
+	$bloc = new Bloc($db);
+	$bloc->fetch($idBloc);
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc);
+
+
 }
 
 
@@ -185,7 +190,6 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
 
 
-
 	// On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
     $h = new BlocHead($db);
     $h->fk_bloc = $idBloc;
@@ -193,10 +197,14 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
     $h->fk_user_creat = 1;
     $h->fk_rank = $fk_rank_increment;
     $h->type = intval($type);
-   $res =  $h->create($user);
+    $res =  $h->create($user);
 	if ($res == $errormysql){
 		$jsonResponse->error =  $langs->trans("errorCreateBlocHead");
 	}
+
+	$bloc = new Bloc($db);
+	$bloc->fetch($idBloc);
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc);
 
 }
 

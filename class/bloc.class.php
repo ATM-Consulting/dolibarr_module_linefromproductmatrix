@@ -1195,11 +1195,11 @@ class Bloc extends CommonObject
 					// Design fa icon en fonction du type de cellules
 					// Si on est sur des headers colonnes
 					if ($matrixCell->type == 0 ){
-						$output  .='<div class="bloc-table-cell bloc-table-head"><a data-id="'.$matrixCell->headId.'"><i class="fas fa-trash deleteHead pull-right"></i></a>';
+						$output  .='<div class="bloc-table-cell bloc-table-head"><a data-blocid="'.$this->id.'" data-id="'.$matrixCell->headId.'"><i class="fas fa-trash deleteHead pull-right"></i></a>';
 					}else{
 						// Si on est sur des headers lignes
 						if ($matrixCell->type > 0){
-							$output  .='<div class="bloc-table-cell"><a data-type="'.$matrixCell->type.'" data-id="'.$matrixCell->headId.'"><i class="fas fa-trash deleteHead"></i></a>';
+							$output  .='<div class="bloc-table-cell"><a data-type="'.$matrixCell->type.'" data-blocid="'.$this->id.'" data-id="'.$matrixCell->headId.'"><i class="fas fa-trash deleteHead"></i></a>';
 						}
 						// Si on est des produits
 						else {$output  .='<div class="bloc-table-cell">';}
