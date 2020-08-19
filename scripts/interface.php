@@ -20,6 +20,9 @@ require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/matrix.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/bloc.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/blochead.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+
+
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other", 'main'));
@@ -69,6 +72,7 @@ if (isset($action) && $action == 'createBloc' ) {
 		$jsonResponse->error = $langs->trans("errorCreateBloc");
 
 	}else{
+		$error = 0;
 		$bh = new BlocHead($db);
 		$bh->fk_bloc = $b->id;
 		$bh->date_creation = date('Y-m-d H:m:s');
@@ -87,6 +91,7 @@ if (isset($action) && $action == 'createBloc' ) {
 			$bh->type = 0;
 			$res = $bh->create($user);
 			if ($res == $errormysql ){
+				$error++;
 				$jsonResponse->error =$langs->trans("errorCreateBlocHeadCol");
 			}
 		}
@@ -95,6 +100,7 @@ if (isset($action) && $action == 'createBloc' ) {
 
 	$out = $b->displayBloc($b);
 
+	$jsonResponse->result = true;
 	$jsonResponse->data = $out;
 
 }
