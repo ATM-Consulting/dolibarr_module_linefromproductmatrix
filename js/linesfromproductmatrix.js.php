@@ -225,7 +225,8 @@ $(document).ready(function(){
 			dataType : "json",
 			data: data
 		})
-		.done(function() {
+		.done(function(data) {
+
 			self.css("background-color", "green");
 			setTimeout(function(){
 				self.css("background-color",'#fff');
@@ -338,6 +339,7 @@ $(document).ready(function(){
 				action: 'createBloc',
 			}
 		})
+		.success(function(data){})
 			.done(function(data) {
 				console.log(data);
 				$(".matrix-container").append(data.data);

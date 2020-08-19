@@ -60,7 +60,11 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabel
 if (isset($action) && $action == 'createBloc' ) {
 	$b = new Bloc($db);
 	$b->label = $label;
-	$b->create($user);
+	$result  = $b->create($user);
+
+	if ($result < 0){
+		$jsonResponse->error = "pb création bloc.";
+	}
 
 	$bh = new BlocHead($db);
 	$bh->fk_bloc = $b->id;

@@ -40,7 +40,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $langs, $conf,$user;
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -103,10 +103,10 @@ class modLinesFromProductMatrix extends DolibarrModules
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			'hooks' => array(
-				//   'data' => array(
-				//       'hookcontext1',
+				   'data' => array(
+				      'order',
 				//       'hookcontext2',
-				//   ),
+				  ),
 				//   'entity' => '0',
 			),
 			// Set this to 1 if features of module are opened to external users
@@ -149,12 +149,13 @@ class modLinesFromProductMatrix extends DolibarrModules
 			$conf->linesfromproductmatrix = new stdClass();
 			$conf->linesfromproductmatrix->enabled = 0;
 		}
-
+		//var_dump($user->rights);
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		 $this->tabs[] = array('order:+tabMatrix:TitleMatrixProduct:mylangfile@linesfromproductmatrix:$user->rights->linesfromproductmatrix->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
-		 $this->tabs[] = array('propal:+tabMatrix:TitleMatrixProduct:mylangfile@linesfromproductmatrix:$user->rights->linesfromproductmatrix->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
+		$this->tabs[] = array('data'=>'propal:+tabname1:Nouvel onglet Matrix:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__'); // To add a new tab identified by code tabname1
+		$this->tabs[] = array('data'=>'order:+tabname1:Nouvel onglet Matrix:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
+		// $this->tabs[] = array('propal:+tabMatrix:TitleMatrixProduct:mylangfile@linesfromproductmatrix:$user->rights->linesfromproductmatrix->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
 		 // To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@linesfromproductmatrix:$user->rights->othermodule->read:/linesfromproductmatrix/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
 		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
@@ -245,17 +246,17 @@ class modLinesFromProductMatrix extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of LinesFromProductMatrix'; // Permission label
 		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update objects of LinesFromProductMatrix'; // Permission label
 		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of LinesFromProductMatrix'; // Permission label
 		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
