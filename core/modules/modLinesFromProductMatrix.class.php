@@ -40,7 +40,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $langs, $conf,$user;
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -149,11 +149,14 @@ class modLinesFromProductMatrix extends DolibarrModules
 			$conf->linesfromproductmatrix = new stdClass();
 			$conf->linesfromproductmatrix->enabled = 0;
 		}
-
+		//var_dump($user->rights);
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		$this->tabs[] = array('data'=>'propal:+tabname1:Nouvel onglet:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
+		$this->tabs[] = array('data'=>'propal:+tabname1:Nouvel onglet Matrix:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__'); // To add a new tab identified by code tabname1
+		$this->tabs[] = array('data'=>'order:+tabname1:Nouvel onglet Matrix:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
+		// $this->tabs[] = array('propal:+tabMatrix:TitleMatrixProduct:mylangfile@linesfromproductmatrix:$user->rights->linesfromproductmatrix->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
+		 // To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@linesfromproductmatrix:$user->rights->othermodule->read:/linesfromproductmatrix/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
 		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
 		//

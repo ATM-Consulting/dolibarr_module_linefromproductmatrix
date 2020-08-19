@@ -46,8 +46,7 @@ $addLineMatrix = GETPOST('addLineMatrix');
 $currentHead = GETPOST('currentHead');
 $currentType = GETPOST('currentType');
 $jsonResponse = new stdClass();
-$jsonResponse->result = false;
-$jsonResponse->log = array();
+
 
 // Modify a bloc's label
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabelBloc' ) {
@@ -64,24 +63,34 @@ if (isset($action) && $action == 'createBloc' ) {
 	$b = new Bloc($db);
 	$b->label = $label;
 
-	$result = $b->create($user);
-	if ($result < 0){$jsonResponse->error = "Problème création de bloc";}
+	$res  = $b->create($user);
+	if ($res < 0){
+		$jsonResponse->error = "pb création bloc.";
 
-	$bh = new BlocHead($db);
-	$bh->fk_bloc = $b->id;
-	$bh->date_creation = date('Y-m-d H:m:s');
-	$bh->fk_user_creat = 1;
-	$bh->fk_rank = 1;
-	$bh->type = 1;
-	$bh->create($user);
+	}else{
+		$bh = new BlocHead($db);
+		$bh->fk_bloc = $b->id;
+		$bh->date_creation = date('Y-m-d H:m:s');
+		$bh->fk_user_creat = 1;
+		$bh->fk_rank = 1;
+		$bh->type = 1;
+		$res = $bh->create($user);
+		if ($res < 0) {
+			$jsonResponse->error = "pb création blochead row.";
+		}else{
+			$bh = new BlocHead($db);
+			$bh->fk_bloc = $b->id;
+			$bh->date_creation = date('Y-m-d H:m:s');
+			$bh->fk_user_creat = 1;
+			$bh->fk_rank = 1;
+			$bh->type = 0;
+			$res = $bh->create($user);
+			if ($res < 0 ){
+				$jsonResponse->error = "pb création blochead col.";
+			}
+		}
 
-	$bh = new BlocHead($db);
-	$bh->fk_bloc = $b->id;
-	$bh->date_creation = date('Y-m-d H:m:s');
-	$bh->fk_user_creat = 1;
-	$bh->fk_rank = 1;
-	$bh->type = 0;
-	$bh->create($user);
+	}
 
 	$out = $b->displayBloc($b);
 
@@ -96,11 +105,16 @@ if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE fk_bloc = '.$idMatrix;
 	$resql = $db->query($sql);
 
+
 	while ($obj = $db->fetch_object($resql)){
 		$bh = new BlocHead($db);
 		// peupler
 		$bh->fetch($obj->rowid);
-		$bh->delete($user);
+		$res = $bh->delete($user);
+		if ($res < 0){
+			$jsonResponse->error = "pb suppression blochead.";
+			break;
+		}
 	}
 
 	$sql = 'select rowid FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_matrix WHERE fk_bloc = '.$idMatrix;
@@ -109,12 +123,20 @@ if (isset($idMatrix) && isset($action) && $action == 'deleteMatrix' ) {
 		$bh = new Matrix($db);
 		// peupler
 		$bh->fetch($obj->rowid);
-		$bh->delete($user);
+		$res = $bh->delete($user);
+		if ($res < 0){
+			$jsonResponse->error = "pb suppression blochead.";
+			break;
+		}
 	}
 
     $b = new Bloc($db);
     $b->id = $idMatrix;
-    $b->delete($user);
+
+    $res = $b->delete($user);
+	if ($res < 0){
+		$jsonResponse->error = "pb suppression bloc.";
+	}
 
 
 }
@@ -133,12 +155,19 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 		$bh = new Matrix($db);
 		// peupler / HYDRATER !!!!! = FETCH
 		$bh->fetch($obj->rowid);
-		$bh->delete($user);
+		$res = $bh->delete($user);
+		if ($res < 0){
+			$jsonResponse->error = "pb suppression matrice.";
+			break;
+		}
 	}
 
 	$bh = new BlocHead($db);
 	$bh->fetch($currentHead);
-	$bh->delete($user);
+	$res= $bh->delete($user);
+	if ($res < 0){
+		$jsonResponse->error = "pb suppression blochead.";
+	}
 
 }
 
@@ -163,7 +192,10 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
     $h->fk_user_creat = 1;
     $h->fk_rank = $fk_rank_increment;
     $h->type = intval($type);
-    $h->create($user);
+   $res =  $h->create($user);
+	if ($res < 0){
+		$jsonResponse->error = "pb création blochead.";
+	}
 
 }
 
@@ -174,7 +206,10 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
     $h = new BlocHead($db);
     $h->fetch($idHead);
     $h->label = $label;
-    $h->update($user);
+    $res = $h->update($user);
+	if ($res < 0){
+		$jsonResponse->error = "pb mise à jour label blochead.";
+	}
 
 }
 
@@ -194,11 +229,21 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
     $m->id = !is_null($res->rowid) ? $res->rowid : '';
 
     if (is_null($res->rowid)){
-        $object = $m->create($user);
+        $res = $m->create($user);
+		if ($res < 0){
+			$jsonResponse->error = "pb affectation Produit.";
+		}
     }else if (!is_null($res->rowid) && !empty($idproduct) ){
-        $m->update($user);
+        $res = $m->update($user);
+		if ($res < 0){
+			$jsonResponse->error = "pb affectation Produit.";
+		}
+
     }else{
-        $m->delete($user);
+        $res = $m->delete($user);
+		if ($res < 0){
+			$jsonResponse->error = "pb suppression Produit.";
+		}
     }
 
 }
