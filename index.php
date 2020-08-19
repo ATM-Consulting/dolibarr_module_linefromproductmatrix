@@ -58,6 +58,7 @@ dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
 
+
 // Load translation files required by the page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"));
 

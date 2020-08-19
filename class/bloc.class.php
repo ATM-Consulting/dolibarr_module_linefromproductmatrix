@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/custom/linesfromproductmatrix/class/matrix.clas
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
+
 /**
  * Class for Bloc
  */
@@ -880,7 +881,7 @@ class Bloc extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 
-	/**
+	/**require_once DOL_DOCUMENT_ROOT . '/htdocs/core/lib/ajax.lib.php';
 	 * 	Create an array of lines
 	 *
 	 * 	@return array|int		array of lines if OK, <0 if KO
@@ -968,6 +969,7 @@ class Bloc extends CommonObject
 		}
 	}
 
+
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
@@ -1054,12 +1056,16 @@ class Bloc extends CommonObject
 	 * @param Bloc $b
 	 * @return string
 	 */
-	public function displayBloc(Bloc $b){
+	public function displayBloc(Bloc $b, $reloadBlocView = false){
 
-		$out = '';
-		$out = '<div class="matrix-item" id="item-matrix'.$b->id.'" data-id="'.$b->id.'">
-			<div class="matrix-head">
-			<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $b->id . '" value="' . $b->label . '">
+			$out = '';
+			if (!$reloadBlocView){
+				$out .= '<div class="matrix-item" id="item-matrix'.$b->id.'" data-id="'.$b->id.'">';
+			}
+
+
+			$out .= '<div class="matrix-head">
+				<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" name="bloclabel" data-id="' . $b->id . '" value="' . $b->label . '">
 			<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
 			<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
 			<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
@@ -1085,8 +1091,12 @@ class Bloc extends CommonObject
 		$out .= '<div class="matrix-footer">
 		<a data-type="1" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
 		<a data-type="0" data-id="'.$b->id.'" class="fas fa-grip-lines matrix-add --line"> Ajouter une Colonne</a>
-		</div>
 		</div>';
+		if (!$reloadBlocView){
+			$out .='</div>';
+		}
+
+
 
 		return $out;
 	}
@@ -1214,7 +1224,6 @@ class Bloc extends CommonObject
 						if ($matrixCell->type === -1 ) {
 							// htmlname en premier
 							$fkproduct= $matrixCell->fk_product ? $matrixCell->fk_product :'';
-
 							$output .= $this->select_produits($matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow,$fkproduct, 'idprod_'.$matrixCell->fk_blocHeaderCol.'_'.$matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2 );
 							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
 
@@ -1303,6 +1312,8 @@ class Bloc extends CommonObject
 	 */
 	public function select_produits($headerColId, $headerRowId, $selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
 	{
+
+
 		// phpcs:enable
 		global $langs, $conf;
 

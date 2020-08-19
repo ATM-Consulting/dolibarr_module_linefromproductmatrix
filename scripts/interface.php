@@ -21,9 +21,6 @@ require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/matrix.cl
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/bloc.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/blochead.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-
-
-
 // Load traductions files requiredby by page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other", 'main'));
 
@@ -48,6 +45,7 @@ $idMatrix = GETPOST('idMatrix');
 $addLineMatrix = GETPOST('addLineMatrix');
 $currentHead = GETPOST('currentHead');
 $currentType = GETPOST('currentType');
+$reloadBlocView = GETPOST('reloadBlocView');
 $errormysql = -1;
 $jsonResponse = new stdClass();
 
@@ -100,7 +98,6 @@ if (isset($action) && $action == 'createBloc' ) {
 
 	$out = $b->displayBloc($b);
 
-	$jsonResponse->result = true;
 	$jsonResponse->data = $out;
 
 }
@@ -178,7 +175,7 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 
 	$bloc = new Bloc($db);
 	$bloc->fetch($idBloc);
-	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc);
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc,$reloadBlocView ? $reloadBlocView : false);
 
 
 }
@@ -210,7 +207,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 
 	$bloc = new Bloc($db);
 	$bloc->fetch($idBloc);
-	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc);
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc,$reloadBlocView ? $reloadBlocView : false );
 
 }
 

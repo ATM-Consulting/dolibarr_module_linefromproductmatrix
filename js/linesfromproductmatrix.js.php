@@ -135,6 +135,7 @@ $(document).ready(function() {
 						method: "POST",
 						dataType: "json",  // format de réponse attendu
 						data: {
+							reloadBlocView : true,
 							id: idBloc,
 							currentHead: currentHead,
 							currentType: currentType,
@@ -177,12 +178,15 @@ $(document).ready(function() {
 			method: "POST",
 			dataType: "json",  // format de réponse attendu
 			data: {
+				reloadBlocView : true,
 				id: idBloc,
 				action: 'addHeaderMatrix',
 				blocheadType: blocheadType
 			},
 			success: function (data) {
 				if(!data.error) {
+					//location.reload();
+
 					currentBloc.html(data.currentDisplayedBloc);
 					matrixSetMessage($out);
 				}else {
