@@ -54,6 +54,8 @@ if (!$res)
 dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"));
@@ -155,8 +157,18 @@ if (empty($reshook)) {
 $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
-llxHeader('', $title, $help_url);
 
+$object = new Commande($db);
+if (!$object->fetch($id, $ref) > 0)
+{
+	dol_print_error($db);
+	exit;
+}
+//llxHeader('', $title, $help_url);
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+
+$head = commande_prepare_head($object);
+dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
 
 if ($permissiontoadd) {
 print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
