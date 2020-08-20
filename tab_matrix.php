@@ -170,19 +170,32 @@ llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|
 $head = commande_prepare_head($object);
 dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
 
-if ($permissiontoadd) {
-print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
-	'<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
-		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
-		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
-		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
-print '<div class="label-form" style="display:none;margin:12px 12px 20px 25px;">
-  			<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">
-  			<button type="submit" class="create-button" style="margin-left: 10px;margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Valider</button>
-  			<button type="submit" class="cancel-button" style="margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Annuler</button>
-		</div>';
-}
+//if ($mode == 'config') {
+//	print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
+//		'<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
+//		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
+//		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
+//		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
+//
+//	print '<div class="label-form" style="display:none;margin:12px 12px 20px 25px;">
+//  			<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">
+//  			<button type="submit" class="create-button" style="margin-left: 10px;margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Valider</button>
+//  			<button type="submit" class="cancel-button" style="margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Annuler</button>
+//		</div>';
+//}
+print '<div class="underbanner clearboth"></div>';
+print '</div>';
+
+dol_fiche_end();
+
+
+
+
+
 
 
 
