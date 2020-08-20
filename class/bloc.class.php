@@ -1056,7 +1056,7 @@ class Bloc extends CommonObject
 	 * @param Bloc $b
 	 * @return string
 	 */
-	public function displayBloc(Bloc $b, $reloadBlocView = false){
+	public function displayBloc(Bloc $b, $reloadBlocView = false, $mode = 'view'){
 			global $user;
 			$out = '';
 
@@ -1066,9 +1066,8 @@ class Bloc extends CommonObject
 
 			$out .= '<div class="matrix-head">';
 
-
-			if($user->rights->linesfromproductmatrix->bloc->write) {
-				$out .= '<input id="bloc-label-' . $b->id . '" class="inputBloc" onfocus="this.select();" style="text-decoration:none; background: none;" type="text" size="6" value="'.$b->label.'" name="bloclabel" data-id="' . $b->id . '">
+			if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
+				$out .= '<input id="bloc-label-' . $b->id . '" class="inputBloc"  style="text-decoration:none; background: none;" type="text" size="6" value="'.$b->label.'" name="bloclabel" data-id="' . $b->id . '">
 						<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
 						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
 						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
@@ -1077,13 +1076,16 @@ class Bloc extends CommonObject
 				$out .= $b->label;
 			}
 
-			 if($user->rights->linesfromproductmatrix->bloc->delete) {
+			 if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
 					$out .= '<a id="matrix-delete-' . $b->id . '">
-						<span data-id="' . $b->id . '" class="fas fa-trash pictodelete pull-right" style="" title="Supprimer"></span>
+						<span data-id="' . $b->id . '" class="fas fa-trash pictodelete pull-right classfortooltip" style="" title="Supprimer"></span>
 						</a>
 						</div>';
-				}
-			else {$out .= '</div>';}
+			}
+			else
+			{
+				$out .= '</div>';
+			}
 
 
 
@@ -1098,11 +1100,11 @@ class Bloc extends CommonObject
 
 
 		$b->fetchMatrix($b);
-		$out .= $b->displayMatrix();
-		if($user->rights->linesfromproductmatrix->bloc->write) {
+		$out .= $b->displayMatrix($mode);
+		if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 			$out .= '<div class="matrix-footer">
-		<a data-type="1" data-id="' . $b->id . '" class="fas fa-grip-lines matrix-add --line"> Ajouter une ligne</a>
-		<a data-type="0" data-id="' . $b->id . '" class="fas fa-grip-lines matrix-add --line"> Ajouter une Colonne</a>
+		<span data-type="1" data-id="' . $b->id . '" class="matrix-add-btn --line classfortooltip" title="jdfhqsdofhd"><span class="fas fa-grip-lines"></span> Ajouter une ligne</span>
+		<span data-type="0" data-id="' . $b->id . '" class="matrix-add-btn --col"><span class="fas fa-grip-lines --rotate90neg"></span> Ajouter une Colonne</span>
 		</div>';
 		}
 			if (!$reloadBlocView) {
@@ -1198,7 +1200,7 @@ class Bloc extends CommonObject
 	/**
 	 * affiche la matrice
 	 */
-	public function displayMatrix(){
+	public function displayMatrix($mode = 'view'){
 
 		global $user;
 		$nbCols = count($this->THCols) + 1;
@@ -1220,15 +1222,15 @@ class Bloc extends CommonObject
 					if ($matrixCell->type == 0 ) {
 						$output .= '<div class="bloc-table-cell bloc-table-head">';
 
-						if($user->rights->linesfromproductmatrix->bloc->delete) {
-						$output .= '<a data-blocid="'.$this->id.'" data-id="'.$matrixCell->headId.'"><i class="fas fa-trash deleteHead pull-right"></i></a>';
+						if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
+						$output .= '<a class="matrix-col-delete"  data-blocid="'.$this->id.'" data-id="'.$matrixCell->headId.'"><i class="fas fa-trash deleteHead pull-right"></i></a>';
 						}
 					}else{
 						// Si on est sur des headers lignes
 						if ($matrixCell->type > 0) {
 							$output .= '<div class="bloc-table-cell">';
-							if ($user->rights->linesfromproductmatrix->bloc->delete) {
-								$output .= '<a data-type="' . $matrixCell->type . '" data-blocid="' . $this->id . '" data-id="' . $matrixCell->headId . '"><i class="fas fa-trash deleteHead"></i></a>';
+							if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
+								$output .= '<a class="matrix-line-delete" data-type="' . $matrixCell->type . '" data-blocid="' . $this->id . '" data-id="' . $matrixCell->headId . '"><i class="fas fa-trash deleteHead"></i></a>';
 							}
 						}else {
 								$output  .='<div class="bloc-table-cell">';
@@ -1242,7 +1244,7 @@ class Bloc extends CommonObject
 
 						// AFFICHAGE PRODUIT
 						if ($matrixCell->type === -1 ) {
-							if ($user->rights->linesfromproductmatrix->bloc->write) {
+							if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 								// htmlname en premier
 								$fkproduct = $matrixCell->fk_product ? $matrixCell->fk_product : '';
 								$output .= $this->select_produits($matrixCell->fk_blocHeaderCol, $matrixCell->fk_blocHeaderRow, $fkproduct, 'idprod_' . $matrixCell->fk_blocHeaderCol . '_' . $matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2);
@@ -1255,8 +1257,8 @@ class Bloc extends CommonObject
 						} else { // AFFICHAGE HEADER
 								// COl/ROW label
 								if ($matrixCell->type >= 0){
-									if ($user->rights->linesfromproductmatrix->bloc->write) {
-										$output .= '<input id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader" onfocus="this.select();" type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="'.$matrixCell->label.'">';
+									if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
+										$output .= '<input required id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader" onfocus="this.select();" type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="'.$matrixCell->label.'">';
 									}else {
 										$output .= $matrixCell->label;
 										}

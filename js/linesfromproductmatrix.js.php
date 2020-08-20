@@ -131,7 +131,7 @@ $(document).ready(function() {
 				"Supprimer": function () {
 					$(this).dialog("close");
 					$.ajax({
-						url: "scripts/interface.php",
+						url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
 						method: "POST",
 						dataType: "json",  // format de réponse attendu
 						data: {
@@ -168,13 +168,15 @@ $(document).ready(function() {
 	/**
 	 * Ajout colonne / ligne dans la matrice active
 	 */
-	$(document).on("click", ".fa-grip-lines", function () {
+	$(document).on("click", ".matrix-add-btn", function () {
 		var currentBloc = $(this).parent().parent();
+		console.log(currentBloc);
+		// TODO les trad
 		var $out = "Nouvelle référence ajoutée avec succès"
 		var idBloc = $(this).data("id");
 		var blocheadType = $(this).data("type");
 		$.ajax({
-			url: "scripts/interface.php",
+			url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
 			method: "POST",
 			dataType: "json",  // format de réponse attendu
 			data: {
@@ -207,7 +209,7 @@ $(document).ready(function() {
 		var self = $(this);
 		var parentBlocTitle = $(this).closest("div");
 		$.ajax({
-			url: "scripts/interface.php",
+			url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
 			method: "POST",
 			dataType: "json",  // format de réponse attendu
 			data: {
@@ -256,7 +258,7 @@ $(document).ready(function() {
 				action: "updatelabelHeader"
 			}
 		$.ajax({
-			url: "scripts/interface.php",
+			url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
 			method: "POST",
 			dataType: "json",
 			data: data,
@@ -271,6 +273,7 @@ $(document).ready(function() {
 				}
 			},
 			error: function (err) {
+				parentBlocTitle.css("background-color", "red");
 				matrixSetMessage(err.responseText, "error");
 			}
 		})
@@ -297,7 +300,7 @@ $(document).ready(function() {
 			}
 
 		$.ajax({
-			url: "scripts/interface.php",
+			url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
 			method: "POST",
 			dataType: "json",
 			data: data,
@@ -337,7 +340,7 @@ $(document).ready(function() {
 				"Supprimer": function () {
 					$(this).dialog("close");
 					$.ajax({
-						url: "scripts/interface.php",
+						url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
 						method: "POST",
 						dataType: "json",  // format de réponse attendu
 						data: {
@@ -373,7 +376,7 @@ $(document).ready(function() {
 		var $out = "Le bloc a bien été enregistré";
 		var label = $("#inputPlaceholderEx").val();
 		$.ajax({
-			url: "scripts/interface.php",
+			url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
 			method: "POST",
 			dataType: "json",  // format de réponse attendu
 			data: {
