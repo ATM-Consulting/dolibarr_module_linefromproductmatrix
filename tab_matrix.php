@@ -55,11 +55,21 @@ dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+
 if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+$element = GETPOST('element', 'alpha');
+if ($element == 'propal') {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+}
+if ($element == 'commande') {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+}
+if ($element == 'facture') {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+}
 
 
 // Load translation files required by the page
@@ -119,20 +129,6 @@ if (empty($reshook)) {
 			else $backtopage = dol_buildpath('/linesfromproductmatrix/bloc_card.php', 1) . '?id=' . ($id > 0 ? $id : '__ID__');
 		}
 	}
-	$triggermodname = 'LINESFROMPRODUCTMATRIX_BLOC_MODIFY'; // Name of trigger action code to execute when we modify record
-
-	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
-
-
-	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'BLOC_MODIFY');
-	}
-	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
-	}
-
-
 }
 
 
@@ -147,7 +143,7 @@ $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 
-$object = new Commande($db);
+$object = linesFromProductMatrixObjectAutoLoad($element, $db);
 
 if ($object->fetch($id, $ref) <= 0)
 {
@@ -163,7 +159,12 @@ if ($id > 0 || !empty($ref)) {
 	llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 	/********************************--**************************************************/
-	$head = commande_prepare_head($object);
+
+	/*
+	 * La fonction call_user_func() appelle une fonction de rappel fournie par le premier argument
+	 */
+	$head = call_user_func($element.'_prepare_head', $object);
+
 	// structure de la tabulation pour la fiche active
 	dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
 	$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
@@ -196,7 +197,6 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="underbanner clearboth"></div>';
 	print '</div>';
 	/************** </div>  *************************/
-
 
 
 
