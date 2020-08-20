@@ -67,6 +67,7 @@ errorDeleteMatrix       = erreur suppression matrice.
 errorUpdateBlocHead     = erreur mise à jour label blochead.
 errorUpdateProduct      = erreur affectation Produit.
 errorDeleteProduct      = erreur suppression Produit.
+emptyLabelHeaderError   = Le label ne doit pas être vide.
 
 
 #
@@ -75,12 +76,16 @@ errorDeleteProduct      = erreur suppression Produit.
 msgDeleteAllDataForThisBloc = Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées
 msgConfirmDelete = Confirmation de suppression
 msgDeleteAllDataForThisBlocMore = Êtes-vous sûr(e) ? Cette référence sera supprimée ainsi que toutes les données qui lui sont associées
-descriptionAddLine = todo
-descriptionAddCol = todo
+descriptionAddLine = Ajouter une ligne dans la matrice
+descriptionAddCol = Ajouter une colonne dans la matrice
 chooseOption = -- Sélectionnez une option --
 quantity = Qts
+deleteBlocConfirm = Le bloc a bien été supprimé
+saveBlocConfirm = Le bloc a bien été sauvegardé
+deleteHeadConfirm = Suppression réalisée avec succès
+addHeadConfirm = Nouvelle référence ajoutée avec succès
 quantityInput = Ajoutez une quantité pour ce produit. Après validation (perte de focus ou touche entrée) , l'element sera mis à jour en base de donnée.
-tooltipDeleteCol = todo
-tooltipDeleteLine = todo
+tooltipDeleteCol = Supprimer une colonne et toutes les références produits qui lui sont associées
+tooltipDeleteLine = Supprimer une ligne et toutes les références produits qui lui sont associées
 
 

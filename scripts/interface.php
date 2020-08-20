@@ -185,7 +185,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	$sql = 'SELECT MAX(fk_rank) AS m FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 1 AND fk_bloc = '.$idBloc;
 	// Méthode historique
 	$resql = $db->query($sql);
-	$result = $db->fetch_row($resql);  // $resql = $db->getRow($sql)   c'est la même chose en méthode simplifiée
+	$result = $db->fetch_row($resql);
 	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
 
 
@@ -220,7 +220,6 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
 	if ($res == $errormysql){
 		$jsonResponse->error = $langs->trans("errorUpdateBlocHead");
 	}
-
 }
 
 
