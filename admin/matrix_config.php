@@ -51,9 +51,7 @@ if (!$res && file_exists("../../../main.inc.php"))
 if (!$res)
 	die("Include of main fails");
 
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+
 dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
@@ -78,18 +76,7 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->linesfromproductmatrix->dir_output . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('bloccard', 'globalcard')); // Note that conf->hooks_modules contains array
 
-// Fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label($object->table_element);
 
-$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
-
-// Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
-$search = array();
-foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_' . $key, 'alpha'))
-		$search[$key] = GETPOST('search_' . $key, 'alpha');
-}
 
 if (empty($action) && empty($id) && empty($ref))
 	$action = 'view';
@@ -154,8 +141,8 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$formfile = new FormFile($db);
-$formproject = new FormProjets($db);
+
+
 
 $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
