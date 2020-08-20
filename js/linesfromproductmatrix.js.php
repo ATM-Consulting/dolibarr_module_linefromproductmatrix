@@ -170,8 +170,6 @@ $(document).ready(function() {
 	 */
 	$(document).on("click", ".matrix-add-btn", function () {
 		var currentBloc = $(this).parent().parent();
-		console.log(currentBloc);
-		// TODO les trad
 		var $out = "Nouvelle référence ajoutée avec succès"
 		var idBloc = $(this).data("id");
 		var blocheadType = $(this).data("type");
