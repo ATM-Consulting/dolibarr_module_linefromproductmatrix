@@ -115,7 +115,7 @@ $(document).ready(function() {
 	 *
 	 */
 	$(document).on("click", ".fas.fa-trash.deleteHead", function () {
-		var $out = "Suppression réalisée avec succès";
+		var $out = '<?php print $langs->trans("deleteHeadConfirm") ?>';
 		var idBloc = $(this).parent().data("blocid");
 		var currentType = $(this).parent().data("type");
 		var currentBloc = $(this).parent().parent().parent().parent().parent();
@@ -170,7 +170,7 @@ $(document).ready(function() {
 	 */
 	$(document).on("click", ".matrix-add-btn", function () {
 		var currentBloc = $(this).parent().parent();
-		var $out = "Nouvelle référence ajoutée avec succès"
+		var $out = '<?php print $langs->trans("addHeadConfirm") ?>'
 		var idBloc = $(this).data("id");
 		var blocheadType = $(this).data("type");
 		$.ajax({
@@ -241,40 +241,50 @@ $(document).ready(function() {
 	 * Modification des entêtes label HEADERS
 	 */
 	$(document).on("change", ".inputBlocHeader", function () {
-
 		let idBlocHead = $(this).data("idhead");  // On récupère l\'id de l\'input
 		let self = $(this);
-		let label = $(this).val();
-		var parentBlocTitle = $(this).closest("div");
+		var label = $(this).val();
+		var currentBlocCell = self.parent();
+		var currentValue = $(this).data("currentValue");
 
-		parentBlocTitle.css("background-color", "green");
 
-		let data =
-			{
-				idhead: idBlocHead,
-				label: label,
-				action: "updatelabelHeader"
-			}
-		$.ajax({
-			url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
-			method: "POST",
-			dataType: "json",
-			data: data,
-			success: function (data) {
-				if(!data.error) {
-					parentBlocTitle.css("background-color", "green");
-					setTimeout(function () {
-						parentBlocTitle.css("background-color", "white");
-					}, 700)
-				}else {
-					matrixSetMessage(data.error, "error");
+		if(label.length == 0){
+			currentBlocCell.html(currentValue);
+			matrixSetMessage('<?php print $langs->trans("emptyLabelHeaderError") ?>', "error");
+
+		}else {
+
+			var parentBlocTitle = $(this).closest("div");
+
+			parentBlocTitle.css("background-color", "green");
+
+			let data =
+				{
+					idhead: idBlocHead,
+					label: label,
+					action: "updatelabelHeader"
 				}
-			},
-			error: function (err) {
-				parentBlocTitle.css("background-color", "red");
-				matrixSetMessage(err.responseText, "error");
-			}
-		})
+			$.ajax({
+				url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
+				method: "POST",
+				dataType: "json",
+				data: data,
+				success: function (data) {
+					if (!data.error) {
+						parentBlocTitle.css("background-color", "green");
+						setTimeout(function () {
+							parentBlocTitle.css("background-color", "white");
+						}, 700)
+					} else {
+						matrixSetMessage(data.error, "error");
+					}
+				},
+				error: function (err) {
+					parentBlocTitle.css("background-color", "red");
+					matrixSetMessage(err.responseText, "error");
+				}
+			})
+		}
 	});
 
 	/**
@@ -325,7 +335,7 @@ $(document).ready(function() {
 	 *
 	 */
 	function deleteConfirmation() {
-		var $out = "Le bloc a bien été supprimé";
+		var $out = '<?php print $langs->trans("deleteBlocConfirm") ?>';
 		var idMatrix = $(this).data("id");
 		var currentBloc = $(this).closest("div.matrix-item");
 
@@ -371,7 +381,7 @@ $(document).ready(function() {
 	 *
 	 */
 	function createABloc() {
-		var $out = "Le bloc a bien été enregistré";
+		var $out = '<?php print $langs->trans("saveBlocConfirm") ?>';
 		var label = $("#inputPlaceholderEx").val();
 		$.ajax({
 			url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",

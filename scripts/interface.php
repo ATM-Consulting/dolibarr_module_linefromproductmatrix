@@ -213,10 +213,6 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 // MODIFICATION LABEL HEADERS
 if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabelHeader' ) {
 
-	if (empty($label)) {
-		$jsonResponse->error = "Le label ne doit pas être vide !";
-	}
-
     $h = new BlocHead($db);
     $h->fetch($idHead);
     $h->label = $label;
