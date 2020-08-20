@@ -4,27 +4,22 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = dirname(__FILE__) . '/';
 
-global $db;
+global $db, $user;
 
 // Include and load Dolibarr environment variables
 $res = 0;
-if (!$res && file_exists($path . "master.inc.php")) $res = @include($path . "master.inc.php");
-if (!$res && file_exists($path . "../master.inc.php")) $res = @include($path . "../master.inc.php");
-if (!$res && file_exists($path . "../../master.inc.php")) $res = @include($path . "../../master.inc.php");
-if (!$res && file_exists($path . "../../../master.inc.php")) $res = @include($path . "../../../master.inc.php");
+
+$res = @include ("../../main.inc.php"); // For root directory
+if (! $res)
+	$res = @include ("../../../main.inc.php"); // For "custom" directory
 if (!$res) die("Include of master fails");
-dol_include_once('discountrules/class/discountrule.class.php');
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/matrix.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/bloc.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/blochead.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 // Load traductions files requiredby by page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other", 'main'));
-
-
 
 
 
@@ -96,7 +91,7 @@ if (isset($action) && $action == 'createBloc' ) {
 
 	}
 
-	$out = $b->displayBloc($b);
+	$out = $b->displayBloc($b, false, 'config');
 
 	$jsonResponse->data = $out;
 
@@ -175,7 +170,7 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 
 	$bloc = new Bloc($db);
 	$bloc->fetch($idBloc);
-	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc,$reloadBlocView ? $reloadBlocView : false);
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc,$reloadBlocView ? $reloadBlocView : false, 'config');
 
 
 }
@@ -208,7 +203,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 
 	$bloc = new Bloc($db);
 	$bloc->fetch($idBloc);
-	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false);
+	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
 
 }
 

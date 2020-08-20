@@ -117,7 +117,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/linesfromproductmatrix/index.php?&action=viewblocs', 1);
+	$backurlforlist = dol_buildpath('/linesfromproductmatrix/matrix_config.php?&action=viewblocs', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {

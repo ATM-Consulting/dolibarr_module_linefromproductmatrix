@@ -17,9 +17,9 @@
  */
 
 /**
- *    \file       bloc_card.php
- *        \ingroup    linesfromproductmatrix
- *        \brief      Page to create/edit/view bloc
+ *    \file       matrix_config.php
+ *    \ingroup    linesfromproductmatrix
+ *    \brief      Page to create/edit/view bloc
  */
 
 
@@ -71,7 +71,6 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bloccard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new Bloc($db);
@@ -103,11 +102,6 @@ $permissiontoread = $user->rights->linesfromproductmatrix->bloc->read;
 $permissiontodelete = $user->rights->linesfromproductmatrix->bloc->delete;
 $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->entity) ? $object->entity : 1];
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'linesfromproductmatrix', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 if (!$permissiontoread)
 	accessforbidden();
@@ -125,7 +119,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/linesfromproductmatrix/index.php', 1);
+	$backurlforlist = dol_buildpath('/linesfromproductmatrix/matrix_config.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -142,14 +136,6 @@ if (empty($reshook)) {
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php';
 
-	// Actions when printing a doc from card
-	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
-
-	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
-
-	// Action to build doc
-	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'BLOC_MODIFY');
@@ -158,11 +144,6 @@ if (empty($reshook)) {
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
-	// Actions to send emails
-	$triggersendname = 'BLOC_SENTBYMAIL';
-	$autocopy = 'MAIN_MAIL_AUTOCOPY_BLOC_TO';
-	$trackid = 'bloc' . $object->id;
-	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 }
 
 
@@ -201,7 +182,7 @@ print '<div class="matrix-wrap">
 			<div class="matrix-container">';
 if ($blocs) {
 	foreach ($blocs as $b){
-		print $bloc->displayBloc($b);
+		print $bloc->displayBloc($b, false, 'config');
 	}
 
 }

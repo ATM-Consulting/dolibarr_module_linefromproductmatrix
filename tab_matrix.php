@@ -98,10 +98,10 @@ if (empty($action) && empty($id) && empty($ref))
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoadd = $user->rights->linesfromproductmatrix->bloc->write;
+//$permissiontoadd = $user->rights->linesfromproductmatrix->bloc->write;
 $permissiontoread = $user->rights->linesfromproductmatrix->bloc->read;
-$permissiontodelete = $user->rights->linesfromproductmatrix->bloc->delete;
-$permissiontoupdate = $user->rights->linesfromproductmatrix->bloc->update;
+//$permissiontodelete = $user->rights->linesfromproductmatrix->bloc->delete;
+
 $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -126,7 +126,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/linesfromproductmatrix/index.php', 1);
+	$backurlforlist = dol_buildpath('/linesfromproductmatrix/matrix_config.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -206,7 +206,7 @@ print '<div class="matrix-wrap">
 			<div class="matrix-container">';
 if ($blocs) {
 	foreach ($blocs as $b){
-		print $bloc->displayBloc($b);
+		print $bloc->displayBloc($b,  false,'view' );
 	}
 
 }

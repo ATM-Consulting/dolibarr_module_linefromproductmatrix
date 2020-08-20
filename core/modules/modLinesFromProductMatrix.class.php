@@ -149,12 +149,12 @@ class modLinesFromProductMatrix extends DolibarrModules
 			$conf->linesfromproductmatrix = new stdClass();
 			$conf->linesfromproductmatrix->enabled = 0;
 		}
-		//var_dump($user->rights);
+
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		$this->tabs[] = array('data'=>'propal:+tabname1:Nouvel onglet Matrix:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__'); // To add a new tab identified by code tabname1
-		$this->tabs[] = array('data'=>'order:+tabname1:Nouvel onglet Matrix:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
+		$this->tabs[] = array('data'=>'propal:+tabname1:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__'); // To add a new tab identified by code tabname1
+		$this->tabs[] = array('data'=>'order:+tabname1:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__');
 		// $this->tabs[] = array('propal:+tabMatrix:TitleMatrixProduct:mylangfile@linesfromproductmatrix:$user->rights->linesfromproductmatrix->read:/linesfromproductmatrix/mynewtab1.php?id=__ID__');
 		 // To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@linesfromproductmatrix:$user->rights->othermodule->read:/linesfromproductmatrix/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
@@ -261,11 +261,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$r++;
-		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Modify qty of object of LinesFromProductMatrix'; // Permission label
-		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
-		$this->rights[$r][5] = 'update'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
-		$r++;
+
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -279,7 +275,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 			'titre'=>$langs->trans('ModuleLinesFromProductMatrixName'),
 			'mainmenu'=>'products',
 			'leftmenu'=>'linesfromproductmatrix',
-			'url'=>'/linesfromproductmatrix/index.php',
+			'url'=>'/linesfromproductmatrix/admin/matrix_config.php',
 			'langs'=>'linesfromproductmatrix@linesfromproductmatrix', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->linesfromproductmatrix->enabled', // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled.
@@ -300,34 +296,6 @@ class modLinesFromProductMatrix extends DolibarrModules
 			'position'=>1000+$r,
 			'enabled'=>'$conf->linesfromproductmatrix->enabled',  // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled.
 			'perms'=>'$user->rights->linesfromproductmatrix->bloc->read',			                // Use 'perms'=>'$user->rights->linesfromproductmatrix->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=linesfromproductmatrix,fk_leftmenu=bloc',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List Bloc',
-			'mainmenu'=>'linesfromproductmatrix',
-			'leftmenu'=>'linesfromproductmatrix_bloc_list',
-			'url'=>'/linesfromproductmatrix/bloc_list.php',
-			'langs'=>'linesfromproductmatrix@linesfromproductmatrix',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->linesfromproductmatrix->enabled',  // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->linesfromproductmatrix->bloc->read',			                // Use 'perms'=>'$user->rights->linesfromproductmatrix->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=linesfromproductmatrix,fk_leftmenu=bloc',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New Bloc',
-			'mainmenu'=>'linesfromproductmatrix',
-			'leftmenu'=>'linesfromproductmatrix_bloc_new',
-			'url'=>'/linesfromproductmatrix/bloc_card.php?action=create',
-			'langs'=>'linesfromproductmatrix@linesfromproductmatrix',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->linesfromproductmatrix->enabled',  // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->linesfromproductmatrix->bloc->write',			                // Use 'perms'=>'$user->rights->linesfromproductmatrix->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);

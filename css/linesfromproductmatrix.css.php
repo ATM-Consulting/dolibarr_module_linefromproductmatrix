@@ -100,6 +100,14 @@ input.inputBloc {
 	box-shadow: 1px 1px 5px rgba(0,0,0, 0.5);
 
 }
+
+.matrix-line-delete, .matrix-col-delete{
+	opacity: 0;
+}
+.bloc-table-row:hover .matrix-line-delete,.bloc-table-head:hover .matrix-col-delete{
+	opacity: 1;
+}
+
 .pictodelete {
 	padding-top: 6px;
 	padding-right: 10px;
@@ -125,11 +133,24 @@ input.inputBloc {
 }
 
 .matrix-footer {
-	display:none;
+	opacity: 0;
 }
 .matrix-item:hover .matrix-footer {
-	display: block;
+	opacity: 1;
 }
 .bloc-table-cell.bloc-table-head {
 	text-align: center;
+}
+
+
+.matrix-add-btn:hover{
+	cursor: pointer;
+	color:  var(--colortextlink) ;
+}
+.matrix-add-btn{
+
+}
+
+.fa-grip-lines.--rotate90neg{
+	transform: rotate(-90deg);
 }
