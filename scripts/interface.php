@@ -9,6 +9,7 @@ global $db, $user;
 // Include and load Dolibarr environment variables
 $res = 0;
 
+// LES USERS sont chargés avec main.inc. pas avec master.inc !!!
 $res = @include ("../../main.inc.php"); // For root directory
 if (! $res)
 	$res = @include ("../../../main.inc.php"); // For "custom" directory

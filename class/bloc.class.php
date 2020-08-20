@@ -115,7 +115,7 @@ class Bloc extends CommonObject
 	public $currentBloc;
 	public $THCols = array();
 	public $THRows = array();
-
+  	public $langs;
 
 	// END MODULEBUILDER PROPERTIES
 
@@ -200,6 +200,7 @@ class Bloc extends CommonObject
 				}
 			}
 		}
+		$this->langs = $langs;
 	}
 
 	/**
@@ -1091,11 +1092,11 @@ class Bloc extends CommonObject
 
 		// Part to display a confirm message when delete a bloc OR matrix line/col
 		$out .= '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
-		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Ce bloc sera supprimé ainsi que toutes les données qui lui sont associées</p>
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>'.$this->langs->trans("msgDeleteAllDataForThisBloc").'</p>
 		</div>';
 
-		$out .= '<div id="deleteHead-confirm" style="display:none" title="Confirmation de suppression">
-		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Êtes-vous sûr(e) ? Cette référence sera supprimée ainsi que toutes les données qui lui sont associées</p>
+		$out .= '<div id="deleteHead-confirm" style="display:none" title="'.$this->langs->trans("msgConfirmDelete").'">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>'.$this->langs->trans("msgDeleteAllDataForThisBlocMore").'</p>
 		</div>';
 
 
@@ -1103,8 +1104,8 @@ class Bloc extends CommonObject
 		$out .= $b->displayMatrix($mode);
 		if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 			$out .= '<div class="matrix-footer">
-		<span data-type="1" data-id="' . $b->id . '" class="matrix-add-btn --line classfortooltip" title="jdfhqsdofhd"><span class="fas fa-grip-lines"></span> Ajouter une ligne</span>
-		<span data-type="0" data-id="' . $b->id . '" class="matrix-add-btn --col"><span class="fas fa-grip-lines --rotate90neg"></span> Ajouter une Colonne</span>
+		<span data-type="1" data-id="' . $b->id . '" class="matrix-add-btn --line classfortooltip" title="'.$this->langs->trans("descriptionAddLine").'"><span class="fas fa-grip-lines"></span> Ajouter une ligne</span>
+		<span data-type="0" data-id="' . $b->id . '" class="matrix-add-btn --col classfortooltip"><span class="fas fa-grip-lines --rotate90neg" title="'.$this->langs->trans("descriptionAddCol").'"></span> Ajouter une Colonne</span>
 		</div>';
 		}
 			if (!$reloadBlocView) {
@@ -1223,14 +1224,14 @@ class Bloc extends CommonObject
 						$output .= '<div class="bloc-table-cell bloc-table-head">';
 
 						if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
-						$output .= '<a class="matrix-col-delete"  data-blocid="'.$this->id.'" data-id="'.$matrixCell->headId.'"><i class="fas fa-trash deleteHead pull-right"></i></a>';
+						$output .= '<a class="matrix-col-delete classfortooltip"  data-blocid="'.$this->id.'" data-id="'.$matrixCell->headId.'" title="'.$this->langs->trans("tooltipDeleteCol").'"><i class="fas fa-trash deleteHead pull-right"></i></a>';
 						}
 					}else{
 						// Si on est sur des headers lignes
 						if ($matrixCell->type > 0) {
 							$output .= '<div class="bloc-table-cell">';
 							if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
-								$output .= '<a class="matrix-line-delete" data-type="' . $matrixCell->type . '" data-blocid="' . $this->id . '" data-id="' . $matrixCell->headId . '"><i class="fas fa-trash deleteHead"></i></a>';
+								$output .= '<a class="matrix-line-delete classfortooltip" data-type="' . $matrixCell->type . '" data-blocid="' . $this->id . '" data-id="' . $matrixCell->headId . '" title="'.$this->langs->trans("tooltipDeleteLine").'"><i class="fas fa-trash deleteHead"></i></a>';
 							}
 						}else {
 								$output  .='<div class="bloc-table-cell">';
@@ -1249,8 +1250,8 @@ class Bloc extends CommonObject
 								$fkproduct = $matrixCell->fk_product ? $matrixCell->fk_product : '';
 								$output .= $this->select_produits($matrixCell->fk_blocHeaderCol, $matrixCell->fk_blocHeaderRow, $fkproduct, 'idprod_' . $matrixCell->fk_blocHeaderCol . '_' . $matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2);
 							}else {
-								$output .= '<label for="quantity">Qté:</label>
-											<input type="number" id="quantity-input" name="quantity" min="0">';
+								$output .= '<label for="quantity">'.$this->langs->trans("quantity").'</label>
+											<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'">';
 							}
 							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
 
@@ -1258,7 +1259,7 @@ class Bloc extends CommonObject
 								// COl/ROW label
 								if ($matrixCell->type >= 0){
 									if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
-										$output .= '<input required id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader" onfocus="this.select();" type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="'.$matrixCell->label.'">';
+										$output .= '<input data-currentValue="'.$matrixCell->label.'" required id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader"  type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="'.$matrixCell->label.'">';
 									}else {
 										$output .= $matrixCell->label;
 										}
@@ -1287,13 +1288,13 @@ class Bloc extends CommonObject
 	 * @return string
 	 */
 	public function getSelectElement($idproduct = 0,$headerColId,$headerRowId){
-		global $langs;
+
 		//var_dump($headerColId,$headerRowId);
 		//linesfromproductmatrix_
 		$p = new Product($this->db);
 		$res = $p->db->getRows('SELECT rowid,label FROM '. MAIN_DB_PREFIX .'product');
 		$output = '<select id="product-select-'. rand(0,200000) . '" data-blocheadercolid="'.$headerColId.'"data-blocheaderrowid="'.$headerRowId.'" data-blocid="'.$this->currentBloc.'" >';
-		$output .= '<option value="">--Please choose an option--</option>';
+		$output .= '<option value="">'.$this->langs->lang("chooseOption").'--Please choose an option--</option>';
 		if ($res){
 			foreach ($res as $element){
 				$output .= '<option value="'.$element->rowid;

@@ -51,13 +51,9 @@ if (!$res && file_exists("../../../main.inc.php"))
 if (!$res)
 	die("Include of main fails");
 
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
-
 
 // Load translation files required by the page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"));
@@ -71,26 +67,13 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bloccard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+
 
 // Initialize technical objects
 $object = new Bloc($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->linesfromproductmatrix->dir_output . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('bloccard', 'globalcard')); // Note that conf->hooks_modules contains array
 
-// Fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label($object->table_element);
-
-$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
-
-// Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
-$search = array();
-foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_' . $key, 'alpha'))
-		$search[$key] = GETPOST('search_' . $key, 'alpha');
-}
 
 if (empty($action) && empty($id) && empty($ref))
 	$action = 'view';
@@ -104,11 +87,6 @@ $permissiontoread = $user->rights->linesfromproductmatrix->bloc->read;
 
 $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->entity) ? $object->entity : 1];
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'linesfromproductmatrix', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 if (!$permissiontoread)
 	accessforbidden();
@@ -173,9 +151,6 @@ if (empty($reshook)) {
  * Put here all code to build page
  */
 
-$form = new Form($db);
-$formfile = new FormFile($db);
-$formproject = new FormProjets($db);
 
 $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';

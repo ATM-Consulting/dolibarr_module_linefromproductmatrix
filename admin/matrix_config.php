@@ -51,6 +51,7 @@ if (!$res && file_exists("../../../main.inc.php"))
 if (!$res)
 	die("Include of main fails");
 
+
 dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
@@ -75,18 +76,7 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->linesfromproductmatrix->dir_output . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('bloccard', 'globalcard')); // Note that conf->hooks_modules contains array
 
-// Fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label($object->table_element);
 
-$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
-
-// Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
-$search = array();
-foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_' . $key, 'alpha'))
-		$search[$key] = GETPOST('search_' . $key, 'alpha');
-}
 
 if (empty($action) && empty($id) && empty($ref))
 	$action = 'view';
@@ -150,10 +140,15 @@ if (empty($reshook)) {
  * Put here all code to build page
  */
 
+
+
+
+
 $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 llxHeader('', $title, $help_url);
+
 print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
 	'<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
 		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
