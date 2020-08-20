@@ -17,9 +17,9 @@
  */
 
 /**
- *    \file       bloc_card.php
+ *    \file       tab_matrix.php
  *    \ingroup    linesfromproductmatrix
- *    \brief      Page to create/edit/view bloc
+ *    \brief      Page to edit matrix qts on active object [ invoice / order / propal ]
  */
 
 
@@ -56,15 +56,19 @@ dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.ph
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"));
+$langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", 'companies', 'bills', 'orders'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bloccard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -83,9 +87,9 @@ if (empty($action) && empty($id) && empty($ref))
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-//$permissiontoadd = $user->rights->linesfromproductmatrix->bloc->write;
+// permission
 $permissiontoread = $user->rights->linesfromproductmatrix->bloc->read;
-//$permissiontodelete = $user->rights->linesfromproductmatrix->bloc->delete;
+
 
 $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->entity) ? $object->entity : 1];
 
@@ -120,17 +124,6 @@ if (empty($reshook)) {
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
 
-	// Actions when linking object each other
-	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php';
-
-	// Actions when printing a doc from card
-	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
-
-	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
-
-	// Action to build doc
-	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'BLOC_MODIFY');
@@ -139,11 +132,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
-	// Actions to send emails
-	$triggersendname = 'BLOC_SENTBYMAIL';
-	$autocopy = 'MAIN_MAIL_AUTOCOPY_BLOC_TO';
-	$trackid = 'bloc' . $object->id;
-	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
+
 }
 
 
@@ -159,62 +148,74 @@ $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 
 $object = new Commande($db);
-if (!$object->fetch($id, $ref) > 0)
+
+if ($object->fetch($id, $ref) <= 0)
 {
 	dol_print_error($db);
 	exit;
 }
-//llxHeader('', $title, $help_url);
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
-$head = commande_prepare_head($object);
-dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
+if ($id > 0 || !empty($ref)) {
 
-dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-print '<div class="fichecenter">';
-print '<div class="underbanner clearboth"></div>';
+	$object->fetch_thirdparty();
 
-//if ($mode == 'config') {
-//	print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
-//		'<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
-//		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
-//		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
-//		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
-//
-//	print '<div class="label-form" style="display:none;margin:12px 12px 20px 25px;">
-//  			<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">
-//  			<button type="submit" class="create-button" style="margin-left: 10px;margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Valider</button>
-//  			<button type="submit" class="cancel-button" style="margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Annuler</button>
-//		</div>';
-//}
-print '<div class="underbanner clearboth"></div>';
-print '</div>';
+	/*********************************--*************************************************/
+	llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
-dol_fiche_end();
+	/********************************--**************************************************/
+	$head = commande_prepare_head($object);
+	// structure de la tabulation pour la fiche active
+	dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
+	/********************************--**************************************************/
 
+	/*****************REF CUSTOMMER  ET TIERS ENTÊTE *****************************************************************/
+	$morehtmlref = '<div class="refidno">';
+	// Ref customer
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	/**********************************************************************************/
 
-
-
-
-
-
-
-$bloc = new Bloc($db);
-$blocs =  $bloc->fetchAll('ASC','fk_rank');
-
-print '<div class="matrix-wrap">
-			<div class="matrix-container">';
-if ($blocs) {
-	foreach ($blocs as $b){
-		print $bloc->displayBloc($b,  false,'view' );
+	/*************************PROJET ENTÊTE *********************************************************/
+	$langs->load("projects");
+	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+	if ($action != 'classify') {
+		$morehtmlref .= ' : ';
 	}
+	$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 
+	/*****************************-CONSTRUCTION DE LA BANNIÈRE FAISANT RÉFÉRENCE À L'ENTITÉ -*****************************************************/
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	/*****************************--*****************************************************/
+
+	/******************************** <hr> ***************************************************/
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	print '</div>';
+	/************** </div>  *************************/
+
+
+
+
+
+
+	$bloc = new Bloc($db);
+	$blocs =  $bloc->fetchAll('ASC','fk_rank');
+
+	print '<div class="matrix-wrap">
+				<div class="matrix-container">';
+	if ($blocs) {
+		foreach ($blocs as $b){
+			print $bloc->displayBloc($b,  false,'view' );
+		}
+
+	}
+	print '</div></div>';
+	dol_fiche_end();
 }
-print '</div>
-	</div>';
 
-
-
+/****** ??? ******/
 if (!empty($conf->use_javascript_ajax)) {
 	include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 }
