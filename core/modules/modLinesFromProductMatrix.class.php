@@ -153,33 +153,9 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		$this->tabs[] = array('data'=>'propal:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__'); // To add a new tab identified by code tabname1
-		$this->tabs[] = array('data'=>'order:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__');
-		$this->tabs[] = array('data'=>'facture:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__');
-		// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@linesfromproductmatrix:$user->rights->othermodule->read:/linesfromproductmatrix/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
-		//
-		// Where objecttype can be
-		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-		// 'contact'          to add a tab in contact view
-		// 'contract'         to add a tab in contract view
-		// 'group'            to add a tab in group view
-		// 'intervention'     to add a tab in intervention view
-		// 'invoice'          to add a tab in customer invoice view
-		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
-		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
-		// 'order_supplier'   to add a tab in supplier order view
-		// 'payment'		  to add a tab in payment view
-		// 'payment_supplier' to add a tab in supplier payment view
-		// 'product'          to add a tab in product view
-		// 'propal'           to add a tab in propal view
-		// 'project'          to add a tab in project view
-		// 'stock'            to add a tab in stock view
-		// 'thirdparty'       to add a tab in third party view
-		// 'user'             to add a tab in user view
+		$this->tabs[] = array('data'=>'propal:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=propal'); // To add a new tab identified by code tabname1
+		$this->tabs[] = array('data'=>'order:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=commande');
+		$this->tabs[] = array('data'=>'invoice:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=facture');
 
 		// Dictionaries
 		$this->dictionaries = array();

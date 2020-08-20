@@ -55,11 +55,21 @@ dol_include_once('/linesfromproductmatrix/class/bloc.class.php');
 dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.php');
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+
 if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+$element = GETPOST('element', 'alpha');
+if ($element == 'propal') {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+}
+if ($element == 'commande') {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+}
+if ($element == 'facture') {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+}
 
 
 
@@ -134,7 +144,7 @@ $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 
-$object = new Commande($db);
+$object = linesFromProductMatrixObjectAutoLoad($element, $db);
 
 if ($object->fetch($id, $ref) <= 0)
 {
@@ -150,14 +160,19 @@ if ($id > 0 || !empty($ref)) {
 	llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 	/********************************--**************************************************/
-	$head = commande_prepare_head($object);
+
+	/*
+	 * La fonction call_user_func() appelle une fonction de rappel fournie par le premier argument
+	 */
+	$head = call_user_func($element.'_prepare_head', $object);
+
 	// structure de la tabulation pour la fiche active
 	dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
-	$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/'.$element.'/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	/********************************--**************************************************/
 
-	/*****************REF CUSTOMMER ET TIERS ENTÊTE *****************************************************************/
+	/*****************REF CUSTOMMER  ET TIERS ENTÊTE *****************************************************************/
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -185,6 +200,9 @@ if ($id > 0 || !empty($ref)) {
 	/************** </div>  *************************/
 
 
+
+
+
 $TlinesObectj = array();
      //  var_dump($object);
 	// var_dump($object->element);
@@ -197,17 +215,14 @@ $TlinesObectj = array();
 	$bloc = new Bloc($db);
 	$blocs =  $bloc->fetchAll('ASC','fk_rank');
 
-
-
 	print '<div class="matrix-wrap">
 				<div class="matrix-container">';
 	if ($blocs) {
 		foreach ($blocs as $b){
 			print $bloc->displayBloc($b,  false,'view' );
 		}
+
 	}
-
-
 	print '</div></div>';
 	dol_fiche_end();
 }
