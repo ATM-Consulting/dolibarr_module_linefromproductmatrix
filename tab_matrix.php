@@ -17,9 +17,9 @@
  */
 
 /**
- *    \file       bloc_card.php
+ *    \file       tab_matrix.php
  *    \ingroup    linesfromproductmatrix
- *    \brief      Page to create/edit/view bloc
+ *    \brief      Page to edit matrix product's quantities
  */
 
 
@@ -164,33 +164,73 @@ if (!$object->fetch($id, $ref) > 0)
 	dol_print_error($db);
 	exit;
 }
+
 //llxHeader('', $title, $help_url);
 llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
-$head = commande_prepare_head($object);
-dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
+if ($id > 0 || !empty($ref)) {
+	$object->fetch_thirdparty();
 
-dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-print '<div class="fichecenter">';
-print '<div class="underbanner clearboth"></div>';
+	$head = commande_prepare_head($object);
 
-//if ($mode == 'config') {
-//	print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
-//		'<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
-//		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
-//		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
-//		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
-//
-//	print '<div class="label-form" style="display:none;margin:12px 12px 20px 25px;">
-//  			<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">
-//  			<button type="submit" class="create-button" style="margin-left: 10px;margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Valider</button>
-//  			<button type="submit" class="cancel-button" style="margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Annuler</button>
-//		</div>';
-//}
-print '<div class="underbanner clearboth"></div>';
-print '</div>';
+	$head = commande_prepare_head($object);
+	dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
 
-dol_fiche_end();
+	$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+	$morehtmlref = '<div class="refidno">';
+	// Ref customer
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	// Project
+	if (!empty($conf->projet->enabled))
+	{
+		$langs->load("projects");
+		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+		if ($user->rights->commande->creer)
+		{
+			if ($action != 'classify') {
+				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref .= ' : ';
+			}
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
+		} else {
+			if (!empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+				$morehtmlref .= $proj->ref;
+				$morehtmlref .= '</a>';
+			} else {
+				$morehtmlref .= '';
+			}
+		}
+	}
+	$morehtmlref .= '</div>';
+
+
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
+	print '</div>';
+
+	dol_fiche_end();
+}
 
 
 
