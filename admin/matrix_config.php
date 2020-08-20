@@ -140,7 +140,7 @@ if (empty($reshook)) {
  * Put here all code to build page
  */
 
-$form = new Form($db);
+
 
 
 
@@ -148,6 +148,7 @@ $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 llxHeader('', $title, $help_url);
+
 print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
 	'<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
 		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
