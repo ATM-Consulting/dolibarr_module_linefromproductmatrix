@@ -60,6 +60,8 @@ class Bloc extends CommonObject
 	 */
 	public $picto = 'bloc@linesfromproductmatrix';
 
+	public $MAX_COL = 3;
+	public $MAX_BLOC = 3;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -1102,9 +1104,11 @@ class Bloc extends CommonObject
 
 		$b->fetchMatrix($b);
 		$out .= $b->displayMatrix($mode);
+		// FOOTER AJOUTER LIGNE COL
 		if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 			$out .= '<div class="matrix-footer">
 		<span data-type="1" data-id="' . $b->id . '" class="matrix-add-btn --line classfortooltip" title="'.$this->langs->trans("descriptionAddLine").'"><span class="fas fa-grip-lines"></span> Ajouter une ligne</span>
+		if
 		<span data-type="0" data-id="' . $b->id . '" class="matrix-add-btn --col classfortooltip"><span class="fas fa-grip-lines --rotate90neg" title="'.$this->langs->trans("descriptionAddCol").'"></span> Ajouter une Colonne</span>
 		</div>';
 		}
@@ -1482,9 +1486,16 @@ class Bloc extends CommonObject
 	}
 
 
+	private function getMaxCol(){
 
+
+	}
+	private function getMaxBloc(){
+
+	}
 
 }
+
 
 
 /**

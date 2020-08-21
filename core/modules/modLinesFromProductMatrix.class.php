@@ -255,7 +255,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 			'langs'=>'linesfromproductmatrix@linesfromproductmatrix', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->linesfromproductmatrix->enabled', // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->linesfromproductmatrix->bloc->read', // Use 'perms'=>'$user->rights->linesfromproductmatrix->bloc->read' if you want your menu with a permission rules
+			'perms'=>'$user->rights->linesfromproductmatrix->bloc->write', // Use 'perms'=>'$user->rights->linesfromproductmatrix->bloc->read' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);

@@ -68,7 +68,7 @@ errorUpdateBlocHead     = erreur mise à jour label blochead.
 errorUpdateProduct      = erreur affectation Produit.
 errorDeleteProduct      = erreur suppression Produit.
 emptyLabelHeaderError   = Le label ne doit pas être vide.
-
+MaxColError             = Impossible de créer une nouvelle colonne.  Nombre maximum 3
 
 #
 # traductions class Bloc

@@ -182,29 +182,78 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	// On sélectionne le fk_rank MAX
 
-	$sql = 'SELECT MAX(fk_rank) AS m FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 1 AND fk_bloc = '.$idBloc;
-	// Méthode historique
-	$resql = $db->query($sql);
-	$result = $db->fetch_row($resql);
-	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
 
+	//var_dump($r);
+	$allowed = true;
 
-	// On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
-    $h = new BlocHead($db);
-    $h->fk_bloc = $idBloc;
-    $h->date_creation = date('Y-m-d H:m:s');
-    $h->fk_user_creat = 1;
-    $h->fk_rank = $fk_rank_increment;
-    $h->type = intval($type);
-    $res =  $h->create($user);
-	if ($res == $errormysql){
-		$jsonResponse->error =  $langs->trans("errorCreateBlocHead");
+	if (intval($type) == 0){
+
+		$s = 'SELECT COUNT(*) AS c FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 0 AND fk_bloc = '.$idBloc;
+		//var_dump($s);
+		$res = $db->query($s);
+		//var_dump($res);
+		$r = $db->fetch_row($res);
+		$allowed  = (intval($r[0]) < 3)	;
 	}
 
 
-	$bloc = new Bloc($db);
-	$bloc->fetch($idBloc);
-	$jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
+ if ( intval($type) == 1){
+
+	 $sql = 'SELECT MAX(fk_rank) AS m FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 1 AND fk_bloc = '.$idBloc;
+	 // Méthode historique
+	 $resql = $db->query($sql);
+	 $result = $db->fetch_row($resql);
+	 $fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
+
+
+	 // On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
+	 $h = new BlocHead($db);
+	 $h->fk_bloc = $idBloc;
+	 $h->date_creation = date('Y-m-d H:m:s');
+	 $h->fk_user_creat = 1;
+	 $h->fk_rank = $fk_rank_increment;
+	 $h->type = intval($type);
+	 $res =  $h->create($user);
+
+	 if ($res == $errormysql){
+		 $jsonResponse->error =  $langs->trans("errorCreateBlocHead");
+	 }
+
+
+	 $bloc = new Bloc($db);
+	 $bloc->fetch($idBloc);
+	 $jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
+// COL
+ }else if ($allowed){
+	 $sql = 'SELECT MAX(fk_rank) AS m FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 1 AND fk_bloc = '.$idBloc;
+	 // Méthode historique
+	 $resql = $db->query($sql);
+	 $result = $db->fetch_row($resql);
+	 $fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
+
+
+	 // On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
+	 $h = new BlocHead($db);
+	 $h->fk_bloc = $idBloc;
+	 $h->date_creation = date('Y-m-d H:m:s');
+	 $h->fk_user_creat = 1;
+	 $h->fk_rank = $fk_rank_increment;
+	 $h->type = intval($type);
+	 $res =  $h->create($user);
+
+	 if ($res == $errormysql){
+		 $jsonResponse->error =  $langs->trans("errorCreateBlocHead");
+	 }
+
+
+	 $bloc = new Bloc($db);
+	 $bloc->fetch($idBloc);
+	 $jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
+// COL
+ } else{
+		$jsonResponse->error =  $langs->trans("MaxColError");
+	}
+
 
 }
 
@@ -262,4 +311,32 @@ $db->close();    // Close $db database opened handler
 $activateDebugLog = GETPOST('activatedebug','int');
 print json_encode($jsonResponse, JSON_PRETTY_PRINT);
 
+
+function addColRow($db,$type,$user,$errormysql,$jsonResponse,$reloadBlocView,$langs){
+	$sql = 'SELECT MAX(fk_rank) AS m FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 1 AND fk_bloc = '.$idBloc;
+	// Méthode historique
+	$resql = $db->query($sql);
+	$result = $db->fetch_row($resql);
+	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
+
+
+	// On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
+	$h = new BlocHead($db);
+	$h->fk_bloc = $idBloc;
+	$h->date_creation = date('Y-m-d H:m:s');
+	$h->fk_user_creat = 1;
+	$h->fk_rank = $fk_rank_increment;
+	$h->type = intval($type);
+	$res =  $h->create($user);
+
+	if ($res == $errormysql){
+		$jsonResponse->error =  $langs->trans("errorCreateBlocHead");
+	}
+
+
+	$bloc = new Bloc($db);
+	$bloc->fetch($idBloc);
+
+	return $jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
+}
 
