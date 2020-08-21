@@ -74,7 +74,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $object = new Bloc($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->linesfromproductmatrix->dir_output . '/temp/massgeneration/' . $user->id;
-$hookmanager->initHooks(array('bloccard', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('lfpmconfig')); // Note that conf->hooks_modules contains array
 
 
 
@@ -105,32 +105,6 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	$error = 0;
-
-	$backurlforlist = dol_buildpath('/linesfromproductmatrix/matrix_config.php', 1);
-
-	if (empty($backtopage) || ($cancel && empty($id))) {
-		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel))
-				$backtopage = $backurlforlist;
-			else $backtopage = dol_buildpath('/linesfromproductmatrix/bloc_card.php', 1) . '?id=' . ($id > 0 ? $id : '__ID__');
-		}
-	}
-	$triggermodname = 'LINESFROMPRODUCTMATRIX_BLOC_MODIFY'; // Name of trigger action code to execute when we modify record
-
-	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
-
-	// Actions when linking object each other
-	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php';
-
-
-	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'BLOC_MODIFY');
-	}
-	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
-	}
-
 }
 
 
@@ -149,17 +123,23 @@ $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
 llxHeader('', $title, $help_url);
 
-print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"),
-	'<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
+
+$btnAdd = '<a class="btnTitle btnTitlePlus" style="background-color:white" href="">
 		<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>
 		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
-		</a>', 'linesfromproductmatrix.png@linesfromproductmatrix');
+		</a>';
 
-print '<div class="label-form" style="display:none;margin:12px 12px 20px 25px;">
-  			<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">
-  			<button type="submit" class="create-button" style="margin-left: 10px;margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Valider</button>
-  			<button type="submit" class="cancel-button" style="margin-right: 10px;padding: 5px 10px;border: 1px solid lightgrey;">Annuler</button>
-		</div>';
+print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), $btnAdd, 'object_linesfromproductmatrix@linesfromproductmatrix');
+
+
+print '<fieldset id="add-block-wrapper" style="display:none;">
+			<legend>'.$langs->trans('AddAMatrixBlock').'</legend>
+			<div class="label-form">
+				<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">
+				<button id="add-block-btn" type="submit" class="button --create-button" >'.$langs->trans("Validate").'</button>
+				<button id="add-block-cancel-btn" type="submit" class="button --cancel-button" >'.$langs->trans("Cancel").'</button>
+			</div>
+  		</fieldset>';
 
 
 
@@ -182,12 +162,8 @@ print '</div>
 if (!empty($conf->use_javascript_ajax)) {
 	include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 }
-?>
 
-<!--Example : Adding jquery code-->
-<script type="text/javascript" language="javascript"></script>
 
-<?php
 // End of page
 llxFooter();
 $db->close();

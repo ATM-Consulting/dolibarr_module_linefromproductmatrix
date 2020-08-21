@@ -63,7 +63,10 @@ if (isset($action) && $action == 'createBloc' ) {
 	$res = $db->query($s);
 	//var_dump($res);
 	$r = $db->fetch_row($res);
-	$allowed  = (intval($r[0]) < 3)	;
+
+	$allowed = true;
+	if(!empty($conf->global->PLM_MAX_COL))	$allowed  = (intval($r[0]) < intval($conf->global->PLM_MAX_BLOC));
+
 	if ($allowed){
 		$b = new Bloc($db);
 		$b->label = $label;
@@ -205,7 +208,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 		$res = $db->query($s);
 		//var_dump($res);
 		$r = $db->fetch_row($res);
-		$allowed  = (intval($r[0]) < 3)	;
+		if(!empty($conf->global->PLM_MAX_COL))	$allowed  = (intval($r[0]) < intval($conf->global->PLM_MAX_COL))	;
 	}
 
 

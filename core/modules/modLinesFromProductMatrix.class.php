@@ -45,7 +45,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 104104; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 104104;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'linesfromproductmatrix';
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
@@ -73,7 +73,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'generic';
+		$this->picto = 'linesfromproductmatrix@linesfromproductmatrix';
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
@@ -220,8 +220,10 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Permissions provided by this module
 		$this->rights = array();
 		$r = 0;
+
 		// Add here entries to declare new permissions
-		/* BEGIN MODULEBUILDER PERMISSIONS */
+
+		/* BEGIN  PERMISSIONS */
 		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of LinesFromProductMatrix'; // Permission label
 		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
@@ -237,14 +239,13 @@ class modLinesFromProductMatrix extends DolibarrModules
 		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
 		$r++;
-
-		/* END MODULEBUILDER PERMISSIONS */
+		/* END  PERMISSIONS */
 
 		// Main menu entries to add
 		$this->menu = array();
 		$r = 0;
 		// Add here entries to declare new menus
-		/* BEGIN MODULEBUILDER TOPMENU */
+		/* BEGIN  TOPMENU */
 		$this->menu[$r++] = array(
 			'fk_menu'=>'fk_mainmenu=products', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left', // This is a Top menu entry
@@ -259,8 +260,8 @@ class modLinesFromProductMatrix extends DolibarrModules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
-		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN MODULEBUILDER LEFTMENU BLOC
+		/* END  TOPMENU */
+		/* BEGIN  LEFTMENU BLOC
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=linesfromproductmatrix',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Top menu entry
@@ -318,58 +319,8 @@ class modLinesFromProductMatrix extends DolibarrModules
             'user'=>2
         );
 
-		/* END MODULEBUILDER LEFTMENU BLOC */
+		/* END LEFTMENU BLOC */
 
-		// Exports profiles provided by this module
-		$r = 1;
-		/* BEGIN MODULEBUILDER EXPORT BLOC */
-		/*
-		$langs->load("linesfromproductmatrix@linesfromproductmatrix");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='BlocLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='bloc@linesfromproductmatrix';
-		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'Bloc'; $keyforclassfile='/linesfromproductmatrix/class/bloc.class.php'; $keyforelement='bloc@linesfromproductmatrix';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
-		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		//$keyforclass = 'BlocLine'; $keyforclassfile='/linesfromproductmatrix/class/bloc.class.php'; $keyforelement='blocline@linesfromproductmatrix'; $keyforalias='tl';
-		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='bloc'; $keyforaliasextra='extra'; $keyforelement='bloc@linesfromproductmatrix';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$keyforselect='blocline'; $keyforaliasextra='extraline'; $keyforelement='blocline@linesfromproductmatrix';
-		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r] = array('blocline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		//$this->export_special_array[$r] = array('t.field'=>'...');
-		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
-		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'bloc as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'bloc_line as tl ON tl.fk_bloc = t.rowid';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('bloc').')';
-		$r++; */
-		/* END MODULEBUILDER EXPORT BLOC */
-
-		// Imports profiles provided by this module
-		$r = 1;
-		/* BEGIN MODULEBUILDER IMPORT BLOC */
-		/*
-		 $langs->load("linesfromproductmatrix@linesfromproductmatrix");
-		 $this->export_code[$r]=$this->rights_class.'_'.$r;
-		 $this->export_label[$r]='BlocLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		 $this->export_icon[$r]='bloc@linesfromproductmatrix';
-		 $keyforclass = 'Bloc'; $keyforclassfile='/linesfromproductmatrix/class/bloc.class.php'; $keyforelement='bloc@linesfromproductmatrix';
-		 include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		 $keyforselect='bloc'; $keyforaliasextra='extra'; $keyforelement='bloc@linesfromproductmatrix';
-		 include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		 //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		 $this->export_sql_start[$r]='SELECT DISTINCT ';
-		 $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'bloc as t';
-		 $this->export_sql_end[$r] .=' WHERE 1 = 1';
-		 $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('bloc').')';
-		 $r++; */
-		/* END MODULEBUILDER IMPORT BLOC */
 	}
 
 	/**

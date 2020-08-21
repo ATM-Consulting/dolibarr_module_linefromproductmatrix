@@ -86,10 +86,15 @@ $(document).ready(function() {
 	// START OF CREATE A BLOC EVENTS
 	$(document).on("click", ".btnTitle", function (e) {
 		e.preventDefault();
-		var textarea = $("#inputPlaceholderEx");
-		$(".label-form").show();
-		textarea.select();
+		var textinput = $("#inputPlaceholderEx");
+		$("#add-block-wrapper").show();
+		textinput.focus();
 	});
+
+	$(document).on("click", "#add-block-cancel-btn", function (e) {
+		$("#add-block-wrapper").slideUp();
+	});
+
 
 	$(document).on("keypress", "#inputPlaceholderEx", function (e) {
 		if (e.which == 13) {
@@ -97,7 +102,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).on("click", ".create-button", createABloc);
+	$(document).on("click", "#add-block-btn", createABloc);
 	// END OF CREATE BLOC EVENTS
 
 
@@ -240,16 +245,16 @@ $(document).ready(function() {
 	/**
 	 * Modification des entêtes label HEADERS
 	 */
-	$(document).on("change", ".inputBlocHeader", function () {
+	$(document).on("change", ".input-bloc-header", function () {
 		let idBlocHead = $(this).data("idhead");  // On récupère l\'id de l\'input
 		let self = $(this);
 		var label = $(this).val();
 		var currentBlocCell = self.parent();
-		var currentValue = $(this).data("currentValue");
+		var currentValue = $(this).attr("data-currentValue");
 
 
 		if(label.length == 0){
-			currentBlocCell.html(currentValue);
+			self.val(currentValue);
 			matrixSetMessage('<?php print $langs->trans("emptyLabelHeaderError") ?>', "error");
 
 		}else {
@@ -393,7 +398,7 @@ $(document).ready(function() {
 			},
 			success: function (data) {
 				if(!data.error) {
-					$(".label-form").hide();
+					$("#add-block-wrapper").hide();
 					$(".matrix-container").append(data.data);
 					matrixSetMessage($out);
 				}else {

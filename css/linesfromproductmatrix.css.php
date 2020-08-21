@@ -88,17 +88,25 @@ input.inputBloc {
 	flex-wrap: wrap;
 }
 .matrix-head {
-	border: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e0e0e0;
 	transition: 0.5s ease-in-out;
+	padding: 8px;
 }
+.matrix-head input.inputBloc {
+	font-weight: bold;
+	min-width: 250px;
+}
+
+
+
 .matrix-item {
 	flex-shrink: 1;
 	flex-basis: auto;
 	width: auto;
 	margin-bottom: 25px;
 	margin-right: 15px;
-	box-shadow: 1px 1px 5px rgba(0,0,0, 0.5);
-
+	box-shadow: 1px 1px 3px rgba(0,0,0, 0.5);
+	/*border: 1px solid #dedede;*/
 }
 
 .matrix-line-delete, .matrix-col-delete{
@@ -119,18 +127,41 @@ input.inputBloc {
 }
 
 /*Matrice*/
+.bloc-table{
+	display: table;
+	width: 100%;
+}
+
 .bloc-table-row {
 	display: table-row;
 }
+
+.bloc-table-row:hover:not(:first-child) {
+	background:  var(--colorbacklinepairhover) !important;
+}
+
 .bloc-table-cell, .bloc-table-head {
-	border: 1px solid #999999;
+	border-left: 1px solid #999999;
+	border-bottom: 1px solid #999999;
 	display: table-cell;
 	padding: 5px 5px;
 }
+
+.bloc-table-cell:first-child{
+	border-left: none;
+}
+
+
+
 .bloc-table-head {
 	background-color: #EEE;
 	font-weight:bold;
 }
+
+.bloc-label{
+	font-weight: bold;
+}
+
 
 .matrix-footer {
 	opacity: 0;
@@ -153,4 +184,9 @@ input.inputBloc {
 
 .fa-grip-lines.--rotate90neg{
 	transform: rotate(-90deg);
+}
+
+.input-bloc-header{
+	background: rgba(255,255,255,0.1);
+	width: calc(100% - 40px);
 }

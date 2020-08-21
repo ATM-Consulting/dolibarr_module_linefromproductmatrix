@@ -186,7 +186,6 @@ $TlinesObject = array();
 	 $TlinesObject[$l->fk_product] = $obj;
  	//var_dump("Qty : ".$l->qty . "  -- ".$l->product_label . '--'.$l->product_ref . "-- fk_product : ".$l->fk_product);
  }
-var_dump($TlinesObject);
 
 	$bloc = new Bloc($db);
 	$blocs =  $bloc->fetchAll('ASC','fk_rank');

@@ -19,9 +19,9 @@
 
 # Module label 'ModuleLinesFromProductMatrixName'
 LinesFromProductMatrixArea = Page de configuration d'ajout rapide
-ModuleLinesFromProductMatrixName = Config produits rapide
+ModuleLinesFromProductMatrixName = Ajout produit par matrice
 # Module description 'ModuleLinesFromProductMatrixDesc'
-ModuleLinesFromProductMatrixDesc = Description de LinesFromProductMatrix
+ModuleLinesFromProductMatrixDesc = Ce module permet de configurer une matrice de produit permettant un saisie rapide dans les devis, commandes et factures
 AddANewBlock = Ajout d'un bloc
 DeleteABlock = Supprimer
 ModifyABlock = Modifier
@@ -30,16 +30,20 @@ confirmBlocModified = Modification effectuée avec succès
 #
 # Page d'administration
 #
-LinesFromProductMatrixSetup = Configuration du module LinesFromProductMatrix
+LinesFromProductMatrixSetup = Configuration du module "Matrice de produit"
 Settings = Réglages
-LinesFromProductMatrixSetupPage = Page de configuration du module LinesFromProductMatrix
+LinesFromProductMatrixSetupPage = Page de configuration du module "Matrice de produit"
+PLM_MAX_BLOC = Nombre maximum de bloc
+PLM_MAX_BLOC_HELP = La valeur 0 indique une infinité
+PLM_MAX_COL = Nombre maximum de colonnes
+PLM_MAX_COL_HELP = La valeur 0 indique une infinité
 
 #
 # Page À propos
 #
 About = À propos
-LinesFromProductMatrixAbout = À propos de LinesFromProductMatrix
-LinesFromProductMatrixAboutPage = Page à propos de LinesFromProductMatrix
+LinesFromProductMatrixAbout = À propos de "Matrice de produit"
+LinesFromProductMatrixAboutPage = Page à propos de "Matrice de produit"
 
 #
 # Page d'exemple
@@ -89,3 +93,7 @@ tooltipDeleteCol = Supprimer une colonne et toutes les références produits qui
 tooltipDeleteLine = Supprimer une ligne et toutes les références produits qui lui sont associées
 
 
+AddAMatrixBlock = Ajouter un nouveau bloc
+YourLabelHere = Titre
+AddLineToMatrix = Ajouter ligne
+AddColToMatrix = Ajouter colonne

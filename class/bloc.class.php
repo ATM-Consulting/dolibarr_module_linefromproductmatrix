@@ -60,9 +60,9 @@ class Bloc extends CommonObject
 	 */
 	public $picto = 'bloc@linesfromproductmatrix';
 
-	public $MAX_COL = 3;
-	public $MAX_BLOC = 3;
-
+	/**
+	 * TODO gérer les status pour affichage et autre
+	 */
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -1070,13 +1070,13 @@ class Bloc extends CommonObject
 			$out .= '<div class="matrix-head">';
 
 			if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
-				$out .= '<input id="bloc-label-' . $b->id . '" class="inputBloc"  style="text-decoration:none; background: none;" type="text" size="6" value="'.$b->label.'" name="bloclabel" data-id="' . $b->id . '">
+				$out .= '<input id="bloc-label-' . $b->id . '" class="inputBloc" type="text"  value="'.dol_htmlentities($b->label, ENT_QUOTES).'" name="bloclabel" data-id="' . $b->id . '">
 						<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
 						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
 						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
 						</a>';
 			}else{
-				$out .= $b->label;
+				$out .= '<span class="bloc-label">'.$b->label.'</span>';
 			}
 
 			 if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
@@ -1106,11 +1106,20 @@ class Bloc extends CommonObject
 		$out .= $b->displayMatrix($mode);
 		// FOOTER AJOUTER LIGNE COL
 		if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
-			$out .= '<div class="matrix-footer">
-		<span data-type="1" data-id="' . $b->id . '" class="matrix-add-btn --line classfortooltip" title="'.$this->langs->trans("descriptionAddLine").'"><span class="fas fa-grip-lines"></span> Ajouter une ligne</span>
-		if
-		<span data-type="0" data-id="' . $b->id . '" class="matrix-add-btn --col classfortooltip"><span class="fas fa-grip-lines --rotate90neg" title="'.$this->langs->trans("descriptionAddCol").'"></span> Ajouter une Colonne</span>
-		</div>';
+			$out .= '<div class="matrix-footer">';
+
+
+			$out .= '<span data-type="1" data-id="' . $b->id . '" class="matrix-add-btn --line classfortooltip" title="'.$this->langs->trans("descriptionAddLine").'">';
+			$out .= '<span class="fas fa-grip-lines"></span> ';
+			$out .= $this->langs->trans('AddLineToMatrix');
+			$out .= '</span>';
+
+			$out .= '<span data-type="0" data-id="' . $b->id . '" class="matrix-add-btn --col classfortooltip">';
+			$out .= '<span class="fas fa-grip-lines --rotate90neg" title="'.$this->langs->trans("descriptionAddCol").'"></span>';
+		 	$out .= $this->langs->trans('AddColToMatrix');
+			$out .= '</span>';
+
+			$out .= '</div><!-- end .matrix-footer -->';
 		}
 			if (!$reloadBlocView) {
 				$out .= '</div>';
@@ -1204,6 +1213,8 @@ class Bloc extends CommonObject
 
 	/**
 	 * affiche la matrice
+	 * @param string $mode view | config
+	 * @return string
 	 */
 	public function displayMatrix($mode = 'view'){
 
@@ -1262,7 +1273,7 @@ class Bloc extends CommonObject
 								// COl/ROW label
 								if ($matrixCell->type >= 0){
 									if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
-										$output .= '<input data-currentValue="'.$matrixCell->label.'" required id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="inputBlocHeader"  type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="'.$matrixCell->label.'">';
+										$output .= '<input placeholder="'.$this->langs->trans("YourLabelHere").'" data-currentValue="'.$matrixCell->label.'" required id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="input-bloc-header"  type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="'.dol_htmlentities($matrixCell->label, ENT_QUOTES).'" >';
 									}else {
 										$output .= $matrixCell->label;
 										}
@@ -1475,7 +1486,7 @@ class Bloc extends CommonObject
 
 			$placeholder = ' placeholder="'.$langs->trans("RefOrLabel").'"';
 
-			$out.=  '<input type="text" class="minwidth100 inputproductmatric" data-idproduct="'.$selected_input_id.'" name="search_'.$htmlname.  '" data-blocheadercolid="'.$headerColId.'"data-blocheaderrowid="'.$headerRowId.'" data-blocid="'.$this->currentBloc.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out.=  '<input type="text" class="minwidth100 inputproductmatric" data-idproduct="'.$selected_input_id.'" name="search_'.$htmlname.  '" data-blocheadercolid="'.$headerColId.'"data-blocheaderrowid="'.$headerRowId.'" data-blocid="'.$this->currentBloc.'" id="search_'.$htmlname.'" value="'.dol_htmlentities($selected_input_value, ENT_QUOTES).'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
 				$out.=  img_picto($langs->trans("Search"), 'search');
 			}
