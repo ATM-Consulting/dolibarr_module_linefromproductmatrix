@@ -1,7 +1,7 @@
 # DOLIBARR MODULE PRODUCT MATRIX
 ![Last realease](https://img.shields.io/github/v/release/ATM-Consulting/dolibarr_module_linesfromproductmatrix)
 
-PRODUCT MATRIX is a Dolibarr module usefull to manage hosts, servers, websites etc...
+PRODUCT MATRIX is a Dolibarr module usefull to easy create or modify lines propal, order or invoices etc...
 
 ## LICENSE
 Copyright (C) 2019 ATM Consulting <contact@atm-consulting.fr>
@@ -15,7 +15,6 @@ See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) fil
 
 This module need this modules to be installed on your dolibarr :
 - abricot : a tools library
-- webpassword : for password management
 
 ### From the ZIP file and GUI interfaces
 
