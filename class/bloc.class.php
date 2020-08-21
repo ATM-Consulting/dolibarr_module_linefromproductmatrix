@@ -1254,8 +1254,7 @@ class Bloc extends CommonObject
 								$fkproduct = $matrixCell->fk_product ? $matrixCell->fk_product : '';
 								$output .= $this->select_produits($matrixCell->fk_blocHeaderCol, $matrixCell->fk_blocHeaderRow, $fkproduct, 'idprod_' . $matrixCell->fk_blocHeaderCol . '_' . $matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2);
 							}else {
-								$output .= '<label for="quantity">'.$this->langs->trans("quantity").'</label>
-											<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'">';
+								$output .= '<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'" placeholder="'.$this->langs->trans("quantity").'">';
 							}
 							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
 

@@ -177,13 +177,16 @@ if ($id > 0 || !empty($ref)) {
 
 
 
-$TlinesObectj = array();
+$TlinesObject = array();
 
  foreach ($object->lines as $l ){
+
  	$obj = new stdclass();
-	// $TlinesObectj[$l->fk_product] =
+ 	$obj->qty = $l->qty;
+	 $TlinesObject[$l->fk_product] = $obj;
  	//var_dump("Qty : ".$l->qty . "  -- ".$l->product_label . '--'.$l->product_ref . "-- fk_product : ".$l->fk_product);
  }
+var_dump($TlinesObject);
 
 	$bloc = new Bloc($db);
 	$blocs =  $bloc->fetchAll('ASC','fk_rank');
@@ -194,7 +197,6 @@ $TlinesObectj = array();
 		foreach ($blocs as $b){
 			print $bloc->displayBloc($b,  false,'view' );
 		}
-
 	}
 	print '</div></div>';
 	dol_fiche_end();
