@@ -69,7 +69,7 @@ errorUpdateProduct      = erreur affectation Produit.
 errorDeleteProduct      = erreur suppression Produit.
 emptyLabelHeaderError   = Le label ne doit pas être vide.
 MaxColError             = Impossible de créer une nouvelle colonne.  Nombre maximum 3
-
+MaxBlocError            = Impossible de créer un nouveau Bloc.  Nombre maximum 3
 #
 # traductions class Bloc
 #

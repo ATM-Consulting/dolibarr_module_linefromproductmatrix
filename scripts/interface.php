@@ -58,43 +58,55 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateLabel
 
 // Create a bloc
 if (isset($action) && $action == 'createBloc' ) {
-	$b = new Bloc($db);
-	$b->label = $label;
+	$s = 'SELECT COUNT(*) AS c FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_bloc ';
+	//var_dump($s);
+	$res = $db->query($s);
+	//var_dump($res);
+	$r = $db->fetch_row($res);
+	$allowed  = (intval($r[0]) < 3)	;
+	if ($allowed){
+		$b = new Bloc($db);
+		$b->label = $label;
 
-	$res  = $b->create($user);
-	if ($res < 0){
-		$jsonResponse->error = $langs->trans("errorCreateBloc");
+		$res  = $b->create($user);
+		if ($res < 0){
+			$jsonResponse->error = $langs->trans("errorCreateBloc");
 
-	}else{
-		$error = 0;
-		$bh = new BlocHead($db);
-		$bh->fk_bloc = $b->id;
-		$bh->date_creation = date('Y-m-d H:m:s');
-		$bh->fk_user_creat = 1;
-		$bh->fk_rank = 1;
-		$bh->type = 1;
-		$res = $bh->create($user);
-		if ($res == $errormysql) {
-			$jsonResponse->error =$langs->trans("errorCreateBlocHeadRow");
 		}else{
+			$error = 0;
 			$bh = new BlocHead($db);
 			$bh->fk_bloc = $b->id;
 			$bh->date_creation = date('Y-m-d H:m:s');
 			$bh->fk_user_creat = 1;
 			$bh->fk_rank = 1;
-			$bh->type = 0;
+			$bh->type = 1;
 			$res = $bh->create($user);
-			if ($res == $errormysql ){
-				$error++;
-				$jsonResponse->error =$langs->trans("errorCreateBlocHeadCol");
+			if ($res == $errormysql) {
+				$jsonResponse->error =$langs->trans("errorCreateBlocHeadRow");
+			}else{
+				$bh = new BlocHead($db);
+				$bh->fk_bloc = $b->id;
+				$bh->date_creation = date('Y-m-d H:m:s');
+				$bh->fk_user_creat = 1;
+				$bh->fk_rank = 1;
+				$bh->type = 0;
+				$res = $bh->create($user);
+				if ($res == $errormysql ){
+					$error++;
+					$jsonResponse->error =$langs->trans("errorCreateBlocHeadCol");
+				}
 			}
+
 		}
 
+		$out = $b->displayBloc($b, false, 'config');
+
+		$jsonResponse->data = $out;
+
+	}else{
+		$jsonResponse->error =  $langs->trans("MaxBlocError");
 	}
 
-	$out = $b->displayBloc($b, false, 'config');
-
-	$jsonResponse->data = $out;
 
 }
 
@@ -183,7 +195,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	// On sélectionne le fk_rank MAX
 
 
-	//var_dump($r);
+
 	$allowed = true;
 
 	if (intval($type) == 0){
