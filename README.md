@@ -14,7 +14,7 @@ See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) fil
 ### Dependencies
 
 This module need this modules to be installed on your dolibarr :
-- abricot : a tools library
+- no module needed
 
 ### From the ZIP file and GUI interfaces
 
