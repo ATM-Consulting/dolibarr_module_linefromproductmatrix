@@ -175,9 +175,12 @@ if ($id > 0 || !empty($ref)) {
 
 
 
-
+$fpc_obj = new stdClass();
+$fpc_obj->id = $object->id;
+$fpc_obj->element = $object->element;
 
 $TlinesObject = array();
+
 
  foreach ($object->lines as $l ){
 
@@ -186,7 +189,7 @@ $TlinesObject = array();
 	 $TlinesObjectFPC[$l->fk_product] = $obj;
  	//var_dump("Qty : ".$l->qty . "  -- ".$l->product_label . '--'.$l->product_ref . "-- fk_product : ".$l->fk_product);
  }
-
+	var_dump($object->id);
 	$bloc = new Bloc($db);
 	$blocs =  $bloc->fetchAll('ASC','fk_rank');
 
@@ -194,7 +197,7 @@ $TlinesObject = array();
 				<div class="matrix-container">';
 	if ($blocs) {
 		foreach ($blocs as $b){
-			print $bloc->displayBloc($b,  false,'view', $TlinesObjectFPC);
+			print $bloc->displayBloc($b,  false,'view', $TlinesObjectFPC , $fpc_obj);
 		}
 	}
 	print '</div></div>';
@@ -206,9 +209,6 @@ if (!empty($conf->use_javascript_ajax)) {
 	include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 }
 ?>
-
-	<!--Example : Adding jquery code-->
-	<script type="text/javascript" language="javascript"></script>
 
 <?php
 // End of page

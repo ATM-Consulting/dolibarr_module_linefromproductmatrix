@@ -42,6 +42,8 @@ $addLineMatrix = GETPOST('addLineMatrix');
 $currentHead = GETPOST('currentHead');
 $currentType = GETPOST('currentType');
 $reloadBlocView = GETPOST('reloadBlocView');
+$qty = GETPOST('qty');
+$fk_fpc_object = GETPOST('fk_fpc_object');
 $errormysql = -1;
 $jsonResponse = new stdClass();
 
@@ -322,6 +324,12 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
 }
 
 
+//**  UPDATE QTY PRODUCT VIEW FORM */
+//updateQtyProduct
+if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'updateQtyProduct' ) {
+
+
+}
 $db->close();    // Close $db database opened handler
 $activateDebugLog = GETPOST('activatedebug','int');
 print json_encode($jsonResponse, JSON_PRETTY_PRINT);

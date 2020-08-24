@@ -118,7 +118,6 @@ class Bloc extends CommonObject
 	public $THCols = array();
 	public $THRows = array();
   	public $langs;
-
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -1042,13 +1041,18 @@ class Bloc extends CommonObject
 		return $error;
 	}
 	//******************************************************************************************************************
+
 	/**
 	 *
 	 * Retourne le template html d'un bloc et de sa matrice.
 	 * @param Bloc $b
+	 * @param bool $reloadBlocView  tag utilisé par ajax pour supprimer le wrapper au reload de du bloc
+	 * @param string $mode			mode  config / view
+	 * @param array $TlinesObjectFPC  tableau de produit avec leurs qty pour la commande courante
+	 * @param int $fk_FPC_OBJECT id de la commande /facture /propal courante
 	 * @return string
 	 */
-	public function displayBloc(Bloc $b, $reloadBlocView = false, $mode = 'view',$TlinesObjectFPC = array()){
+	public function displayBloc(Bloc $b, $reloadBlocView = false, $mode = 'view',$TlinesObjectFPC = array(), stdClass $fpc_object = null){
 			global $user;
 			$out = '';
 
@@ -1092,7 +1096,7 @@ class Bloc extends CommonObject
 
 
 		$b->fetchMatrix($b);
-		$out .= $b->displayMatrix($mode,$TlinesObjectFPC);
+		$out .= $b->displayMatrix($mode,$TlinesObjectFPC, $fpc_object);
 		// FOOTER AJOUTER LIGNE COL
 		if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 			$out .= '<div class="matrix-footer">';
@@ -1204,10 +1208,11 @@ class Bloc extends CommonObject
 	 * affiche la matrice
 	 * @param string $mode view | config
 	 * @param array $TlinesObjectFPC tableau d'objets représentant les lignes de l'element courant
-	 * 								(F facture , P propal , C commande)
+	 *                                (F facture , P propal , C commande)
+	 * @param int $fk_FPC_object  id de la commande / propal / facture courante
 	 * @return string
 	 */
-	public function displayMatrix($mode = 'view',$TlinesObjectFPC = array()){
+	public function displayMatrix($mode = 'view',$TlinesObjectFPC = array(), stdClass $fpc_object = null){
 
 		global $user;
 		$nbCols = count($this->THCols) + 1;
@@ -1270,7 +1275,7 @@ class Bloc extends CommonObject
 
 									$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : '' ;
 									$output .= '<span>'. $url .'</span>';
-									$output .= '<input class="classfortooltip inputNumber" type="number" id="quantity-input" name="quantity" min="0"  placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
+									$output .= '<input class="classfortooltip inputNumber" data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'" data-fk-fpc-element="'.$this->get_fpc_element($fpc_object).'" data-fk-product="'.$matrixCell->fk_product.'" type="number" id="quantity-input" name="quantity" min="0"  placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
 
 								}else{
 									$output .= '<input class="classfortooltip inputNumber " type="number" id="quantity-input" name="quantity" min="0" title="--" placeholder="'.$this->langs->trans("quantity").'">';
@@ -1301,6 +1306,12 @@ class Bloc extends CommonObject
 		$res->out = $output;
   		return $output;
 
+	}
+	public function get_fpc_id($fpc){
+		return $fpc ? $fpc->id : '';
+	}
+	public function get_fpc_element($fpc){
+		return $fpc ? $fpc->element : '';
 	}
 	public function getNomUrlForProduct($fk_Product){
 		if (empty($fk_Product)){

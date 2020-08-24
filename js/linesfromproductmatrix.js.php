@@ -334,6 +334,44 @@ $(document).ready(function() {
 	});
 
 
+	/** **
+	 *
+	 */
+	$(document).on("change", ".inputNumber", function () {
+
+		let idproduct  = $(this).attr('data-fk_product');
+		let fk_fpc_object = $(this).attr('data-fk_fpc_object');
+
+		let qty = $(this).val();
+		let data =
+			{
+				fk_fpc_object :fk_fpc_object,
+				idproduct: idproduct,
+				qty :qty,
+				action: "updateQtyProduct"
+			}
+
+		$.ajax({
+			url: "<?php print dol_buildpath('linesfromproductmatrix/scripts/interface.php', 1)?>",
+			method: "POST",
+			dataType: "json",
+			data: data,
+			success: function (data) {
+				if(!data.error) {
+					self.css("background-color", "green");
+					setTimeout(function () {
+						self.css("background-color", '#fff');
+					}, 800);
+				}else {
+					matrixSetMessage(data.error, "error");
+				}
+			},
+			error: function (err) {
+				matrixSetMessage(err.responseText, "error");
+			}
+		})
+	});
+
 
 	/**
 	 *  Box de confirmation avant suppression
