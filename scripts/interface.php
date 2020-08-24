@@ -368,9 +368,33 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
   	if ($l->fk_product == $idproduct ){
   		var_dump($l->id);
   		$res =  $db->getRow("select price FROM llx_product_price WHERE fk_product = ".$idproduct . ' ORDER BY date_price DESC');
-		$obj->updateline($l->id,$l->desc ,$res->price ,$l->remise_percent,$qty,null,null,$l->tva_tx,$l->localtax1_tx,$l->localtax2_tx,$res->price,$l->info_bits,1,$l->fk_parent_line,$l->skip_update_total);
-  		$updated = true;
-  		break;
+  		if ($res > 0){
+
+			if($obj->element == "commande"){
+				/** @var Commande $obj */
+				$obj->updateline(
+					$l->id,
+					$l->desc ,
+					$res->price ,
+					$qty,
+					$l->remise_percent,
+					$l->tva_tx,
+					$l->localtax1_tx,
+					$l->localtax2_tx,
+					$res->price,
+					$l->info_bits,
+					null,
+					null,
+					$l->type,
+					$l->fk_parent_line,
+					$l->skip_update_total);
+			}
+
+
+			$updated = true;
+			break;
+		}
+
 	}
   }
  // on ajoute si pas present dans le current fpc
