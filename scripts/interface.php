@@ -19,6 +19,7 @@ require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/matrix.cl
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/bloc.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/blochead.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+
 // Load traductions files requiredby by page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other", 'main'));
 
@@ -29,21 +30,23 @@ $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"
 //---------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------
 
-$label = GETPOST('label');
-$idHead = GETPOST('idhead');
-$idBloc = GETPOST('id');
-$type = GETPOST('blocheadType');
-$idproduct = GETPOST('idproduct');
-$action = GETPOST('action');
-$headerColId = GETPOST('blocheadercolid');
-$headerRowId = GETPOST('blocheaderrowid');
-$idMatrix = GETPOST('idMatrix');
-$addLineMatrix = GETPOST('addLineMatrix');
-$currentHead = GETPOST('currentHead');
-$currentType = GETPOST('currentType');
+$label 			= GETPOST('label');
+$idHead 		= GETPOST('idhead');
+$idBloc 		= GETPOST('id');
+$type 			= GETPOST('blocheadType');
+$idproduct 		= GETPOST('idproduct');
+$action 		= GETPOST('action');
+$headerColId 	= GETPOST('blocheadercolid');
+$headerRowId 	= GETPOST('blocheaderrowid');
+$idMatrix 		= GETPOST('idMatrix');
+$addLineMatrix 	= GETPOST('addLineMatrix');
+$currentHead 	= GETPOST('currentHead');
+$currentType	= GETPOST('currentType');
 $reloadBlocView = GETPOST('reloadBlocView');
-$qty = GETPOST('qty');
-$fk_fpc_object = GETPOST('fk_fpc_object');
+$qty 			= GETPOST('qty');
+$fk_fpc_object 	= GETPOST('fk_fpc_object');
+$fpc_element 	= GETPOST('fpc_element');
+
 $errormysql = -1;
 $jsonResponse = new stdClass();
 
@@ -327,6 +330,81 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
 //**  UPDATE QTY PRODUCT VIEW FORM */
 //updateQtyProduct
 if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'updateQtyProduct' ) {
+
+//	if ($element == 'propal') {
+//		require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+//	}
+//	if ($element == 'commande') {
+//		require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+//	}
+//	if ($element == 'facture') {
+//		require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+//	}
+
+	$obj = null;
+  if ($fpc_element == "commande"){
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+ 	$obj = new Commande($db);
+ 	//$classElement = "OrderLine";
+  }
+  if ($fpc_element == "propal"){
+	  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		$obj = new Propal($db);
+	  	//$classElement = "PropaleLigne";
+  }
+  if ($fpc_element == "facture"){
+	  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$obj = new Facture($db);
+	   // $classElement = "???";
+  }
+
+  $obj->fetch($fk_fpc_object);
+
+  $p = new Product($db);
+  $p->fetch($idproduct);
+
+ $updated = false;
+  foreach ($obj->lines as $l){
+  	if ($l->fk_product == $idproduct ){
+  		var_dump($l->id);
+  		$res =  $db->getRow("select price FROM llx_product_price WHERE fk_product = ".$idproduct . ' ORDER BY date_price DESC');
+		$obj->updateline($l->id,$l->desc ,$res->price ,$l->remise_percent,$qty,null,null,$l->tva_tx,$l->localtax1_tx,$l->localtax2_tx,$res->price,$l->info_bits,1,$l->fk_parent_line,$l->skip_update_total);
+  		$updated = true;
+  		break;
+	}
+  }
+ // on ajoute si pas present dans le current fpc
+ if (!$updated){
+
+	 $desc = $p->label;
+	 // prix unitaire du produit
+	 $res =  $db->getRow("select price , price_ttc  FROM llx_product_price WHERE fk_product = ".$idproduct . ' ORDER BY date_price DESC');
+	 $pu_ht = $res->price;
+	 $txtva = $p->tva_tx;
+	 $txlocaltax1 = $p->localtax1_tx;
+	 $txlocaltax2 = $p->localtax2_tx;
+	 $remise_percent = 0; // discountrule
+	 $info_bits = 0;
+	 $fk_remise_except = 0;
+	 $price_base_type = $p->price_base_type;
+	 $pu_ttc = $res->price_ttc;
+
+
+	 $res2 = $obj->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $idproduct, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc);
+	 var_dump($obj);
+	 if ($res2 < 0) {
+			 $error++;
+			 var_dump("e");
+	 }
+
+
+
+	 // create
+
+ }
+
+
+
 
 
 }

@@ -175,11 +175,9 @@ if ($id > 0 || !empty($ref)) {
 
 
 
-$fpc_obj = new stdClass();
-$fpc_obj->id = $object->id;
-$fpc_obj->element = $object->element;
 
-$TlinesObject = array();
+
+ $TlinesObject = array();
 
 
  foreach ($object->lines as $l ){
@@ -187,9 +185,14 @@ $TlinesObject = array();
  	$obj = new stdclass();
  	$obj->qty = $l->qty;
 	 $TlinesObjectFPC[$l->fk_product] = $obj;
- 	//var_dump("Qty : ".$l->qty . "  -- ".$l->product_label . '--'.$l->product_ref . "-- fk_product : ".$l->fk_product);
+
  }
-	var_dump($object->id);
+ 	var_dump($TlinesObjectFPC);
+	// tiny fpc : get id and element from current fpc
+ 	$fpc_obj = new stdClass();
+	$fpc_obj->id = $object->id;
+	$fpc_obj->element = $object->element;
+
 	$bloc = new Bloc($db);
 	$blocs =  $bloc->fetchAll('ASC','fk_rank');
 

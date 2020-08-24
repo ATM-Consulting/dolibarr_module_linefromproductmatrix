@@ -118,6 +118,7 @@ class Bloc extends CommonObject
 	public $THCols = array();
 	public $THRows = array();
   	public $langs;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -1275,7 +1276,7 @@ class Bloc extends CommonObject
 
 									$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : '' ;
 									$output .= '<span>'. $url .'</span>';
-									$output .= '<input class="classfortooltip inputNumber" data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'" data-fk-fpc-element="'.$this->get_fpc_element($fpc_object).'" data-fk-product="'.$matrixCell->fk_product.'" type="number" id="quantity-input" name="quantity" min="0"  placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
+									$output .= '<input class="classfortooltip inputNumber" data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'" data-fpc-element="'.$this->get_fpc_element($fpc_object).'" data-fk-product="'.$matrixCell->fk_product.'" type="number" id="quantity-input" name="quantity" min="0"  placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
 
 								}else{
 									$output .= '<input class="classfortooltip inputNumber " type="number" id="quantity-input" name="quantity" min="0" title="--" placeholder="'.$this->langs->trans("quantity").'">';
@@ -1305,6 +1306,9 @@ class Bloc extends CommonObject
 		$res = new stdClass();
 		$res->out = $output;
   		return $output;
+
+	}
+	public function setFcpObject($fcp){
 
 	}
 	public function get_fpc_id($fpc){

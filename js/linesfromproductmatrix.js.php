@@ -339,13 +339,15 @@ $(document).ready(function() {
 	 */
 	$(document).on("change", ".inputNumber", function () {
 
-		let idproduct  = $(this).attr('data-fk_product');
-		let fk_fpc_object = $(this).attr('data-fk_fpc_object');
+		let idproduct  = $(this).attr('data-fk-product');
+		let fk_fpc_object = $(this).attr('data-fk-fpc-object');
+		let fpc_element = $(this).attr('data-fpc-element');
 
 		let qty = $(this).val();
 		let data =
 			{
 				fk_fpc_object :fk_fpc_object,
+				fpc_element : fpc_element,
 				idproduct: idproduct,
 				qty :qty,
 				action: "updateQtyProduct"
