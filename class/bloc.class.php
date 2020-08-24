@@ -1041,18 +1041,7 @@ class Bloc extends CommonObject
 
 		return $error;
 	}
-
-	/**
-	 * Load specific bloc
-	 * @param $id
-	 */
-	public function fetchBloc($id){
-
-		$b = new Bloc($this->db);
-		$b->fetch($id);
-		$this->fetchMatrix($b);
-	}
-
+	//******************************************************************************************************************
 	/**
 	 *
 	 * Retourne le template html d'un bloc et de sa matrice.
@@ -1214,6 +1203,8 @@ class Bloc extends CommonObject
 	/**
 	 * affiche la matrice
 	 * @param string $mode view | config
+	 * @param array $TlinesObjectFPC tableau d'objets représentant les lignes de l'element courant
+	 * 								(F facture , P propal , C commande)
 	 * @return string
 	 */
 	public function displayMatrix($mode = 'view',$TlinesObjectFPC = array()){
@@ -1275,15 +1266,18 @@ class Bloc extends CommonObject
 								 */
 
 								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
+									$url = $this->getNomUrlForProduct($matrixCell->fk_product);
 
-									$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : 0 ;
-									$output .= '<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'" placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
+									$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : '' ;
+									$output .= '<span>'. $url .'</span>';
+									$output .= '<input class="classfortooltip inputNumber" type="number" id="quantity-input" name="quantity" min="0"  placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
+
 								}else{
-									$output .= '<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'" placeholder="'.$this->langs->trans("quantity").'">';
+									$output .= '<input class="classfortooltip inputNumber " type="number" id="quantity-input" name="quantity" min="0" title="--" placeholder="'.$this->langs->trans("quantity").'">';
 								}
 
 							}
-							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
+
 
 						} else { // AFFICHAGE HEADER
 								// COl/ROW label
@@ -1308,41 +1302,15 @@ class Bloc extends CommonObject
   		return $output;
 
 	}
-
-	/**
-	 *  DEPRECATED
-	 *
-	 * @param int $idproduct
-	 * @param $headerColId
-	 * @param $headerRowId
-	 * @return string
-	 */
-	public function getSelectElement($idproduct = 0,$headerColId,$headerRowId){
-
-		//var_dump($headerColId,$headerRowId);
-		//linesfromproductmatrix_
-		$p = new Product($this->db);
-		$res = $p->db->getRows('SELECT rowid,label FROM '. MAIN_DB_PREFIX .'product');
-		$output = '<select id="product-select-'. rand(0,200000) . '" data-blocheadercolid="'.$headerColId.'"data-blocheaderrowid="'.$headerRowId.'" data-blocid="'.$this->currentBloc.'" >';
-		$output .= '<option value="">'.$this->langs->lang("chooseOption").'--Please choose an option--</option>';
-		if ($res){
-			foreach ($res as $element){
-				$output .= '<option value="'.$element->rowid;
-
-				if ($idproduct == $element->rowid){
-					$output .= '" selected>'.$element->label.'</option>';
-				}else{
-					$output .= '">'.$element->label.'</option>';
-				}
-
-			}
-			$output .='</select>';
-			//var_dump($output);
+	public function getNomUrlForProduct($fk_Product){
+		if (empty($fk_Product)){
+			return false;
 		}
-		return $output;
+		$p = new Product($this->db);
+		$p->fetch(intval($fk_Product));
+		return $p->getNomUrl(1,'');
+
 	}
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
@@ -1512,13 +1480,6 @@ class Bloc extends CommonObject
 	}
 
 
-	private function getMaxCol(){
-
-
-	}
-	private function getMaxBloc(){
-
-	}
 
 }
 

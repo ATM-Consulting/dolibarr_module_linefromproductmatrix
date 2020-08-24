@@ -182,6 +182,13 @@ input.inputBloc {
 
 }
 
+.classfortooltip.inputNumber{
+	float: right;
+	text-align: right;
+	margin-left: 30px;
+	width: 50%;
+
+}
 .fa-grip-lines.--rotate90neg{
 	transform: rotate(-90deg);
 }
