@@ -57,6 +57,14 @@ MyWidget = Mon widget
 MyWidgetDescription = Description de mon widget
 
 #
+# Msg Buttons
+#
+
+Modify = Modifier
+delete = suppression
+confirmDelete = confirmation de suppression
+
+#
 #errors
 #
 #

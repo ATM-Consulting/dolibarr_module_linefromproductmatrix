@@ -1072,7 +1072,7 @@ class Bloc extends CommonObject
 			if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 				$out .= '<input id="bloc-label-' . $b->id . '" class="inputBloc" type="text"  value="'.dol_htmlentities($b->label, ENT_QUOTES).'" name="bloclabel" data-id="' . $b->id . '">
 						<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
-						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
+						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="'.$this->langs->trans('Modify').'"></span>
 						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
 						</a>';
 			}else{
@@ -1081,7 +1081,7 @@ class Bloc extends CommonObject
 
 			 if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
 					$out .= '<a id="matrix-delete-' . $b->id . '">
-						<span data-id="' . $b->id . '" class="fas fa-trash pictodelete pull-right classfortooltip" style="" title="Supprimer"></span>
+						<span data-id="' . $b->id . '" class="fas fa-trash pictodelete pull-right classfortooltip" style="" title="'.$this->langs->trans('delete').'"></span>
 						</a>
 						</div>';
 			}
@@ -1093,7 +1093,7 @@ class Bloc extends CommonObject
 
 
 		// Part to display a confirm message when delete a bloc OR matrix line/col
-		$out .= '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
+		$out .= '<div id="dialog-confirm" style="display:none" title="'.$this->langs->trans('confirmDelete').'">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>'.$this->langs->trans("msgDeleteAllDataForThisBloc").'</p>
 		</div>';
 
@@ -1261,14 +1261,21 @@ class Bloc extends CommonObject
 						// AFFICHAGE PRODUIT
 						if ($matrixCell->type === -1 ) {
 							if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
-								// htmlname en premier
+
 								$fkproduct = $matrixCell->fk_product ? $matrixCell->fk_product : '';
 								$output .= $this->select_produits($matrixCell->fk_blocHeaderCol, $matrixCell->fk_blocHeaderRow, $fkproduct, 'idprod_' . $matrixCell->fk_blocHeaderCol . '_' . $matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2);
 							}else { // view
 
-								//si un array (id_product qty )  commande , propale ou facture est  passé en params de la fonction
-								// on affiche la qty du produit en cours si existant.
+
+								/**
+								 *si un array (id_product qty )  commande , propale ou facture est  passé en params de la fonction
+								 * on affiche la qty du produit en cours si existant.
+								 *
+								 *
+								 */
+
 								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
+
 									$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : 0 ;
 									$output .= '<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'" placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
 								}else{
