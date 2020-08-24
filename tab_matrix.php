@@ -183,7 +183,7 @@ $TlinesObject = array();
 
  	$obj = new stdclass();
  	$obj->qty = $l->qty;
-	 $TlinesObject[$l->fk_product] = $obj;
+	 $TlinesObjectFPC[$l->fk_product] = $obj;
  	//var_dump("Qty : ".$l->qty . "  -- ".$l->product_label . '--'.$l->product_ref . "-- fk_product : ".$l->fk_product);
  }
 
@@ -194,7 +194,7 @@ $TlinesObject = array();
 				<div class="matrix-container">';
 	if ($blocs) {
 		foreach ($blocs as $b){
-			print $bloc->displayBloc($b,  false,'view' );
+			print $bloc->displayBloc($b,  false,'view', $TlinesObjectFPC);
 		}
 	}
 	print '</div></div>';

@@ -1059,7 +1059,7 @@ class Bloc extends CommonObject
 	 * @param Bloc $b
 	 * @return string
 	 */
-	public function displayBloc(Bloc $b, $reloadBlocView = false, $mode = 'view'){
+	public function displayBloc(Bloc $b, $reloadBlocView = false, $mode = 'view',$TlinesObjectFPC = array()){
 			global $user;
 			$out = '';
 
@@ -1103,7 +1103,7 @@ class Bloc extends CommonObject
 
 
 		$b->fetchMatrix($b);
-		$out .= $b->displayMatrix($mode);
+		$out .= $b->displayMatrix($mode,$TlinesObjectFPC);
 		// FOOTER AJOUTER LIGNE COL
 		if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 			$out .= '<div class="matrix-footer">';
@@ -1216,7 +1216,7 @@ class Bloc extends CommonObject
 	 * @param string $mode view | config
 	 * @return string
 	 */
-	public function displayMatrix($mode = 'view'){
+	public function displayMatrix($mode = 'view',$TlinesObjectFPC = array()){
 
 		global $user;
 		$nbCols = count($this->THCols) + 1;
@@ -1264,8 +1264,17 @@ class Bloc extends CommonObject
 								// htmlname en premier
 								$fkproduct = $matrixCell->fk_product ? $matrixCell->fk_product : '';
 								$output .= $this->select_produits($matrixCell->fk_blocHeaderCol, $matrixCell->fk_blocHeaderRow, $fkproduct, 'idprod_' . $matrixCell->fk_blocHeaderCol . '_' . $matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2);
-							}else {
-								$output .= '<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'" placeholder="'.$this->langs->trans("quantity").'">';
+							}else { // view
+
+								//si un array (id_product qty )  commande , propale ou facture est  passé en params de la fonction
+								// on affiche la qty du produit en cours si existant.
+								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
+									$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : 0 ;
+									$output .= '<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'" placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
+								}else{
+									$output .= '<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'" placeholder="'.$this->langs->trans("quantity").'">';
+								}
+
 							}
 							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
 
