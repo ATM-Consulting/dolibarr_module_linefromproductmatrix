@@ -400,6 +400,7 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 			if ($res > 0) {
 					// On créé un objet $values contenant toutes les infos nécessaires pour l'update de TOUS les éléments FPC
 					$values = prepareValues($l, $qty, $res, $p, true);
+					var_dump($values);
 
 					$errormysql = addLineInObject($obj, $values);
 
@@ -477,7 +478,7 @@ function updateLineInObject (&$currentObj, stdClass $values){
  * @return int $error  1 = OK /  < 0 = erreur
  */
 function addLineInObject (&$currentObj, stdClass $values){
-	return $currentObj->addLine($values->desc, $values->pu, $values->qty, $values->txtva, '', '', $values->idproduct, '', '', '', $values->price_base_type);
+	return $currentObj->addLine($values->desc, $values->pu, $values->qty, $values->txtva, '', '', $values->idproduct, '', '', '', $values->price_base_type, $values->pu_ttc);
 }
 
 /**
@@ -500,8 +501,16 @@ function deleteLineOfObject (&$currentObj, $idLine){
 	}
 }
 
+/**
+ * Création d'objet contenant les valeurs nécessaires au CRU des objets FPC
+ * @param      $currentLine
+ * @param      $qty
+ * @param      $res
+ * @param      $product
+ * @param bool $add
+ * @return stdClass
+ */
 function prepareValues($currentLine, $qty, $res, $product, $add = false) {
-
 	$values = new stdClass();
 	$values->idproduct = $product->id ? $product->id : null;
 	$values->rowid = $currentLine->id;
@@ -513,6 +522,7 @@ function prepareValues($currentLine, $qty, $res, $product, $add = false) {
 		$values->desc = $product->label;
 		$values->remise_percent = $product->remise_percent;
 		$values->txtva = $product->tva_tx;
+		$values->pu_ttc = $res->price_ttc; // Obligatoire pour que s'affiche le prix HT dans la fiche du FPC
 	}
 	else {
 		$values->desc = $currentLine->desc;
