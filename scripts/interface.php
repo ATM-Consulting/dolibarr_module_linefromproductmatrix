@@ -337,6 +337,7 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 	if  (empty($idproduct)){
 		$jsonResponse->error = $langs->trans("NoProductError");
 	}
+
 	if (!$jsonResponse->error) {
 
 		$obj = null;
@@ -392,10 +393,7 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 			if ($res > 0) {
 					// On créé un objet $values contenant toutes les infos nécessaires pour l'update de TOUS les éléments FPC
 					$values = prepareValues($l, $qty, $res, $p, true);
-					var_dump($values);
-
 					$errormysql = addLineInObject($obj, $values, $obj->element);
-
 			} else {
 				$error++;
 			}

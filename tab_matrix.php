@@ -189,7 +189,6 @@ if ($id > 0 || !empty($ref)) {
  }
 
 	// tiny fpc : get id and element from current fpc
-
  	$fpc_obj = new stdClass();
 	$fpc_obj->id = $object->id;
 	$fpc_obj->element = $object->element;
