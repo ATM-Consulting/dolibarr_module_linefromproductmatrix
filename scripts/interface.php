@@ -200,8 +200,6 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 
 }
 
-
-
 // Add a Matrix Line or Col
 if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	// On sélectionne le fk_rank MAX
@@ -281,8 +279,6 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 
 }
 
-
-
 // MODIFICATION LABEL HEADERS
 if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabelHeader' ) {
 
@@ -294,7 +290,6 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
 		$jsonResponse->error = $langs->trans("errorUpdateBlocHead");
 	}
 }
-
 
 //***  CRUD SELECT PRODUCT   ***//
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselect' ) {
@@ -335,12 +330,10 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
 //updateQtyProduct
 if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'updateQtyProduct' ) {
 
-
 	if ($qty < 0 ) {
 		$jsonResponse->error = $langs->trans("NegativeNumberError");
 		$jsonResponse->currentQty = $current_qty;
 	}
-
 	if  (empty($idproduct)){
 		$jsonResponse->error = $langs->trans("NoProductError");
 	}
@@ -368,6 +361,7 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 		$p->fetch($idproduct);
 
 		$updated = false;
+
 		// Itération sur les lignes de Facture/Propal/Commande
 		foreach ($obj->lines as $l) {
 
@@ -389,9 +383,7 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 							$updated = true;
 							break;
 					}
-
 				}
-
 			}
 		}
 		// On ajoute la ligne, si elle n'est pas présente dans le current FPC
@@ -402,7 +394,7 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 					$values = prepareValues($l, $qty, $res, $p, true);
 					var_dump($values);
 
-					$errormysql = addLineInObject($obj, $values);
+					$errormysql = addLineInObject($obj, $values, $obj->element);
 
 			} else {
 				$error++;
@@ -411,41 +403,10 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 	}
 
 
-
-
 }
 $db->close();    // Close $db database opened handler
 $activateDebugLog = GETPOST('activatedebug','int');
 print json_encode($jsonResponse, JSON_PRETTY_PRINT);
-
-
-function addColRow($db,$type,$user,$errormysql,$jsonResponse,$reloadBlocView,$langs){
-	$sql = 'SELECT MAX(fk_rank) AS m FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 1 AND fk_bloc = '.$idBloc;
-	// Méthode historique
-	$resql = $db->query($sql);
-	$result = $db->fetch_row($resql);
-	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
-
-
-	// On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
-	$h = new BlocHead($db);
-	$h->fk_bloc = $idBloc;
-	$h->date_creation = date('Y-m-d H:m:s');
-	$h->fk_user_creat = 1;
-	$h->fk_rank = $fk_rank_increment;
-	$h->type = intval($type);
-	$res =  $h->create($user);
-
-	if ($res == $errormysql){
-		$jsonResponse->error =  $langs->trans("errorCreateBlocHead");
-	}
-
-
-	$bloc = new Bloc($db);
-	$bloc->fetch($idBloc);
-
-	return $jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
-}
 
 
 /**
@@ -477,8 +438,56 @@ function updateLineInObject (&$currentObj, stdClass $values){
  * @param stdClass $values
  * @return int $error  1 = OK /  < 0 = erreur
  */
-function addLineInObject (&$currentObj, stdClass $values){
-	return $currentObj->addLine($values->desc, $values->pu, $values->qty, $values->txtva, '', '', $values->idproduct, '', '', '', $values->price_base_type, $values->pu_ttc);
+function addLineInObject (&$currentObj, stdClass $values, $element){
+	global $OBJECT_COMMANDE, $OBJECT_FACTURE, $OBJECT_PROPAL;
+
+	if($element == $OBJECT_COMMANDE) {
+		return $currentObj->addLine(
+			$values->desc,
+			$values->pu,
+			$values->qty,
+			$values->txtva,
+			'',
+			'',
+			$values->idproduct,
+			'',
+			'',
+			'',
+			$values->price_base_type,
+			$values->pu_ttc);
+	}
+	if($element == $OBJECT_FACTURE) {
+		return $currentObj->addLine(
+			$values->desc,
+			$values->pu,
+			$values->qty,
+			$values->txtva,
+			'',
+			'',
+			$values->idproduct,
+			'',
+			'',
+			'',
+			0,
+			0,
+			'',
+			$values->price_base_type,
+			$values->pu_ttc);
+	}
+	if($element == $OBJECT_PROPAL) {
+		return $currentObj->addLine(
+			$values->desc,
+			$values->pu,
+			$values->qty,
+			$values->txtva,
+			'',
+			'',
+			$values->idproduct,
+			'',
+			$values->price_base_type,
+			$values->pu_ttc);
+	}
+
 }
 
 /**
