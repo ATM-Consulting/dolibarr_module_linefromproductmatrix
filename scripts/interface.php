@@ -368,7 +368,9 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 		$p->fetch($idproduct);
 
 		$updated = false;
+		// itération sur les lignes de commande
 		foreach ($obj->lines as $l) {
+
 			if ($l->fk_product == $idproduct) {
 
 				$res = $db->getRow("select price FROM llx_product_price WHERE fk_product = " . $idproduct . ' ORDER BY date_price DESC');
@@ -398,9 +400,11 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 								$l->type,
 								$l->fk_parent_line,
 								$l->skip_update_total);
+
+							$updated = true;
+							break;
 						}
-						$updated = true;
-						break;
+
 					}
 
 				}

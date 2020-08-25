@@ -1292,8 +1292,18 @@ class Bloc extends CommonObject
 								}else{
 
 									$output .= '<span>'. $url .'</span>';
-									$output .= '<input class="classfortooltip inputNumber" data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'" data-fpc-element="'.$this->get_fpc_element($fpc_object).'" data-fk-product="'.$matrixCell->fk_product.'" type="number" id="quantity-input" name="quantity" min="0"  placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'" >';
-									//$output .= '<input class="classfortooltip inputNumber " data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'" data-fpc-element="'.$this->get_fpc_element($fpc_object).'"  type="number" id="quantity-input" name="quantity" min="0" title="--" placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
+									$output .= '<input
+												id="quantity-input"
+												class="classfortooltip
+												inputNumber"
+												data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'"
+												data-fpc-element="'.$this->get_fpc_element($fpc_object).'"
+												data-fk-product="'.$matrixCell->fk_product.'"
+												type="number"
+												name="quantity"
+												min="0"
+												placeholder="'.$this->langs->trans("quantity").'"
+												value="'. $qt.'" >';
 								}
 
 							}

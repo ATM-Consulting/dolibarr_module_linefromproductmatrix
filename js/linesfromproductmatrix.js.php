@@ -378,7 +378,7 @@ $(document).ready(function() {
 					// on entre < 0 sur une cellule avec produit avec qty préexistante
 					if (data.currentQty){
 						self.val(data.currentQty);
-					}else{ // on entre < 0 sur une cellule avec produit sans qty préexistante
+					}else{ // on entre < 0 sur une cellule avec ou sans produit sans qty préexistante
 						self.val('');
 					}
 
