@@ -82,6 +82,8 @@ errorDeleteProduct      = erreur suppression Produit.
 emptyLabelHeaderError   = Le label ne doit pas être vide.
 MaxColError             = Impossible de créer une nouvelle colonne.  Nombre maximum 3
 MaxBlocError            = Impossible de créer un nouveau Bloc.  Nombre maximum 3
+NegativeNumberError     = Nombre négatif impossible.
+NoProductError          = Il n'y a pas de produit /service affecté pour cette cellule. Veuillez l'ajouter via la configuration.
 #
 # traductions class Bloc
 #

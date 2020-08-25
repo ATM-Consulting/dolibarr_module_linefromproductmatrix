@@ -339,10 +339,14 @@ $(document).ready(function() {
 	 */
 	$(document).on("change", ".inputNumber", function () {
 
+
+
+
 		let idproduct  = $(this).attr('data-fk-product');
 		let fk_fpc_object = $(this).attr('data-fk-fpc-object');
 		let fpc_element = $(this).attr('data-fpc-element');
-
+		let currentQty= $(this).attr('data-currentQty');
+		var  self = $(this);
 		let qty = $(this).val();
 		let data =
 			{
@@ -350,6 +354,7 @@ $(document).ready(function() {
 				fpc_element : fpc_element,
 				idproduct: idproduct,
 				qty :qty,
+				currentQty : currentQty,
 				action: "updateQtyProduct"
 			}
 
@@ -360,12 +365,24 @@ $(document).ready(function() {
 			data: data,
 			success: function (data) {
 				if(!data.error) {
+
+					if (self.val() == 0) {self.val('');}
+
 					self.css("background-color", "green");
 					setTimeout(function () {
 						self.css("background-color", '#fff');
 					}, 800);
+
 				}else {
 					matrixSetMessage(data.error, "error");
+					// on entre < 0 sur une cellule avec produit avec qty préexistante
+					if (data.currentQty){
+						self.val(data.currentQty);
+					}else{ // on entre < 0 sur une cellule avec produit sans qty préexistante
+						self.val('');
+					}
+
+
 				}
 			},
 			error: function (err) {

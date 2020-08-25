@@ -187,8 +187,9 @@ if ($id > 0 || !empty($ref)) {
 	 $TlinesObjectFPC[$l->fk_product] = $obj;
 
  }
- 	var_dump($TlinesObjectFPC);
+
 	// tiny fpc : get id and element from current fpc
+
  	$fpc_obj = new stdClass();
 	$fpc_obj->id = $object->id;
 	$fpc_obj->element = $object->element;

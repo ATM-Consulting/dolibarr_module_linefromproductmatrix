@@ -29,6 +29,9 @@ $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other"
 //---------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------
+$OBJECT_COMMANDE = "commande";
+$OBJECT_PROPAL = "propal";
+$OBJECT_FACTURE = "facture";
 
 $label 			= GETPOST('label');
 $idHead 		= GETPOST('idhead');
@@ -46,6 +49,7 @@ $reloadBlocView = GETPOST('reloadBlocView');
 $qty 			= GETPOST('qty');
 $fk_fpc_object 	= GETPOST('fk_fpc_object');
 $fpc_element 	= GETPOST('fpc_element');
+$current_qty 	= GETPOST('currentQty');
 
 $errormysql = -1;
 $jsonResponse = new stdClass();
@@ -331,102 +335,121 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
 //updateQtyProduct
 if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'updateQtyProduct' ) {
 
-//	if ($element == 'propal') {
-//		require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
-//	}
-//	if ($element == 'commande') {
-//		require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
-//	}
-//	if ($element == 'facture') {
-//		require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-//	}
 
-	$obj = null;
-  if ($fpc_element == "commande"){
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
- 	$obj = new Commande($db);
- 	//$classElement = "OrderLine";
-  }
-  if ($fpc_element == "propal"){
-	  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-		$obj = new Propal($db);
-	  	//$classElement = "PropaleLigne";
-  }
-  if ($fpc_element == "facture"){
-	  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$obj = new Facture($db);
-	   // $classElement = "???";
-  }
+	if ($qty < 0 ) {
+		$jsonResponse->error = $langs->trans("NegativeNumberError");
+		$jsonResponse->currentQty = $current_qty;
+	}
 
-  $obj->fetch($fk_fpc_object);
+	if  (empty($idproduct)){
+		$jsonResponse->error = $langs->trans("NoProductError");
+	}
+	if (!$jsonResponse->error) {
 
-  $p = new Product($db);
-  $p->fetch($idproduct);
+		$obj = null;
+		if ($fpc_element == $OBJECT_COMMANDE) {
+			require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+			$obj = new Commande($db);
 
- $updated = false;
-  foreach ($obj->lines as $l){
-  	if ($l->fk_product == $idproduct ){
-  		var_dump($l->id);
-  		$res =  $db->getRow("select price FROM llx_product_price WHERE fk_product = ".$idproduct . ' ORDER BY date_price DESC');
-  		if ($res > 0){
+		}
+		if ($fpc_element == $OBJECT_PROPAL) {
+			require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+			$obj = new Propal($db);
 
-			if($obj->element == "commande"){
-				/** @var Commande $obj */
-				$obj->updateline(
-					$l->id,
-					$l->desc ,
-					$res->price ,
-					$qty,
-					$l->remise_percent,
-					$l->tva_tx,
-					$l->localtax1_tx,
-					$l->localtax2_tx,
-					$res->price,
-					$l->info_bits,
-					null,
-					null,
-					$l->type,
-					$l->fk_parent_line,
-					$l->skip_update_total);
+		}
+		if ($fpc_element == $OBJECT_FACTURE) {
+			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+			$obj = new Facture($db);
+		}
+
+		$obj->fetch($fk_fpc_object);
+
+		$p = new Product($db);
+		$p->fetch($idproduct);
+
+		$updated = false;
+		foreach ($obj->lines as $l) {
+			if ($l->fk_product == $idproduct) {
+
+				$res = $db->getRow("select price FROM llx_product_price WHERE fk_product = " . $idproduct . ' ORDER BY date_price DESC');
+				if ($res > 0) {
+
+					// on cherche à supprimer la ligne active
+					if ($qty == 0) {
+						$obj->deleteline($user, $l->id);
+						$updated = true;
+						break;
+					} else {
+						if ($obj->element == $OBJECT_COMMANDE) {
+							/** @var Commande $obj */
+							$obj->updateline(
+								$l->id,
+								$l->desc,
+								$res->price,
+								$qty,
+								$l->remise_percent,
+								$l->tva_tx,
+								$l->localtax1_tx,
+								$l->localtax2_tx,
+								$res->price,
+								$l->info_bits,
+								null,
+								null,
+								$l->type,
+								$l->fk_parent_line,
+								$l->skip_update_total);
+						}
+						$updated = true;
+						break;
+					}
+
+				}
+
+			}
+		}
+		// on ajoute si pas present dans le current fpc
+		if (!$updated) {
+			if ($res > 0) {
+				if ($obj->element == $OBJECT_COMMANDE) {
+
+					$desc = $p->label;
+					// prix unitaire du produit
+					$res = $db->getRow("select price , price_ttc  FROM llx_product_price WHERE fk_product = " . $idproduct . ' ORDER BY date_price DESC');
+					$pu_ht = $res->price;
+					$txtva = $p->tva_tx;
+					$txlocaltax1 = $p->localtax1_tx;
+					$txlocaltax2 = $p->localtax2_tx;
+					$remise_percent = 0; // discountrule
+					$info_bits = 0;
+					$fk_remise_except = 0;
+					$price_base_type = $p->price_base_type;
+					$pu_ttc = $res->price_ttc;
+
+
+					$res2 = $obj->addline($desc,
+						$pu_ht,
+						$qty,
+						$txtva,
+						$txlocaltax1,
+						$txlocaltax2,
+						$idproduct,
+						$remise_percent,
+						$info_bits,
+						$fk_remise_except,
+						$price_base_type,
+						$pu_ttc);
+
+					if ($res2 < 0) {
+						$error++;
+					}
+				}
+			} else {
+				$error++;
 			}
 
 
-			$updated = true;
-			break;
 		}
-
 	}
-  }
- // on ajoute si pas present dans le current fpc
- if (!$updated){
-
-	 $desc = $p->label;
-	 // prix unitaire du produit
-	 $res =  $db->getRow("select price , price_ttc  FROM llx_product_price WHERE fk_product = ".$idproduct . ' ORDER BY date_price DESC');
-	 $pu_ht = $res->price;
-	 $txtva = $p->tva_tx;
-	 $txlocaltax1 = $p->localtax1_tx;
-	 $txlocaltax2 = $p->localtax2_tx;
-	 $remise_percent = 0; // discountrule
-	 $info_bits = 0;
-	 $fk_remise_except = 0;
-	 $price_base_type = $p->price_base_type;
-	 $pu_ttc = $res->price_ttc;
-
-
-	 $res2 = $obj->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $idproduct, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc);
-	 var_dump($obj);
-	 if ($res2 < 0) {
-			 $error++;
-			 var_dump("e");
-	 }
-
-
-
-	 // create
-
- }
-
 
 
 

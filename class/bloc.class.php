@@ -1270,16 +1270,30 @@ class Bloc extends CommonObject
 								 *
 								 *
 								 */
-
+								$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : '' ;
+								$url = $this->getNomUrlForProduct($matrixCell->fk_product);
+								// ligne commande non vide  && le produit est present dans la config matrice
 								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
-									$url = $this->getNomUrlForProduct($matrixCell->fk_product);
 
-									$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : '' ;
 									$output .= '<span>'. $url .'</span>';
-									$output .= '<input class="classfortooltip inputNumber" data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'" data-fpc-element="'.$this->get_fpc_element($fpc_object).'" data-fk-product="'.$matrixCell->fk_product.'" type="number" id="quantity-input" name="quantity" min="0"  placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
+									$output .= '<input
+												id="quantity-input"
+												class="classfortooltip inputNumber"
+												data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'"
+												data-fpc-element="'.$this->get_fpc_element($fpc_object).'"
+												data-fk-product="'.$matrixCell->fk_product.'"
+												data-currentQty ="'.$qt.'"
+												type="number"
+												name="quantity"
+												min="0"
+												placeholder="'.$this->langs->trans("quantity").'"
+												value="'. $qt.'">';
 
 								}else{
-									$output .= '<input class="classfortooltip inputNumber " type="number" id="quantity-input" name="quantity" min="0" title="--" placeholder="'.$this->langs->trans("quantity").'">';
+
+									$output .= '<span>'. $url .'</span>';
+									$output .= '<input class="classfortooltip inputNumber" data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'" data-fpc-element="'.$this->get_fpc_element($fpc_object).'" data-fk-product="'.$matrixCell->fk_product.'" type="number" id="quantity-input" name="quantity" min="0"  placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'" >';
+									//$output .= '<input class="classfortooltip inputNumber " data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'" data-fpc-element="'.$this->get_fpc_element($fpc_object).'"  type="number" id="quantity-input" name="quantity" min="0" title="--" placeholder="'.$this->langs->trans("quantity").'" value="'. $qt.'">';
 								}
 
 							}
