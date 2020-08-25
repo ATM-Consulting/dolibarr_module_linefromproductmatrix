@@ -368,7 +368,7 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 		$p->fetch($idproduct);
 
 		$updated = false;
-		// itération sur les lignes de commande
+		// Itération sur les lignes de Facture/Propal/Commande
 		foreach ($obj->lines as $l) {
 
 			if ($l->fk_product == $idproduct) {
@@ -376,82 +376,36 @@ if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'update
 				$res = $db->getRow("select price FROM llx_product_price WHERE fk_product = " . $idproduct . ' ORDER BY date_price DESC');
 				if ($res > 0) {
 
-					// on cherche à supprimer la ligne active
+					// On cherche à supprimer la ligne active
 					if ($qty == 0) {
-						$obj->deleteline($user, $l->id);
+						$errormysql = deleteLineOfObject($obj, $l->id);
 						$updated = true;
 						break;
 					} else {
-						if ($obj->element == $OBJECT_COMMANDE) {
-							/** @var Commande $obj */
-							$obj->updateline(
-								$l->id,
-								$l->desc,
-								$res->price,
-								$qty,
-								$l->remise_percent,
-								$l->tva_tx,
-								$l->localtax1_tx,
-								$l->localtax2_tx,
-								$res->price,
-								$l->info_bits,
-								null,
-								null,
-								$l->type,
-								$l->fk_parent_line,
-								$l->skip_update_total);
-
+							// On créé un objet $values contenant toutes les infos nécessaires pour l'update de TOUS les éléments FPC
+							$values = prepareValues($l, $qty, $res, $p);
+							// On update
+							$errormysql = updateLineInObject($obj, $values);
 							$updated = true;
 							break;
-						}
-
 					}
 
 				}
 
 			}
 		}
-		// on ajoute si pas present dans le current fpc
+		// On ajoute la ligne, si elle n'est pas présente dans le current FPC
 		if (!$updated) {
+			$res = $db->getRow("select price , price_ttc  FROM llx_product_price WHERE fk_product = " . $idproduct . ' ORDER BY date_price DESC');
 			if ($res > 0) {
-				if ($obj->element == $OBJECT_COMMANDE) {
+					// On créé un objet $values contenant toutes les infos nécessaires pour l'update de TOUS les éléments FPC
+					$values = prepareValues($l, $qty, $res, $p, true);
 
-					$desc = $p->label;
-					// prix unitaire du produit
-					$res = $db->getRow("select price , price_ttc  FROM llx_product_price WHERE fk_product = " . $idproduct . ' ORDER BY date_price DESC');
-					$pu_ht = $res->price;
-					$txtva = $p->tva_tx;
-					$txlocaltax1 = $p->localtax1_tx;
-					$txlocaltax2 = $p->localtax2_tx;
-					$remise_percent = 0; // discountrule
-					$info_bits = 0;
-					$fk_remise_except = 0;
-					$price_base_type = $p->price_base_type;
-					$pu_ttc = $res->price_ttc;
+					$errormysql = addLineInObject($obj, $values);
 
-
-					$res2 = $obj->addline($desc,
-						$pu_ht,
-						$qty,
-						$txtva,
-						$txlocaltax1,
-						$txlocaltax2,
-						$idproduct,
-						$remise_percent,
-						$info_bits,
-						$fk_remise_except,
-						$price_base_type,
-						$pu_ttc);
-
-					if ($res2 < 0) {
-						$error++;
-					}
-				}
 			} else {
 				$error++;
 			}
-
-
 		}
 	}
 
@@ -492,3 +446,79 @@ function addColRow($db,$type,$user,$errormysql,$jsonResponse,$reloadBlocView,$la
 	return $jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
 }
 
+
+/**
+ * Update une ligne dans un Objet de type FPC
+ * @param          $currentObj
+ * @param stdClass $values
+ * @return int $error  1 = OK /  < 0 = erreur
+ */
+function updateLineInObject (&$currentObj, stdClass $values){
+	global $OBJECT_FACTURE, $OBJECT_PROPAL, $OBJECT_COMMANDE;
+
+	/** @var Commande $currentObj */
+	if ($currentObj->element == $OBJECT_COMMANDE) {
+		return $currentObj->updateline($values->rowid, $values->desc, $values->pu, $values->qty, $values->remise_percent, $values->txtva);
+	}
+	/** @var Propal $currentObj */
+	if ($currentObj->element == $OBJECT_PROPAL) {
+		 return $currentObj->updateline($values->rowid, $values->pu, $values->qty, $values->remise_percent, $values->txtva);
+	}
+	/** @var Facture $currentObj */
+	if ($currentObj->element == $OBJECT_FACTURE)  {
+		 return $currentObj->updateline($values->rowid, $values->desc, $values->pu, $values->qty, $values->remise_percent, $values->date_start, $values->date_end, $values->txtva);
+	}
+}
+
+/**
+ * Ajouter une ligne dans un Objet de type FPC
+ * @param          $currentObj
+ * @param stdClass $values
+ * @return int $error  1 = OK /  < 0 = erreur
+ */
+function addLineInObject (&$currentObj, stdClass $values){
+	return $currentObj->addLine($values->desc, $values->pu, $values->qty, $values->txtva, '', '', $values->idproduct, '', '', '', $values->price_base_type);
+}
+
+/**
+ * Supprimer une ligne dans un Objet de type FPC
+ * @param        $currentObj
+ * @param int    $idLine
+ * @return int $error  1 = OK /  < 0 = erreur
+ */
+function deleteLineOfObject (&$currentObj, $idLine){
+	global $OBJECT_COMMANDE, $user;
+
+	if ($currentObj->element == $OBJECT_COMMANDE) {
+		/** @var Commande $currentObj */
+		return $currentObj->deleteLine($user, $idLine);
+
+	}
+	else {
+		/** @var Facture $currentObj */
+		return $currentObj->deleteLine($idLine);
+	}
+}
+
+function prepareValues($currentLine, $qty, $res, $product, $add = false) {
+
+	$values = new stdClass();
+	$values->idproduct = $product->id ? $product->id : null;
+	$values->rowid = $currentLine->id;
+	$values->pu = $res->price;
+	$values->qty = $qty;
+	$values->date_start = null;
+	$values->date_end = null;
+	if ($add) {
+		$values->desc = $product->label;
+		$values->remise_percent = $product->remise_percent;
+		$values->txtva = $product->tva_tx;
+	}
+	else {
+		$values->desc = $currentLine->desc;
+		$values->remise_percent = $currentLine->remise_percent;
+		$values->txtva = $currentLine->tva_tx;
+	}
+
+	return $values;
+}
