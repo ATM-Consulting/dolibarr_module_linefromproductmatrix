@@ -364,6 +364,7 @@ $(document).ready(function() {
 			dataType: "json",
 			data: data,
 			success: function (data) {
+				console.log(data);
 				if(!data.error) {
 
 					if (self.val() == 0) {self.val('');}
@@ -375,6 +376,7 @@ $(document).ready(function() {
 
 				}else {
 					matrixSetMessage(data.error, "error");
+
 					// on entre < 0 sur une cellule avec produit avec qty préexistante
 					if (data.currentQty){
 						self.val(data.currentQty);
