@@ -1246,7 +1246,11 @@ class Bloc extends CommonObject
 								$output .= '<a class="matrix-line-delete classfortooltip" data-type="' . $matrixCell->type . '" data-blocid="' . $this->id . '" data-id="' . $matrixCell->headId . '" title="'.$this->langs->trans("tooltipDeleteLine").'"><i class="fas fa-trash deleteHead"></i></a>';
 							}
 						}else {
-								$output  .='<div class="bloc-table-cell">';
+							  if ($matrixCell->fk_product){
+								  $output  .='<div class="bloc-table-cell">';
+							  }else{
+								  $output  .='<div class="bloc-table-cell greyCell">';
+							  }
 							}
 						}
 
@@ -1288,22 +1292,6 @@ class Bloc extends CommonObject
 												min="0"
 												placeholder="'.$this->langs->trans("quantity").'"
 												value="'. $qt.'">';
-
-								}else{
-
-									$output .= '<span>'. $url .'</span>';
-									$output .= '<input
-												id="quantity-input"
-												class="classfortooltip
-												inputNumber"
-												data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'"
-												data-fpc-element="'.$this->get_fpc_element($fpc_object).'"
-												data-fk-product="'.$matrixCell->fk_product.'"
-												type="number"
-												name="quantity"
-												min="0"
-												placeholder="'.$this->langs->trans("quantity").'"
-												value="'. $qt.'" >';
 								}
 
 							}

@@ -203,3 +203,8 @@ input.inputBloc {
 	background: rgba(255,255,255,0.1);
 	width: calc(100% - 40px);
 }
+
+.greyCell{
+	background-color: #f7f7f7;
+	width = 250px!important;
+}
