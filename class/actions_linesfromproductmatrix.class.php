@@ -73,25 +73,7 @@ class ActionsLinesfromproductmatrix
 	 * @param $action
 	 * @param $hookmanager
 	 */
-	public function formObjectOptions($parameters, &$object, &$action, $hookmanager){
-
-		global $langs;
-/*
-		$sql = "SELECT count(*) as c FROM ".MAIN_DB_PREFIX."musiqueservice_trainingsession WHERE fk_product = ".$object->id;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if($resql > 0){
-				$obj = $this->db->fetch_object($resql);
-				print '<td>';
-				print $langs->trans('NbSessionForProduct');
-				print '<td>';
-				print $obj->c.'<td>';
-
-			}
-		}
-*/
-	}
+	public function formObjectOptions($parameters, &$object, &$action, $hookmanager){}
 	/**
 	 *
 	 * @param $parameters
@@ -100,33 +82,12 @@ class ActionsLinesfromproductmatrix
 	 * @param $hookmanager
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager){
-		var_dump($action);
 
 		global $conf,$langs;
-		if ($action == 'delete'){
-			var_dmp('try to delete.');
-		}
+		if ($action == 'delete'){}
 
-		if ($action == 'confirm_delete'){
-			/*
-			$sql = "SELECT count(*) as c FROM ".MAIN_DB_PREFIX."musiqueservice_trainingsession WHERE fk_product = ".$object->id;
-
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				if($resql > 0 ){
-					$obj = $this->db->fetch_object($resql);
-					if ($obj->c > 0){
-						setEventMessage($obj->c. " Sessions sont liées à ce produits. Suppréssion Impossible.");
-						header('Location: ' . DOL_URL_ROOT . '/product/card.php?id='.$object->id.'&action=ask_delete_modmusiquechild');
-						exit;
-					}
-				}
-			}
-		*/
-		}
+		if ($action == 'confirm_delete'){}
 		if ($action == 'confirm_delete_childs'){
-
 			$action="confirm_delete";
 		}
 

@@ -19,31 +19,53 @@ require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/matrix.cl
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/bloc.class.php';
 require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/blochead.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/custom/linesfromproductmatrix/class/ControllerLines.class.php';
+
 // Load traductions files requiredby by page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", "other", 'main'));
 
 
 
-//---------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------
 
-$label = GETPOST('label');
-$idHead = GETPOST('idhead');
-$idBloc = GETPOST('id');
-$type = GETPOST('blocheadType');
-$idproduct = GETPOST('idproduct');
-$action = GETPOST('action');
-$headerColId = GETPOST('blocheadercolid');
-$headerRowId = GETPOST('blocheaderrowid');
-$idMatrix = GETPOST('idMatrix');
-$addLineMatrix = GETPOST('addLineMatrix');
-$currentHead = GETPOST('currentHead');
-$currentType = GETPOST('currentType');
+$OBJECT_COMMANDE = "commande";
+$OBJECT_PROPAL = "propal";
+$OBJECT_FACTURE = "facture";
+
+$label 			= GETPOST('label');
+$idHead 		= GETPOST('idhead');
+$idBloc 		= GETPOST('id');
+$type 			= GETPOST('blocheadType');
+$idproduct 		= GETPOST('idproduct');
+$action 		= GETPOST('action');
+$headerColId 	= GETPOST('blocheadercolid');
+$headerRowId 	= GETPOST('blocheaderrowid');
+$idMatrix 		= GETPOST('idMatrix');
+$addLineMatrix 	= GETPOST('addLineMatrix');
+$currentHead 	= GETPOST('currentHead');
+$currentType	= GETPOST('currentType');
 $reloadBlocView = GETPOST('reloadBlocView');
+$qty 			= GETPOST('qty');
+$fk_fpc_object 	= GETPOST('fk_fpc_object');
+$fpc_element 	= GETPOST('fpc_element');
+$current_qty 	= GETPOST('currentQty');
+
 $errormysql = -1;
 $jsonResponse = new stdClass();
+
+if ($fpc_element == $OBJECT_COMMANDE) {
+			require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+			$obj = new Commande($db);
+
+}
+if ($fpc_element == $OBJECT_PROPAL) {
+			require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+			$obj = new Propal($db);
+
+}
+if ($fpc_element == $OBJECT_FACTURE) {
+			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+			$obj = new Facture($db);
+}
 
 
 // Modify a bloc's label
@@ -191,8 +213,6 @@ if (isset($currentHead) && isset($action) && $action == 'deleteHead' ) {
 
 }
 
-
-
 // Add a Matrix Line or Col
 if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	// On sélectionne le fk_rank MAX
@@ -272,8 +292,6 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 
 }
 
-
-
 // MODIFICATION LABEL HEADERS
 if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabelHeader' ) {
 
@@ -285,7 +303,6 @@ if (isset($idHead) && isset($label) && isset($action) && $action == 'updatelabel
 		$jsonResponse->error = $langs->trans("errorUpdateBlocHead");
 	}
 }
-
 
 //***  CRUD SELECT PRODUCT   ***//
 if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselect' ) {
@@ -322,36 +339,18 @@ if (isset($idBloc) && isset($label) && isset($action) && $action == 'updateselec
 }
 
 
+//**  UPDATE QTY PRODUCT VIEW FORM */
+//updateQtyProduct
+if (isset($fk_fpc_object) && isset($qty) && isset($action) && $action == 'updateQtyProduct' ) {
+
+	$c = new ControllerLines($db,$langs);
+	$c->init($fk_fpc_object,$qty,$current_qty,$idproduct,$fpc_element,$obj);
+	$c->processInput();
+	$jsonResponse = $c->jsonResponse;
+	$c = null;
+}
+
+
 $db->close();    // Close $db database opened handler
 $activateDebugLog = GETPOST('activatedebug','int');
 print json_encode($jsonResponse, JSON_PRETTY_PRINT);
-
-
-function addColRow($db,$type,$user,$errormysql,$jsonResponse,$reloadBlocView,$langs){
-	$sql = 'SELECT MAX(fk_rank) AS m FROM '.MAIN_DB_PREFIX.'linesfromproductmatrix_blochead WHERE type = 1 AND fk_bloc = '.$idBloc;
-	// Méthode historique
-	$resql = $db->query($sql);
-	$result = $db->fetch_row($resql);
-	$fk_rank_increment = ++$result[0] ;  // On incrémente le fk_rank
-
-
-	// On insert une ligne avec le bon type  et les infos relatives au bloc (fk_bloc) et on lui passe un fk_rank à "fk_rank maximum + 1"
-	$h = new BlocHead($db);
-	$h->fk_bloc = $idBloc;
-	$h->date_creation = date('Y-m-d H:m:s');
-	$h->fk_user_creat = 1;
-	$h->fk_rank = $fk_rank_increment;
-	$h->type = intval($type);
-	$res =  $h->create($user);
-
-	if ($res == $errormysql){
-		$jsonResponse->error =  $langs->trans("errorCreateBlocHead");
-	}
-
-
-	$bloc = new Bloc($db);
-	$bloc->fetch($idBloc);
-
-	return $jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
-}
-

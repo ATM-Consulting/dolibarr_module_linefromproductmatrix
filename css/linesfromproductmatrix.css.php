@@ -132,6 +132,7 @@ input.inputBloc {
 	width: 100%;
 }
 
+
 .bloc-table-row {
 	display: table-row;
 }
@@ -139,6 +140,8 @@ input.inputBloc {
 .bloc-table-row:hover:not(:first-child) {
 	background:  var(--colorbacklinepairhover) !important;
 }
+
+
 
 .bloc-table-cell, .bloc-table-head {
 	border-left: 1px solid #999999;
@@ -182,6 +185,16 @@ input.inputBloc {
 
 }
 
+.classfortooltip.inputNumber{
+
+	bottom: 5px;
+	right: 5px;
+	float: right;
+	text-align: right;
+	margin-left: 30px;
+	width: 50%;
+
+}
 .fa-grip-lines.--rotate90neg{
 	transform: rotate(-90deg);
 }

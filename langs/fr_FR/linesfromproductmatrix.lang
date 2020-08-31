@@ -57,6 +57,14 @@ MyWidget = Mon widget
 MyWidgetDescription = Description de mon widget
 
 #
+# Msg Buttons
+#
+
+Modify = Modifier
+delete = suppression
+confirmDelete = confirmation de suppression
+
+#
 #errors
 #
 #
@@ -74,6 +82,9 @@ errorDeleteProduct      = erreur suppression Produit.
 emptyLabelHeaderError   = Le label ne doit pas être vide.
 MaxColError             = Impossible de créer une nouvelle colonne.  Nombre maximum 3
 MaxBlocError            = Impossible de créer un nouveau Bloc.  Nombre maximum 3
+NegativeNumberError     = Nombre négatif impossible.
+NoProductError          = Il n'y a pas de produit /service affecté pour cette cellule. Veuillez l'ajouter via la configuration.
+CallFunctionNameError   = L'objet courant ne peut pas appeler la fonction prepare_head. Contactez votre administrateur system.
 #
 # traductions class Bloc
 #

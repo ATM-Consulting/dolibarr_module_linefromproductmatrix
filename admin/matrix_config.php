@@ -113,11 +113,6 @@ if (empty($reshook)) {
  *
  * Put here all code to build page
  */
-
-
-
-
-
 $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
@@ -129,10 +124,10 @@ $btnAdd = '<a class="btnTitle btnTitlePlus" style="background-color:white" href=
 		<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">Créer un bloc</span>
 		</a>';
 
-print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), $btnAdd, 'object_linesfromproductmatrix@linesfromproductmatrix');
+print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), '', 'object_linesfromproductmatrix@linesfromproductmatrix');
 
 
-print '<fieldset id="add-block-wrapper" style="display:none;">
+print '<fieldset id="add-block-wrapper">
 			<legend>'.$langs->trans('AddAMatrixBlock').'</legend>
 			<div class="label-form">
 				<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">

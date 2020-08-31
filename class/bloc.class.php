@@ -1041,25 +1041,19 @@ class Bloc extends CommonObject
 
 		return $error;
 	}
-
-	/**
-	 * Load specific bloc
-	 * @param $id
-	 */
-	public function fetchBloc($id){
-
-		$b = new Bloc($this->db);
-		$b->fetch($id);
-		$this->fetchMatrix($b);
-	}
+	//******************************************************************************************************************
 
 	/**
 	 *
 	 * Retourne le template html d'un bloc et de sa matrice.
 	 * @param Bloc $b
+	 * @param bool $reloadBlocView  tag utilisé par ajax pour supprimer le wrapper au reload de du bloc
+	 * @param string $mode			mode  config / view
+	 * @param array $TlinesObjectFPC  tableau de produit avec leurs qty pour la commande courante
+	 * @param int $fk_FPC_OBJECT id de la commande /facture /propal courante
 	 * @return string
 	 */
-	public function displayBloc(Bloc $b, $reloadBlocView = false, $mode = 'view'){
+	public function displayBloc(Bloc $b, $reloadBlocView = false, $mode = 'view',$TlinesObjectFPC = array(), stdClass $fpc_object = null){
 			global $user;
 			$out = '';
 
@@ -1072,7 +1066,7 @@ class Bloc extends CommonObject
 			if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 				$out .= '<input id="bloc-label-' . $b->id . '" class="inputBloc" type="text"  value="'.dol_htmlentities($b->label, ENT_QUOTES).'" name="bloclabel" data-id="' . $b->id . '">
 						<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
-						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="Modifier"></span>
+						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="'.$this->langs->trans('Modify').'"></span>
 						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fa fa-check" style="color:lightgrey; display: none" ></span>
 						</a>';
 			}else{
@@ -1081,7 +1075,7 @@ class Bloc extends CommonObject
 
 			 if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
 					$out .= '<a id="matrix-delete-' . $b->id . '">
-						<span data-id="' . $b->id . '" class="fas fa-trash pictodelete pull-right classfortooltip" style="" title="Supprimer"></span>
+						<span data-id="' . $b->id . '" class="fas fa-trash pictodelete pull-right classfortooltip" style="" title="'.$this->langs->trans('delete').'"></span>
 						</a>
 						</div>';
 			}
@@ -1093,7 +1087,7 @@ class Bloc extends CommonObject
 
 
 		// Part to display a confirm message when delete a bloc OR matrix line/col
-		$out .= '<div id="dialog-confirm" style="display:none" title="Confirmation de suppression">
+		$out .= '<div id="dialog-confirm" style="display:none" title="'.$this->langs->trans('confirmDelete').'">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>'.$this->langs->trans("msgDeleteAllDataForThisBloc").'</p>
 		</div>';
 
@@ -1103,7 +1097,7 @@ class Bloc extends CommonObject
 
 
 		$b->fetchMatrix($b);
-		$out .= $b->displayMatrix($mode);
+		$out .= $b->displayMatrix($mode,$TlinesObjectFPC, $fpc_object);
 		// FOOTER AJOUTER LIGNE COL
 		if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
 			$out .= '<div class="matrix-footer">';
@@ -1214,9 +1208,12 @@ class Bloc extends CommonObject
 	/**
 	 * affiche la matrice
 	 * @param string $mode view | config
+	 * @param array $TlinesObjectFPC tableau d'objets représentant les lignes de l'element courant
+	 *                                (F facture , P propal , C commande)
+	 * @param int $fk_FPC_object  id de la commande / propal / facture courante
 	 * @return string
 	 */
-	public function displayMatrix($mode = 'view'){
+	public function displayMatrix($mode = 'view',$TlinesObjectFPC = array(), stdClass $fpc_object = null){
 
 		global $user;
 		$nbCols = count($this->THCols) + 1;
@@ -1261,13 +1258,56 @@ class Bloc extends CommonObject
 						// AFFICHAGE PRODUIT
 						if ($matrixCell->type === -1 ) {
 							if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
-								// htmlname en premier
+
 								$fkproduct = $matrixCell->fk_product ? $matrixCell->fk_product : '';
 								$output .= $this->select_produits($matrixCell->fk_blocHeaderCol, $matrixCell->fk_blocHeaderRow, $fkproduct, 'idprod_' . $matrixCell->fk_blocHeaderCol . '_' . $matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2);
-							}else {
-								$output .= '<input class="classfortooltip" type="number" id="quantity-input" name="quantity" min="0" title="'.$this->langs->trans("quantityInput").'" placeholder="'.$this->langs->trans("quantity").'">';
+							}else { // view
+
+
+								/**
+								 *si un array (id_product qty )  commande , propale ou facture est  passé en params de la fonction
+								 * on affiche la qty du produit en cours si existant.
+								 *
+								 *
+								 */
+								$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : '' ;
+								$url = $this->getNomUrlForProduct($matrixCell->fk_product);
+								// ligne commande non vide  && le produit est present dans la config matrice
+								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
+
+									$output .= '<span>'. $url .'</span>';
+									$output .= '<input
+												id="quantity-input"
+												class="classfortooltip inputNumber"
+												data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'"
+												data-fpc-element="'.$this->get_fpc_element($fpc_object).'"
+												data-fk-product="'.$matrixCell->fk_product.'"
+												data-currentQty ="'.$qt.'"
+												type="number"
+												name="quantity"
+												min="0"
+												placeholder="'.$this->langs->trans("quantity").'"
+												value="'. $qt.'">';
+
+								}else{
+
+									$output .= '<span>'. $url .'</span>';
+									$output .= '<input
+												id="quantity-input"
+												class="classfortooltip
+												inputNumber"
+												data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'"
+												data-fpc-element="'.$this->get_fpc_element($fpc_object).'"
+												data-fk-product="'.$matrixCell->fk_product.'"
+												type="number"
+												name="quantity"
+												min="0"
+												placeholder="'.$this->langs->trans("quantity").'"
+												value="'. $qt.'" >';
+								}
+
 							}
-							//$output  .= $this->getSelectElement($matrixCell->fk_product,$matrixCell->fk_blocHeaderCol,$matrixCell->fk_blocHeaderRow);
+
 
 						} else { // AFFICHAGE HEADER
 								// COl/ROW label
@@ -1292,41 +1332,24 @@ class Bloc extends CommonObject
   		return $output;
 
 	}
+	public function setFcpObject($fcp){
 
-	/**
-	 *  DEPRECATED
-	 *
-	 * @param int $idproduct
-	 * @param $headerColId
-	 * @param $headerRowId
-	 * @return string
-	 */
-	public function getSelectElement($idproduct = 0,$headerColId,$headerRowId){
-
-		//var_dump($headerColId,$headerRowId);
-		//linesfromproductmatrix_
-		$p = new Product($this->db);
-		$res = $p->db->getRows('SELECT rowid,label FROM '. MAIN_DB_PREFIX .'product');
-		$output = '<select id="product-select-'. rand(0,200000) . '" data-blocheadercolid="'.$headerColId.'"data-blocheaderrowid="'.$headerRowId.'" data-blocid="'.$this->currentBloc.'" >';
-		$output .= '<option value="">'.$this->langs->lang("chooseOption").'--Please choose an option--</option>';
-		if ($res){
-			foreach ($res as $element){
-				$output .= '<option value="'.$element->rowid;
-
-				if ($idproduct == $element->rowid){
-					$output .= '" selected>'.$element->label.'</option>';
-				}else{
-					$output .= '">'.$element->label.'</option>';
-				}
-
-			}
-			$output .='</select>';
-			//var_dump($output);
-		}
-		return $output;
 	}
+	public function get_fpc_id($fpc){
+		return $fpc ? $fpc->id : '';
+	}
+	public function get_fpc_element($fpc){
+		return $fpc ? $fpc->element : '';
+	}
+	public function getNomUrlForProduct($fk_Product){
+		if (empty($fk_Product)){
+			return false;
+		}
+		$p = new Product($this->db);
+		$p->fetch(intval($fk_Product));
+		return $p->getNomUrl(1,'',-1000);
 
-
+	}
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
@@ -1496,13 +1519,6 @@ class Bloc extends CommonObject
 	}
 
 
-	private function getMaxCol(){
-
-
-	}
-	private function getMaxBloc(){
-
-	}
 
 }
 
