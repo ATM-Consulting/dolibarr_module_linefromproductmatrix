@@ -1347,7 +1347,7 @@ class Bloc extends CommonObject
 		}
 		$p = new Product($this->db);
 		$p->fetch(intval($fk_Product));
-		return $p->getNomUrl(1,'');
+		return $p->getNomUrl(1,'',-1000);
 
 	}
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

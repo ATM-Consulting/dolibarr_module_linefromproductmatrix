@@ -113,11 +113,6 @@ if (empty($reshook)) {
  *
  * Put here all code to build page
  */
-
-
-
-
-
 $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante

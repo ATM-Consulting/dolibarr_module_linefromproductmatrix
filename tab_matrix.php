@@ -35,17 +35,19 @@ if (!empty($conf->projet->enabled)) {
 }
 
 $element = GETPOST('element', 'alpha');
+$callUserFunction = '';
 if ($element == 'propal') {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+	$callUserFunction = $element.'_prepare_head';
 }
 if ($element == 'commande') {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+	$callUserFunction = $element.'_prepare_head';
 }
 if ($element == 'facture') {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+	$callUserFunction = $element.'_prepare_head';
 }
-
-
 
 // Load translation files required by the page
 $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix", 'companies', 'bills', 'orders'));
@@ -117,7 +119,6 @@ if (empty($reshook)) {
 $title = $langs->trans("LinesFromProductMatrixArea");
 $help_url = '';
 // print load_fiche_titre pour afficher le titre du contenu de la page courante
-
 $object = linesFromProductMatrixObjectAutoLoad($element, $db);
 
 if ($object->fetch($id, $ref) <= 0)
@@ -130,32 +131,34 @@ if ($id > 0 || !empty($ref)) {
 
 	$object->fetch_thirdparty();
 
-	/*********************************--*************************************************/
 	llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
-
-	/********************************--**************************************************/
 
 	/*
 	 * La fonction call_user_func() appelle une fonction de rappel fournie par le premier argument
 	 */
-	$head = call_user_func($element.'_prepare_head', $object);
+
+	if (function_exists($callUserFunction)){
+		$head = call_user_func($callUserFunction, $object);
+	}else{
+		setEventMessage($langs->trans("CallFunctionNameError") ,'errors');
+	}
 
 	// structure de la tabulation pour la fiche active
 	dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
 	$linkback = '<a href="' . DOL_URL_ROOT . '/'.$element.'/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-	/********************************--**************************************************/
 
-	/*****************REF CUSTOMMER  ET TIERS ENTÊTE *****************************************************************/
+
+	// REF CUSTOMMER  ET TIERS ENTÊTE
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
-	/**********************************************************************************/
 
-	/*************************PROJET ENTÊTE *********************************************************/
+
+	// PROJET ENTÊTE
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($action != 'classify') {
@@ -163,15 +166,15 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 
-	/*****************************-CONSTRUCTION DE LA BANNIÈRE FAISANT RÉFÉRENCE À L'ENTITÉ -*****************************************************/
+	// CONSTRUCTION DE LA BANNIÈRE FAISANT RÉFÉRENCE À L'ENTITÉ
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	/*****************************--*****************************************************/
 
-	/******************************** <hr> ***************************************************/
+
+	// <hr>
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '</div>';
-	/************** </div>  *************************/
+
 
 
 
@@ -207,7 +210,7 @@ if ($id > 0 || !empty($ref)) {
 	dol_fiche_end();
 }
 
-/****** ??? ******/
+
 if (!empty($conf->use_javascript_ajax)) {
 	include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 }
