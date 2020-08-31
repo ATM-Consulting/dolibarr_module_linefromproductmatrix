@@ -1267,7 +1267,6 @@ class Bloc extends CommonObject
 								$output .= $this->select_produits($matrixCell->fk_blocHeaderCol, $matrixCell->fk_blocHeaderRow, $fkproduct, 'idprod_' . $matrixCell->fk_blocHeaderCol . '_' . $matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2);
 							}else { // view
 
-
 								/**
 								 *si un array (id_product qty )  commande , propale ou facture est  passé en params de la fonction
 								 * on affiche la qty du produit en cours si existant.
@@ -1292,6 +1291,25 @@ class Bloc extends CommonObject
 												min="0"
 												placeholder="'.$this->langs->trans("quantity").'"
 												value="'. $qt.'">';
+
+								}else{
+									if ($matrixCell->fk_product){
+
+										$output .= '<span>'. $url .'</span>';
+										$output .= '<input
+												id="quantity-input"
+												class="classfortooltip
+												inputNumber"
+												data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'"
+												data-fpc-element="'.$this->get_fpc_element($fpc_object).'"
+												data-fk-product="'.$matrixCell->fk_product.'"
+												type="number"
+												name="quantity"
+												min="0"
+												placeholder="'.$this->langs->trans("quantity").'"
+												value="'. $qt.'" >';
+									}
+
 								}
 
 							}
