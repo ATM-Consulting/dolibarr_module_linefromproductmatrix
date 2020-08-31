@@ -65,6 +65,7 @@ $langs->loadLangs(array("linesfromproductmatrix@linesfromproductmatrix","other")
 
 /* Javascript library of module linesfromproductmatrix */
 $(document).ready(function() {
+
 	$(document).on("click", ".fa-pencil-alt, .inputBloc", function () {
 		if ($(this).is("input")) {
 			var input = $(this);
@@ -79,23 +80,7 @@ $(document).ready(function() {
 		pencil.css("display", "none");
 	});
 
-
-	/**
-	 * Création des blocs en renseignant le label
-	 */
-	// START OF CREATE A BLOC EVENTS
-	$(document).on("click", ".btnTitle", function (e) {
-		e.preventDefault();
-		var textinput = $("#inputPlaceholderEx");
-		$("#add-block-wrapper").show();
-		textinput.focus();
-	});
-
-	$(document).on("click", "#add-block-cancel-btn", function (e) {
-		$("#add-block-wrapper").slideUp();
-	});
-
-
+	// START CREATE BLOC EVENTS
 	$(document).on("keypress", "#inputPlaceholderEx", function (e) {
 		if (e.which == 13) {
 			createABloc();
@@ -457,7 +442,7 @@ $(document).ready(function() {
 			},
 			success: function (data) {
 				if(!data.error) {
-					$("#add-block-wrapper").hide();
+					$("#inputPlaceholderEx").val("");
 					$(".matrix-container").append(data.data);
 					matrixSetMessage($out);
 				}else {
