@@ -305,6 +305,7 @@ $(document).ready(function() {
 			success: function (data) {
 				if(!data.error) {
 					self.css("background-color", "green");
+					self.blur();
 					setTimeout(function () {
 						self.css("background-color", '#fff');
 					}, 800);
