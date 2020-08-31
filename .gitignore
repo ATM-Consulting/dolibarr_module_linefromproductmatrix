@@ -9,6 +9,7 @@
 # PHPdocumentor generated files
 /build/phpdoc
 /doc/code/phpdoc
+.idea/
 # Sphinx generated files
 /doc/user/build
 /.settings/
