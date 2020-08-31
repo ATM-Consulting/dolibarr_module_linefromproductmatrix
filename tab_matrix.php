@@ -169,7 +169,6 @@ if ($id > 0 || !empty($ref)) {
 
 	/******************************** <hr> ***************************************************/
 	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
 	print '</div>';
 	/************** </div>  *************************/
 
