@@ -13,45 +13,51 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
-DROP PROCEDURE IF EXISTS initBlocs;
-DELIMITER $$ CREATE PROCEDURE initBlocs()
-    BEGIN
-    DECLARE bloc_id INT DEFAULT 0;
-    DECLARE iter INT DEFAULT 0;
-    DECLARE itercol INT DEFAULT 0;
-    START TRANSACTION;
 
-    iterloop : LOOP
-        IF iter < 3 THEN
-            SET iter = iter +1;
-            INSERT INTO llx_linesfromproductmatrix_bloc(ref, label, date_creation, tms, fk_user_creat, fk_user_modif, fk_rank, fk_status)
-            VALUES('BLOCTEST', 'BLOCTEST', now(), current_timestamp, 1, 1, 1, 1);
+INSERT INTO llx_linesfromproductmatrix_bloc(rowid, ref, label, date_creation, tms, fk_user_creat, fk_user_modif, fk_rank, fk_status)
+VALUES(1, 'BLOCTEST', 'BLOCTEST', now(), current_timestamp, 1, 1, 1, 1);
 
-            SET bloc_id = LAST_INSERT_ID();
-            COMMIT;
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (1, 1, 'Catégorie', now(), 0, current_timestamp, 1, 1);
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (2, 1, 'Catégorie', now(), 0, current_timestamp, 1, 1);
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (3, 1, 'Catégorie', now(), 0, current_timestamp, 1, 1);
 
-            colloop : LOOP
-                IF itercol < 3 THEN
-
-                    INSERT INTO llx_linesfromproductmatrix_blochead( fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
-                    VALUES (bloc_id, 'Catégorie', now(), 0, current_timestamp, 1, 1);
-
-                    INSERT INTO llx_linesfromproductmatrix_blochead( fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
-                    VALUES ( bloc_id, 'Type', now(), 1, current_timestamp, 1, 1);
-                    SET itercol = itercol +1;
-                ELSE
-                    LEAVE colloop;
-                END IF;
-                END LOOP colloop;
-                SET itercol = 0;
-        ELSE
-            LEAVE iterloop;
-        END IF;
-        END LOOP iterloop;
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (4, 1, 'Type', now(), 1, current_timestamp, 1, 1);
 
 
-    END$$ DELIMITER ;
-    CALL initBlocs();
+
+
+INSERT INTO llx_linesfromproductmatrix_bloc(rowid, ref, label, date_creation, tms, fk_user_creat, fk_user_modif, fk_rank, fk_status)
+VALUES(2, 'BLOCTEST', 'BLOCTEST', now(), current_timestamp, 1, 1, 1, 1);
+
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (5, 2, 'Catégorie', now(), 0, current_timestamp, 1, 1);
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (6, 2, 'Catégorie', now(), 0, current_timestamp, 1, 1);
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (7, 2, 'Catégorie', now(), 0, current_timestamp, 1, 1);
+
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (8, 2, 'Type', now(), 1, current_timestamp, 1, 1);
+
+
+
+
+INSERT INTO llx_linesfromproductmatrix_bloc(rowid, ref, label, date_creation, tms, fk_user_creat, fk_user_modif, fk_rank, fk_status)
+VALUES(3, 'BLOCTEST', 'BLOCTEST', now(), current_timestamp, 1, 1, 1, 1);
+
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (9, 3, 'Catégorie', now(), 0, current_timestamp, 1, 1);
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (10, 3, 'Catégorie', now(), 0, current_timestamp, 1, 1);
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (11, 3, 'Catégorie', now(), 0, current_timestamp, 1, 1);
+
+INSERT INTO llx_linesfromproductmatrix_blochead(rowid, fk_bloc, label, date_creation, type, tms, fk_user_creat, fk_rank)
+VALUES (12, 3, 'Type', now(), 1, current_timestamp, 1, 1);
 
 
 
