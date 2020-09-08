@@ -159,12 +159,14 @@ if ($id > 0 || !empty($ref)) {
 
 
 	// PROJET ENTÊTE
-	$langs->load("projects");
-	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	if ($action != 'classify') {
-		$morehtmlref .= ' : ';
+	if(!empty($conf->projet->enabled)) {
+		$langs->load("projects");
+		$morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
+		if ($action != 'classify') {
+			$morehtmlref .= ' : ';
+		}
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	}
-	$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 
 	// CONSTRUCTION DE LA BANNIÈRE FAISANT RÉFÉRENCE À L'ENTITÉ
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
