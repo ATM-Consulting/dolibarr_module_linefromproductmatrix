@@ -4,7 +4,7 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = dirname(__FILE__) . '/';
 
-global $db, $user;
+global $db, $user, $conf;
 
 // Include and load Dolibarr environment variables
 $res = 0;
@@ -129,7 +129,7 @@ if (isset($action) && $action == 'createBloc' ) {
 		$jsonResponse->data = $out;
 
 	}else{
-		$jsonResponse->error =  $langs->trans("MaxBlocError");
+		$jsonResponse->error =  $langs->trans("MaxBlocError", $conf->global->PLM_MAX_BLOC);
 	}
 
 
@@ -286,7 +286,7 @@ if (isset($idBloc) && isset($action) && $action == 'addHeaderMatrix' ) {
 	 $jsonResponse->currentDisplayedBloc = $bloc->displayBloc($bloc, $reloadBlocView ? $reloadBlocView : false,'config');
 // COL
  } else{
-		$jsonResponse->error =  $langs->trans("MaxColError");
+		$jsonResponse->error =  $langs->trans("MaxColError", $conf->global->PLM_MAX_COL);
 	}
 
 
