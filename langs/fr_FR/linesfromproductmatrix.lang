@@ -108,3 +108,6 @@ AddAMatrixBlock = Ajouter un nouveau bloc
 YourLabelHere = Titre
 AddLineToMatrix = Ajouter ligne
 AddColToMatrix = Ajouter colonne
+AccessMatrix=Accès aux matrices
+CreateUpdateMatrix=Créer / Modifier les matrices
+DeleteMatrix=Suppression d'une matrice
