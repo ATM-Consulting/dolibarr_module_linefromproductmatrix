@@ -83,6 +83,7 @@ emptyLabelHeaderError   = Le label ne doit pas être vide.
 MaxColError             = Impossible de créer une nouvelle colonne.  Nombre maximum %s
 MaxBlocError            = Impossible de créer un nouveau Bloc.  Nombre maximum %s
 NegativeNumberError     = Nombre négatif impossible.
+NotANumber              = Veuillez saisir un nombre
 NoProductError          = Il n'y a pas de produit /service affecté pour cette cellule. Veuillez l'ajouter via la configuration.
 CallFunctionNameError   = L'objet courant ne peut pas appeler la fonction prepare_head. Contactez votre administrateur system.
 #
@@ -111,3 +112,4 @@ AddColToMatrix = Ajouter colonne
 AccessMatrix=Accès aux matrices
 CreateUpdateMatrix=Créer / Modifier les matrices
 DeleteMatrix=Suppression d'une matrice
+

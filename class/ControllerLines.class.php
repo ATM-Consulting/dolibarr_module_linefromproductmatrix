@@ -36,7 +36,7 @@ class ControllerLines {
 		$this->currentElement = $element;
 		$this->fk_fpc_object = $fk_fpc_object;
 		$this->obj = $obj;
-		$this->checkPositiveQty();
+		$this->checkQty();
 		$this->checkProduct();
 
 	}
@@ -90,10 +90,11 @@ class ControllerLines {
 	}
 
 
-	public function checkPositiveQty(){
+	public function checkQty(){
 
-		if ($this->qty < 0 ) {
-			$this->jsonResponse->error = $this->langs->trans("NegativeNumberError");
+		if ($this->qty < 0 || !is_numeric($this->qty)) {
+			if(!is_numeric($this->qty)) $this->jsonResponse->error = $this->langs->trans("NotANumber");
+			else $this->jsonResponse->error = $this->langs->trans("NegativeNumberError");
 			$this->jsonResponse->currentQty = $this->currentQty;
 		}
 	}
