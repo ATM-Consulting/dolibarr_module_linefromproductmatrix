@@ -188,7 +188,7 @@ if ($id > 0 || !empty($ref)) {
 
  	$obj = new stdclass();
  	$obj->qty = $l->qty;
-	 $TlinesObjectFPC[$l->fk_product] = $obj;
+ 	if(empty($TlinesObjectFPC[$l->fk_product])) $TlinesObjectFPC[$l->fk_product] = $obj;
 
  }
 
