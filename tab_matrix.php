@@ -145,7 +145,9 @@ if ($id > 0 || !empty($ref)) {
 
 	// structure de la tabulation pour la fiche active
 	dol_fiche_head($head, 'tabmatrix', $langs->trans("CustomerOrder"), -1, 'order');
-	$linkback = '<a href="' . DOL_URL_ROOT . '/'.$element.'/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$moredirlinkback = '';
+	if($element == 'facture') $moredirlinkback = 'compta/';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/'.$moredirlinkback.$element.'/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 
