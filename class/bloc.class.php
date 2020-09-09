@@ -1274,44 +1274,48 @@ class Bloc extends CommonObject
 								 *
 								 */
 								$qt =$TlinesObjectFPC[$matrixCell->fk_product] ? $TlinesObjectFPC[$matrixCell->fk_product]->qty : '' ;
-								$url = $this->getNomUrlForProduct($matrixCell->fk_product);
+
 								// ligne commande non vide  && le produit est present dans la config matrice
 								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
+									$url = $this->getNomUrlForProduct($matrixCell->fk_product, 10);
+									$output .= '<span>' . $url . '</span>';
 
-									$output .= '<span>'. $url .'</span>';
-									$output .= '<input
-												id="quantity-input"
+									$output .= '<input ';
+									if(!$user->rights->linesfromproductmatrix->bloc->write) $output .='disabled ';
+									$output .= 'id="quantity-input"
 												class="classfortooltip inputNumber"
-												data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'"
-												data-fpc-element="'.$this->get_fpc_element($fpc_object).'"
-												data-fk-product="'.$matrixCell->fk_product.'"
-												data-currentQty ="'.$qt.'"
+												data-fk-fpc-object="' . $this->get_fpc_id($fpc_object) . '"
+												data-fpc-element="' . $this->get_fpc_element($fpc_object) . '"
+												data-fk-product="' . $matrixCell->fk_product . '"
+												data-currentQty ="' . $qt . '"
 												type="number"
 												step="0.01"
 												name="quantity"
 												min="0"
-												placeholder="'.$this->langs->trans("quantity").'"
-												value="'. $qt.'">';
+												placeholder="' . $this->langs->trans("quantity") . '"
+												value="' . $qt . '">';
+
 
 								}else{
-									if ($matrixCell->fk_product){
-
-										$output .= '<span>'. $url .'</span>';
-										$output .= '<input
+									if ($matrixCell->fk_product) {
+										$url = $this->getNomUrlForProduct($matrixCell->fk_product);
+										$output .= '<span>' . $url . '</span>';
+										if ($user->rights->linesfromproductmatrix->bloc->write) {
+											$output .= '<input
 												id="quantity-input"
 												class="classfortooltip
 												inputNumber"
-												data-fk-fpc-object="'.$this->get_fpc_id($fpc_object).'"
-												data-fpc-element="'.$this->get_fpc_element($fpc_object).'"
-												data-fk-product="'.$matrixCell->fk_product.'"
+												data-fk-fpc-object="' . $this->get_fpc_id($fpc_object) . '"
+												data-fpc-element="' . $this->get_fpc_element($fpc_object) . '"
+												data-fk-product="' . $matrixCell->fk_product . '"
 												type="number"
 												step="0.01"
 												name="quantity"
 												min="0"
-												placeholder="'.$this->langs->trans("quantity").'"
-												value="'. $qt.'" >';
+												placeholder="' . $this->langs->trans("quantity") . '"
+												value="' . $qt . '" >';
+										}
 									}
-
 								}
 
 							}
@@ -1349,13 +1353,13 @@ class Bloc extends CommonObject
 	public function get_fpc_element($fpc){
 		return $fpc ? $fpc->element : '';
 	}
-	public function getNomUrlForProduct($fk_Product){
+	public function getNomUrlForProduct($fk_Product, $maxlength = 0){
 		if (empty($fk_Product)){
 			return false;
 		}
 		$p = new Product($this->db);
 		$p->fetch(intval($fk_Product));
-		return $p->getNomUrl(1,'',-1000);
+		return $p->getNomUrl(1,'',$maxlength);
 
 	}
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

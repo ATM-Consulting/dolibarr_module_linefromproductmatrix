@@ -256,70 +256,12 @@ class modLinesFromProductMatrix extends DolibarrModules
 			'langs'=>'linesfromproductmatrix@linesfromproductmatrix', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->linesfromproductmatrix->enabled', // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->linesfromproductmatrix->bloc->write', // Use 'perms'=>'$user->rights->linesfromproductmatrix->bloc->read' if you want your menu with a permission rules
+			'perms'=>'$user->rights->linesfromproductmatrix->bloc->read', // Use 'perms'=>'$user->rights->linesfromproductmatrix->bloc->read' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END  TOPMENU */
-		/* BEGIN  LEFTMENU BLOC
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=linesfromproductmatrix',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Top menu entry
-			'titre'=>'Bloc',
-			'mainmenu'=>'linesfromproductmatrix',
-			'leftmenu'=>'bloc',
-			'url'=>'/linesfromproductmatrix/linesfromproductmatrixindex.php',
-			'langs'=>'linesfromproductmatrix@linesfromproductmatrix',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->linesfromproductmatrix->enabled',  // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->linesfromproductmatrix->bloc->read',			                // Use 'perms'=>'$user->rights->linesfromproductmatrix->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		*/
 
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=linesfromproductmatrix',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'List Bloc',
-            'mainmenu'=>'linesfromproductmatrix',
-            'leftmenu'=>'linesfromproductmatrix_bloc',
-            'url'=>'/linesfromproductmatrix/bloc_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'linesfromproductmatrix@linesfromproductmatrix',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->linesfromproductmatrix->enabled',
-            // Use 'perms'=>'$user->rights->linesfromproductmatrix->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=linesfromproductmatrix,fk_leftmenu=linesfromproductmatrix_bloc',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'New Bloc',
-            'mainmenu'=>'linesfromproductmatrix',
-            'leftmenu'=>'linesfromproductmatrix_bloc',
-            'url'=>'/linesfromproductmatrix/bloc_card.php?action=create',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'linesfromproductmatrix@linesfromproductmatrix',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->linesfromproductmatrix->enabled',
-            // Use 'perms'=>'$user->rights->linesfromproductmatrix->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2
-        );
-
-		/* END LEFTMENU BLOC */
 
 	}
 

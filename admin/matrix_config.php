@@ -126,15 +126,16 @@ $btnAdd = '<a class="btnTitle btnTitlePlus" style="background-color:white" href=
 
 print load_fiche_titre($langs->trans("LinesFromProductMatrixArea"), '', 'object_linesfromproductmatrix@linesfromproductmatrix');
 
-
-print '<fieldset id="add-block-wrapper">
-			<legend>'.$langs->trans('AddAMatrixBlock').'</legend>
+if($permissiontoadd) {
+	print '<fieldset id="add-block-wrapper">
+			<legend>' . $langs->trans('AddAMatrixBlock') . '</legend>
 			<div class="label-form">
 				<input placeholder="Titre du bloc" type="text" id="inputPlaceholderEx" class="form-control">
-				<button id="add-block-btn" type="submit" class="button --create-button" >'.$langs->trans("Validate").'</button>
-				<button id="add-block-cancel-btn" type="submit" class="button --cancel-button" >'.$langs->trans("Cancel").'</button>
+				<button id="add-block-btn" type="submit" class="button --create-button" >' . $langs->trans("Validate") . '</button>
+				<button id="add-block-cancel-btn" type="submit" class="button --cancel-button" >' . $langs->trans("Cancel") . '</button>
 			</div>
   		</fieldset>';
+}
 
 
 
