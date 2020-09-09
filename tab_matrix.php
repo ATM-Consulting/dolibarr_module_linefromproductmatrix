@@ -169,7 +169,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// CONSTRUCTION DE LA BANNIÈRE FAISANT RÉFÉRENCE À L'ENTITÉ
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, "&element=".$element);
 
 
 	print '<hr>';
