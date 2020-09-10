@@ -134,7 +134,12 @@ if($permissiontoadd) {
 				<button id="add-block-btn" type="submit" class="button --create-button" >' . $langs->trans("Validate") . '</button>
 				<button id="add-block-cancel-btn" type="submit" class="button --cancel-button" >' . $langs->trans("Cancel") . '</button>
 			</div>
-  		</fieldset>';
+			<script type="text/javascript">
+				$("#add-block-cancel-btn").on("click", function(e) {
+				    $("#inputPlaceholderEx").val("");
+				});
+			</script>
+</fieldset>';
 }
 
 
