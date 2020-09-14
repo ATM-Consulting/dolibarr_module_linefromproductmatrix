@@ -191,7 +191,7 @@ input.inputBloc {
 	right: 5px;
 	float: right;
 	text-align: right;
-	margin-left: 30px;
+	/*margin-left: 30px;*/
 	width: 50%;
 
 }

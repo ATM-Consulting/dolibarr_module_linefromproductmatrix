@@ -1277,7 +1277,7 @@ class Bloc extends CommonObject
 
 								// ligne commande non vide  && le produit est present dans la config matrice
 								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
-									$url = $this->getNomUrlForProduct($matrixCell->fk_product, 10);
+									$url = $this->getNomUrlForProduct($matrixCell->fk_product, -10000);
 									$output .= '<span>' . $url . '</span>';
 
 									$output .= '<input ';
