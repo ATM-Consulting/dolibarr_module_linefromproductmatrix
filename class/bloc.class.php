@@ -1280,6 +1280,7 @@ class Bloc extends CommonObject
 									$output .= '<input ';
 									if(!$user->rights->linesfromproductmatrix->bloc->write) $output .='disabled ';
 									$output .= 'id="quantity-input"
+												style="width: 80%;"
 												class="classfortooltip inputNumber"
 												data-fk-fpc-object="' . $this->get_fpc_id($fpc_object) . '"
 												data-fpc-element="' . $this->get_fpc_element($fpc_object) . '"
