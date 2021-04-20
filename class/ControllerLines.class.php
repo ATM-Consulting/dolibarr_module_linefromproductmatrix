@@ -42,6 +42,7 @@ class ControllerLines {
 	}
 
 	public function processInput(){
+		global $user, $conf;
 
 		if (!$this->jsonResponse->error) {
 
@@ -52,7 +53,7 @@ class ControllerLines {
 			$p->fetch($this->idproduct);
 
 			$updated = false;
-
+			$this->jsonResponse->msg = "product fetched";
 			// Itération sur les lignes de Facture/Propal/Commande
 			foreach ($this->obj->lines as $l) {
 				if ($l->fk_product == $this->idproduct) {
@@ -61,6 +62,7 @@ class ControllerLines {
 						// On cherche à supprimer la ligne active
 						if ($this->qty == 0) {
 							$this->errormysql = $this->deleteLineOfObject($this->obj, $l->id);
+							$this->jsonResponse->msg = "line deleted";
 							$updated = true;
 							break;
 						} else {
@@ -68,6 +70,7 @@ class ControllerLines {
 							$values = $this->prepareValues($l, $this->qty, $res, $p);
 							// On update
 							$this->errormysql = $this->updateLineInObject($this->obj, $values);
+							$this->jsonResponse->msg = "line updated";
 							$updated = true;
 							break;
 						}
@@ -76,13 +79,37 @@ class ControllerLines {
 			}
 			// On ajoute la ligne, si elle n'est pas présente dans le current FPC
 			if (!$updated) {
+
 				$res = $this->db->getRow("select price , price_ttc  FROM llx_product_price WHERE fk_product = " . $this->idproduct . ' ORDER BY date_price DESC');
+
+				if (empty($res))
+				{
+					if ($p->import_key) // if $res null (produit importé), créer prix de vente à 0
+					{
+						// je crée une ligne de prix pour les produits importés qui n'en ont pas
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price, fk_product, fk_user_author, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
+						$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
+						$sql .= " VALUES(1, '".$this->db->idate(dol_now())."',".$p->id.",".$user->id.", 0, 0,'HT',1 ,20 , null, 0,";
+						$sql .= " 0, 0, '0', '0', 0, 0, 0,".$conf->entity.", null";
+						$sql .= ")";
+						$resql = $this->db->query($sql);
+						if ($resql)
+						{
+							$res = new stdClass();
+							$res->price = "0.00000000";
+							$res->price_ttc = "0.00000000";
+						}
+					}
+				}
+
 				if ($res > 0) {
 					// On créé un objet $values contenant toutes les infos nécessaires pour l'update de TOUS les éléments FPC
 					$values = $this->prepareValues($l, $this->qty, $res, $p, true);
 					$this->errormysql = $this->addLineInObject($this->obj, $values, $this->obj->element);
+					$this->jsonResponse->msg = "line created";
 				} else {
 					$this->error++;
+					$this->jsonResponse->msg = "Error while getting product price";
 				}
 			}
 		}
