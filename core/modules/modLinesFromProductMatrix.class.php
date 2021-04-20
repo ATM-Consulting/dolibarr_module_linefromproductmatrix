@@ -77,7 +77,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
-			'triggers' => 0,
+			'triggers' => 1,
 			// Set this to 1 if module has its own login method file (core/login)
 			'login' => 0,
 			// Set this to 1 if module has its own substitution function file (core/substitutions)
@@ -292,7 +292,9 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		$sql = array();
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix WHERE fk_product not in (SELECT rowid FROM ".MAIN_DB_PREFIX."product)", // suppression des cellules comprenant un produit qui n'existe plus
+		);
 
 		// Document templates
 		$moduledir = 'linesfromproductmatrix';

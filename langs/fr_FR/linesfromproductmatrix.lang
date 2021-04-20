@@ -112,4 +112,5 @@ AddColToMatrix = Ajouter colonne
 AccessMatrix=Accès aux matrices
 CreateUpdateMatrix=Créer / Modifier les matrices
 DeleteMatrix=Suppression d'une matrice
+DeleteCellUsedForProduct=Les cellules qui référencaient le produit "%s" ont été vidées dans la matrice de configuration
 
