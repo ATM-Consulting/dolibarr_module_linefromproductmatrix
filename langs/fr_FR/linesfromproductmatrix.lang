@@ -20,6 +20,7 @@
 # Module label 'ModuleLinesFromProductMatrixName'
 LinesFromProductMatrixArea = Page de configuration d'ajout rapide
 ModuleLinesFromProductMatrixName = Ajout produit par matrice
+MenuModuleLinesFromProductMatrixName = Gestion des matrices
 # Module description 'ModuleLinesFromProductMatrixDesc'
 ModuleLinesFromProductMatrixDesc = Ce module permet de configurer une matrice de produit permettant un saisie rapide dans les devis, commandes et factures
 AddANewBlock = Ajout d'un bloc

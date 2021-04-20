@@ -64,7 +64,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 		$this->editor_name = 'Editor name';
 		$this->editor_url = 'https://www.example.com';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = '1.0';
+		$this->version = '1.1.0';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -249,7 +249,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 		$this->menu[$r++] = array(
 			'fk_menu'=>'fk_mainmenu=products', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left', // This is a Top menu entry
-			'titre'=>$langs->trans('ModuleLinesFromProductMatrixName'),
+			'titre'=>$langs->trans('MenuModuleLinesFromProductMatrixName'),
 			'mainmenu'=>'products',
 			'leftmenu'=>'linesfromproductmatrix',
 			'url'=>'/linesfromproductmatrix/admin/matrix_config.php',
