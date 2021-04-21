@@ -1314,6 +1314,19 @@ class Bloc extends CommonObject
 												value="' . $qt . '" >';
 										}
 									}
+									else {
+										$output .= '<input
+												id="quantity-input"
+												style="width: 80%;"
+												class="classfortooltip
+												inputNumber"
+												type="number"
+												step="0.01"
+												name="quantity"
+												min="0"
+												placeholder="' . $this->langs->trans("quantity") . '"
+												disabled >';
+									}
 								}
 
 							}

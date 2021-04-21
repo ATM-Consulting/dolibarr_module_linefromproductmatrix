@@ -64,7 +64,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 		$this->editor_name = 'Editor name';
 		$this->editor_url = 'https://www.example.com';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = '1.0';
+		$this->version = '1.1.0';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -77,7 +77,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
-			'triggers' => 0,
+			'triggers' => 1,
 			// Set this to 1 if module has its own login method file (core/login)
 			'login' => 0,
 			// Set this to 1 if module has its own substitution function file (core/substitutions)
@@ -249,7 +249,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 		$this->menu[$r++] = array(
 			'fk_menu'=>'fk_mainmenu=products', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left', // This is a Top menu entry
-			'titre'=>$langs->trans('ModuleLinesFromProductMatrixName'),
+			'titre'=>$langs->trans('MenuModuleLinesFromProductMatrixName'),
 			'mainmenu'=>'products',
 			'leftmenu'=>'linesfromproductmatrix',
 			'url'=>'/linesfromproductmatrix/admin/matrix_config.php',
@@ -278,6 +278,14 @@ class modLinesFromProductMatrix extends DolibarrModules
 		global $conf, $langs;
 
 		$result = $this->_load_tables('/linesfromproductmatrix/sql/');
+		// déplacement du fichier de data parce que c'est graaaaaaaaaaave chiant de supprimer les modifs à chaque redémarrage...
+		if (empty($conf->global->LFPM_ALREADY_ACTIVATED))
+		{
+			$this->_load_tables('/linesfromproductmatrix/sql_data/');
+			require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+			dolibarr_set_const($this->db, 'LFPM_ALREADY_ACTIVATED', dol_now(), 'chaine', 0, '', $conf->entity);
+		}
+
 		if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
 		// Create extrafields during init
@@ -292,7 +300,9 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		$sql = array();
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix WHERE fk_product not in (SELECT rowid FROM ".MAIN_DB_PREFIX."product)", // suppression des cellules comprenant un produit qui n'existe plus
+		);
 
 		// Document templates
 		$moduledir = 'linesfromproductmatrix';
