@@ -116,7 +116,14 @@ class InterfaceLinesFromProductMatrixTriggers extends DolibarrTriggers
 			//case 'ACTION_MODIFY':
 			//case 'ACTION_CREATE':
 
-
+			case 'PRODUCT_DELETE': // Si on supprime un produit référencé dans une cellule, vidage de la cellule
+				$res = $this->db->getRow("SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix WHERE fk_product = ".$object->id);
+				if ($res->nb > 0)
+				{
+					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."linesfromproductmatrix_matrix WHERE fk_product = ".$object->id);
+					setEventMessage($langs->trans('DeleteCellUsedForProduct', $object->ref));
+				}
+				break;
 
 			default:
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
