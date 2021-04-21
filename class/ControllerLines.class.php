@@ -84,8 +84,8 @@ class ControllerLines {
 
 				if (empty($res))
 				{
-					if ($p->import_key) // if $res null (produit importé), créer prix de vente à 0
-					{
+					/*if ($p->import_key) // if $res null (produit importé), créer prix de vente à 0
+					{*/
 						// je crée une ligne de prix pour les produits importés qui n'en ont pas
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price, fk_product, fk_user_author, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
 						$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
@@ -99,7 +99,7 @@ class ControllerLines {
 							$res->price = "0.00000000";
 							$res->price_ttc = "0.00000000";
 						}
-					}
+//					}
 				}
 
 				if ($res > 0) {
