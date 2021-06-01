@@ -52,35 +52,53 @@ class ControllerLines {
 			$p = new Product($this->db);
 			$p->fetch($this->idproduct);
 
+			$PriceSQL = "select price , price_ttc  FROM llx_product_price WHERE fk_product = " . $this->idproduct . ' ORDER BY date_price DESC';
+
+			$price_level = 1;
+			if ($this->obj->socid > 0 && !empty($conf->global->PRODUIT_MULTIPRICES)) {
+				$thirdpartytemp = new Societe($this->db);
+				$thirdpartytemp->fetch($this->obj->socid);
+				$price_level = $thirdpartytemp->price_level;
+				if ($price_level >= 1)
+				{
+					$res = new stdClass();
+					$res->price = $p->multiprices[$price_level];
+					$res->price_ttc = $p->multiprices_ttc[$price_level];
+				}
+			}
+
 			$updated = false;
 			$this->jsonResponse->msg = "product fetched";
 			// Itération sur les lignes de Facture/Propal/Commande
 			foreach ($this->obj->lines as $l) {
 				if ($l->fk_product == $this->idproduct) {
-					$res = $this->db->getRow("select price FROM llx_product_price WHERE fk_product = " . $this->idproduct . ' ORDER BY date_price DESC');
-					if ($res > 0) {
-						// On cherche à supprimer la ligne active
-						if ($this->qty == 0) {
-							$this->errormysql = $this->deleteLineOfObject($this->obj, $l->id);
-							$this->jsonResponse->msg = "line deleted";
-							$updated = true;
-							break;
-						} else {
-							// On créé un objet $values contenant toutes les infos nécessaires pour l'update de TOUS les éléments FPC
-							$values = $this->prepareValues($l, $this->qty, $res, $p);
-							// On update
-							$this->errormysql = $this->updateLineInObject($this->obj, $values);
-							$this->jsonResponse->msg = "line updated";
-							$updated = true;
-							break;
-						}
+
+					if (empty($res)) $res = $this->db->getRow($PriceSQL);
+
+					// On cherche à supprimer la ligne active
+					if ($this->qty == 0) {
+						$this->errormysql = $this->deleteLineOfObject($this->obj, $l->id);
+						$this->jsonResponse->msg = "line deleted";
+						$updated = true;
+						break;
+
+					} else if ($res > 0) {
+
+						// On créé un objet $values contenant toutes les infos nécessaires pour l'update de TOUS les éléments FPC
+						$values = $this->prepareValues($l, $this->qty, $res, $p);
+						// On update
+						$this->errormysql = $this->updateLineInObject($this->obj, $values);
+						$this->jsonResponse->msg = "line updated";
+						$updated = true;
+						break;
+
 					}
 				}
 			}
 			// On ajoute la ligne, si elle n'est pas présente dans le current FPC
 			if (!$updated) {
 
-				$res = $this->db->getRow("select price , price_ttc  FROM llx_product_price WHERE fk_product = " . $this->idproduct . ' ORDER BY date_price DESC');
+				if (empty($res)) $res = $this->db->getRow($PriceSQL);
 
 				if (empty($res))
 				{
