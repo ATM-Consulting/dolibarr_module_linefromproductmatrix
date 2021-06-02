@@ -124,7 +124,8 @@ class ControllerLines {
 					// On créé un objet $values contenant toutes les infos nécessaires pour l'update de TOUS les éléments FPC
 					$values = $this->prepareValues($l, $this->qty, $res, $p, true);
 					$this->errormysql = $this->addLineInObject($this->obj, $values, $this->obj->element);
-					$this->jsonResponse->msg = "line created";
+					if ($this->errormysql > 0) $this->jsonResponse->msg = "line created";
+					else $this->jsonResponse->error = $this->errormysql;
 				} else {
 					$this->error++;
 					$this->jsonResponse->msg = "Error while getting product price";
