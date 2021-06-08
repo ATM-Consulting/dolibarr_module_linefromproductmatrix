@@ -52,7 +52,7 @@ class ControllerLines {
 			$p = new Product($this->db);
 			$p->fetch($this->idproduct);
 
-			$PriceSQL = "select price , price_ttc  FROM llx_product_price WHERE fk_product = " . $this->idproduct . ' ORDER BY date_price DESC';
+			$PriceSQL = "select price, tva_tx, price_ttc  FROM llx_product_price WHERE fk_product = " . $this->idproduct . ' ORDER BY date_price DESC';
 
 			$price_level = 1;
 			if ($this->obj->socid > 0 && !empty($conf->global->PRODUIT_MULTIPRICES)) {
@@ -63,6 +63,7 @@ class ControllerLines {
 				{
 					$res = new stdClass();
 					$res->price = $p->multiprices[$price_level];
+					$res->tva_tx = $p->multiprices_tva_tx[$price_level];
 					$res->price_ttc = $p->multiprices_ttc[$price_level];
 				}
 			}
@@ -115,6 +116,7 @@ class ControllerLines {
 						{
 							$res = new stdClass();
 							$res->price = "0.00000000";
+							$res->tva_tx = "0.00000000";
 							$res->price_ttc = "0.00000000";
 						}
 //					}
@@ -271,7 +273,7 @@ class ControllerLines {
 		if ($add) {
 			$values->desc = $product->label;
 			$values->remise_percent = $product->remise_percent;
-			$values->txtva = $product->tva_tx;
+			$values->txtva = $res->tva_tx;
 			$values->pu_ttc = $res->price_ttc; // Obligatoire pour que s'affiche le prix HT dans la fiche du FPC
 		}
 		else {
