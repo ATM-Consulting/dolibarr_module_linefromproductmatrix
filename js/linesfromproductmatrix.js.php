@@ -361,7 +361,8 @@ $(document).ready(function() {
 					}, 800);
 
 				}else {
-					matrixSetMessage(data.error, "error");
+					//matrixSetMessage(data.error, "error");
+					document.location.reload();
 
 					// on entre < 0 sur une cellule avec produit avec qty préexistante
 					if (data.currentQty){
@@ -374,7 +375,8 @@ $(document).ready(function() {
 				}
 			},
 			error: function (err) {
-				matrixSetMessage(err.responseText, "error");
+				//matrixSetMessage(err.responseText, "error");
+				document.location.reload();
 			}
 		})
 	});
