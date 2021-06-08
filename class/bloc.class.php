@@ -1278,7 +1278,7 @@ class Bloc extends CommonObject
 								// ligne commande non vide  && le produit est present dans la config matrice
 								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
 									$output .= '<BR /><input ';
-									if(!$user->rights->linesfromproductmatrix->bloc->write) $output .='disabled ';
+									if(!$user->rights->linesfromproductmatrix->bloc->read) $output .='disabled ';
 									$output .= 'id="quantity-input"
 												style="width: 80%;"
 												class="classfortooltip inputNumber"
