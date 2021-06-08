@@ -1277,8 +1277,8 @@ class Bloc extends CommonObject
 
 								// ligne commande non vide  && le produit est present dans la config matrice
 								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
-									$output .= '<input ';
-									if(!$user->rights->linesfromproductmatrix->bloc->write) $output .='disabled ';
+									$output .= '<BR /><input ';
+									if(!$user->rights->linesfromproductmatrix->bloc->read) $output .='disabled ';
 									$output .= 'id="quantity-input"
 												style="width: 80%;"
 												class="classfortooltip inputNumber"
@@ -1297,8 +1297,8 @@ class Bloc extends CommonObject
 								}else{
 									if ($matrixCell->fk_product) {
 										$url = $this->getNomUrlForProduct($matrixCell->fk_product);
-										$output .= '<span>' . $url . '</span>';
-										if ($user->rights->linesfromproductmatrix->bloc->write) {
+										$output .= '<span>' . $url . '</span><BR />';
+										if ($user->rights->linesfromproductmatrix->bloc->read) {
 											$output .= '<input
 												id="quantity-input"
 												class="classfortooltip
@@ -1315,7 +1315,7 @@ class Bloc extends CommonObject
 										}
 									}
 									else {
-										$output .= '<input
+										$output .= '<BR /><input
 												id="quantity-input"
 												style="width: 80%;"
 												class="classfortooltip

@@ -2,8 +2,9 @@
 
 ## 1.1.0
 
-- FIX : Fix addline for product wich don't have selling price
+- FIX : Fix addline for products wich don't have selling price
 - FIX : Fix delete cells used for a deleted product
+- FIX : Fix product multiprice management
 
 ## 1.0
 
