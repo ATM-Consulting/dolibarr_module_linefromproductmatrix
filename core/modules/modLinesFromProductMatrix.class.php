@@ -145,7 +145,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (!isset($conf->linesfromproductmatrix) || !isset($conf->linesfromproductmatrix->enabled)) {
+		if (!isset($conf->linesfromproductmatrix) || !isModEnabled('linesfromproductmatrix')) {
 			$conf->linesfromproductmatrix = new stdClass();
 			$conf->linesfromproductmatrix->enabled = 0;
 		}
@@ -153,9 +153,9 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		$this->tabs[] = array('data'=>'propal:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=propal'); // To add a new tab identified by code tabname1
-		$this->tabs[] = array('data'=>'order:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=commande');
-		$this->tabs[] = array('data'=>'invoice:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->rights->linesfromproductmatrix->bloc->read:/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=facture');
+		$this->tabs[] = array('data'=>'propal:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->hasRight('linesfromproductmatrix', 'bloc', 'read'):/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=propal'); // To add a new tab identified by code tabname1
+		$this->tabs[] = array('data'=>'order:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->hasRight('linesfromproductmatrix', 'bloc', 'read'):/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=commande');
+		$this->tabs[] = array('data'=>'invoice:+tabmatrix:Ajout rapide de quantité:linesfromproductmatrix@linesfromproductmatrix:$user->hasRight('linesfromproductmatrix', 'bloc', 'read'):/linesfromproductmatrix/tab_matrix.php?id=__ID__&element=facture');
 
 		// Dictionaries
 		$this->dictionaries = array();
@@ -179,7 +179,7 @@ class modLinesFromProductMatrix extends DolibarrModules
 			// Name of columns with primary key (try to always name it 'rowid')
 			'tabrowid'=>array("rowid", "rowid", "rowid"),
 			// Condition to show each dictionary
-			'tabcond'=>array($conf->linesfromproductmatrix->enabled, $conf->linesfromproductmatrix->enabled, $conf->linesfromproductmatrix->enabled)
+			'tabcond'=>array(isModEnabled('linesfromproductmatrix'), isModEnabled('linesfromproductmatrix'), isModEnabled('linesfromproductmatrix'))
 		);
 		*/
 
@@ -208,13 +208,13 @@ class modLinesFromProductMatrix extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->linesfromproductmatrix->enabled',
+			//      'test' => 'isModEnabled('linesfromproductmatrix')',
 			//      'priority' => 50,
 			//  ),
 		);
 		// Example: $this->cronjobs=array(
-		//    0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>'$conf->linesfromproductmatrix->enabled', 'priority'=>50),
-		//    1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>'$conf->linesfromproductmatrix->enabled', 'priority'=>50)
+		//    0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>'isModEnabled('linesfromproductmatrix')', 'priority'=>50),
+		//    1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>'isModEnabled('linesfromproductmatrix')', 'priority'=>50)
 		// );
 
 		// Permissions provided by this module
@@ -226,18 +226,18 @@ class modLinesFromProductMatrix extends DolibarrModules
 		/* BEGIN  PERMISSIONS */
 		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'AccessMatrix'; // Permission label
-		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
+		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->hasRight('linesfromproductmatrix', 'level1', 'level2'))
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->hasRight('linesfromproductmatrix', 'level1', 'level2'))
 		$r++;
 		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'CreateUpdateMatrix'; // Permission label
-		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
+		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->hasRight('linesfromproductmatrix', 'level1', 'level2'))
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->hasRight('linesfromproductmatrix', 'level1', 'level2'))
 		$r++;
 		$this->rights[$r][0] = $this->numero . $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'DeleteMatrix'; // Permission label
-		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->linesfromproductmatrix->level1->level2)
+		$this->rights[$r][4] = 'bloc'; // In php code, permission will be checked by test if ($user->hasRight('linesfromproductmatrix', 'level1', 'level2'))
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->hasRight('linesfromproductmatrix', 'level1', 'level2'))
 		$r++;
 		/* END  PERMISSIONS */
 
@@ -255,8 +255,8 @@ class modLinesFromProductMatrix extends DolibarrModules
 			'url'=>'/linesfromproductmatrix/admin/matrix_config.php',
 			'langs'=>'linesfromproductmatrix@linesfromproductmatrix', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
-			'enabled'=>'$conf->linesfromproductmatrix->enabled', // Define condition to show or hide menu entry. Use '$conf->linesfromproductmatrix->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->linesfromproductmatrix->bloc->read', // Use 'perms'=>'$user->rights->linesfromproductmatrix->bloc->read' if you want your menu with a permission rules
+			'enabled'=>'isModEnabled('linesfromproductmatrix')', // Define condition to show or hide menu entry. Use 'isModEnabled('linesfromproductmatrix')' if entry must be visible if module is enabled.
+			'perms'=>'$user->hasRight('linesfromproductmatrix', 'bloc', 'read')', // Use 'perms'=>'$user->hasRight('linesfromproductmatrix', 'bloc', 'read')' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -291,11 +291,11 @@ class modLinesFromProductMatrix extends DolibarrModules
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('linesfromproductmatrix_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', '$conf->linesfromproductmatrix->enabled');
-		//$result2=$extrafields->addExtraField('linesfromproductmatrix_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', '$conf->linesfromproductmatrix->enabled');
-		//$result3=$extrafields->addExtraField('linesfromproductmatrix_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', '$conf->linesfromproductmatrix->enabled');
-		//$result4=$extrafields->addExtraField('linesfromproductmatrix_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', '$conf->linesfromproductmatrix->enabled');
-		//$result5=$extrafields->addExtraField('linesfromproductmatrix_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', '$conf->linesfromproductmatrix->enabled');
+		//$result1=$extrafields->addExtraField('linesfromproductmatrix_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', 'isModEnabled('linesfromproductmatrix')');
+		//$result2=$extrafields->addExtraField('linesfromproductmatrix_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', 'isModEnabled('linesfromproductmatrix')');
+		//$result3=$extrafields->addExtraField('linesfromproductmatrix_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', 'isModEnabled('linesfromproductmatrix')');
+		//$result4=$extrafields->addExtraField('linesfromproductmatrix_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', 'isModEnabled('linesfromproductmatrix')');
+		//$result5=$extrafields->addExtraField('linesfromproductmatrix_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'linesfromproductmatrix@linesfromproductmatrix', 'isModEnabled('linesfromproductmatrix')');
 
 		// Permissions
 		$this->remove($options);

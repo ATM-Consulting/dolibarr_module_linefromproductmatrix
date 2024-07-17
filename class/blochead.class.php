@@ -165,10 +165,10 @@ class BlocHead extends CommonObject
 		$this->db = $db;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->linesfromproductmatrix->blocchild->read) {
+		/*if ($user->hasRight('linesfromproductmatrix', 'blocchild', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -477,8 +477,8 @@ class BlocHead extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->blocchild->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->blocchild->blocchild_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'blocchild', 'write')))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'blocchild', 'blocchild_advance')->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -602,8 +602,8 @@ class BlocHead extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->linesfromproductmatrix_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'write')))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'linesfromproductmatrix_advance', 'validate')))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -627,8 +627,8 @@ class BlocHead extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->linesfromproductmatrix_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'write')))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'linesfromproductmatrix_advance', 'validate')))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -652,8 +652,8 @@ class BlocHead extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->linesfromproductmatrix_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'write')))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'linesfromproductmatrix_advance', 'validate')))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;

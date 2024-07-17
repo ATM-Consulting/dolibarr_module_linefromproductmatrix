@@ -138,7 +138,7 @@ class ActionsLinesfromproductmatrix
 				'default',
 				dol_buildpath('/custom/musiqueservice/trainingsession_card.php?action=create&idmenu=381&mainmenu=musiqueservice&leftmenu='."&fk_product=" .$object->id .$this->addDatesFieldsWithDuration($object), 1),
 				'button-modsport-creation',
-				$user->rights->musiqueservice->trainingsession->write, $param );
+				$user->hasRight('musiqueservice', 'trainingsession', 'write'), $param );
 		}
 	}
 

@@ -30,7 +30,7 @@ dol_include_once('/linesfromproductmatrix/lib/linesfromproductmatrix_bloc.lib.ph
 dol_include_once('/linesfromproductmatrix/class/blochead.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('projet')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -75,7 +75,7 @@ if (empty($action) && empty($id) && empty($ref))
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // permission
-$permissiontoread = $user->rights->linesfromproductmatrix->bloc->read;
+$permissiontoread = $user->hasRight('linesfromproductmatrix', 'bloc', 'read');
 
 
 $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -161,7 +161,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 	// PROJET ENTÊTE
-	if(!empty($conf->projet->enabled)) {
+	if(isModEnabled('projet')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
 		if ($action != 'classify') {

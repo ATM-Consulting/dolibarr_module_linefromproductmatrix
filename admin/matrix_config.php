@@ -84,9 +84,9 @@ if (empty($action) && empty($id) && empty($ref))
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoadd = $user->rights->linesfromproductmatrix->bloc->write;
-$permissiontoread = $user->rights->linesfromproductmatrix->bloc->read;
-$permissiontodelete = $user->rights->linesfromproductmatrix->bloc->delete;
+$permissiontoadd = $user->hasRight('linesfromproductmatrix', 'bloc', 'write');
+$permissiontoread = $user->hasRight('linesfromproductmatrix', 'bloc', 'read');
+$permissiontodelete = $user->hasRight('linesfromproductmatrix', 'bloc', 'delete');
 $upload_dir = $conf->linesfromproductmatrix->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 

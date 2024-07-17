@@ -171,10 +171,10 @@ class Bloc extends CommonObject
 		$this->db = $db;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->linesfromproductmatrix->bloc->read) {
+		/*if ($user->hasRight('linesfromproductmatrix', 'bloc', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -496,8 +496,8 @@ class Bloc extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->bloc->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->bloc->bloc_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'bloc', 'write')))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'bloc', 'bloc_advance')->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -621,8 +621,8 @@ class Bloc extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->linesfromproductmatrix_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'write')))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'linesfromproductmatrix_advance', 'validate')))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -646,8 +646,8 @@ class Bloc extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->linesfromproductmatrix_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'write')))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'linesfromproductmatrix_advance', 'validate')))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -671,8 +671,8 @@ class Bloc extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->linesfromproductmatrix->linesfromproductmatrix_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'write')))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->hasRight('linesfromproductmatrix', 'linesfromproductmatrix_advance', 'validate')))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -1063,7 +1063,7 @@ class Bloc extends CommonObject
 
 			$out .= '<div class="matrix-head">';
 
-			if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
+			if($mode == 'config' && $user->hasRight('linesfromproductmatrix', 'bloc', 'write')) {
 				$out .= '<input id="bloc-label-' . $b->id . '" class="inputBloc" type="text"  value="'.dol_htmlentities($b->label, ENT_QUOTES).'" name="bloclabel" data-id="' . $b->id . '">
 						<a class="editfielda reposition" data-id="' . $b->id . '" href="#bloc-label-' . $b->id . '">
 						<span id="' . $b->id . '" data-id="' . $b->id . '" class="fas fa-pencil-alt" title="'.$this->langs->trans('Modify').'"></span>
@@ -1073,7 +1073,7 @@ class Bloc extends CommonObject
 				$out .= '<span class="bloc-label">'.$b->label.'</span>';
 			}
 
-			 if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
+			 if($mode == 'config' && $user->hasRight('linesfromproductmatrix', 'bloc', 'delete')) {
 					$out .= '<a id="matrix-delete-' . $b->id . '">
 						<span data-id="' . $b->id . '" class="fas fa-trash pictodelete pull-right classfortooltip" style="" title="'.$this->langs->trans('delete').'"></span>
 						</a>
@@ -1099,7 +1099,7 @@ class Bloc extends CommonObject
 		$b->fetchMatrix($b);
 		$out .= $b->displayMatrix($mode,$TlinesObjectFPC, $fpc_object);
 		// FOOTER AJOUTER LIGNE COL
-		if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
+		if($mode == 'config' && $user->hasRight('linesfromproductmatrix', 'bloc', 'write')) {
 			$out .= '<div class="matrix-footer">';
 
 
@@ -1235,14 +1235,14 @@ class Bloc extends CommonObject
 					if ($matrixCell->type == 0 ) {
 						$output .= '<div class="bloc-table-cell bloc-table-head">';
 
-						if($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
+						if($mode == 'config' && $user->hasRight('linesfromproductmatrix', 'bloc', 'delete')) {
 						$output .= '<a class="matrix-col-delete classfortooltip"  data-blocid="'.$this->id.'" data-id="'.$matrixCell->headId.'" title="'.$this->langs->trans("tooltipDeleteCol").'"><i class="fas fa-trash deleteHead pull-right"></i></a>';
 						}
 					}else{
 						// Si on est sur des headers lignes
 						if ($matrixCell->type > 0) {
 							$output .= '<div class="bloc-table-cell">';
-							if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->delete) {
+							if ($mode == 'config' && $user->hasRight('linesfromproductmatrix', 'bloc', 'delete')) {
 								$output .= '<a class="matrix-line-delete classfortooltip" data-type="' . $matrixCell->type . '" data-blocid="' . $this->id . '" data-id="' . $matrixCell->headId . '" title="'.$this->langs->trans("tooltipDeleteLine").'"><i class="fas fa-trash deleteHead"></i></a>';
 							}
 						}else {
@@ -1261,7 +1261,7 @@ class Bloc extends CommonObject
 
 						// AFFICHAGE PRODUIT
 						if ($matrixCell->type === -1 ) {
-							if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
+							if ($mode == 'config' && $user->hasRight('linesfromproductmatrix', 'bloc', 'write')) {
 
 								$fkproduct = $matrixCell->fk_product ? $matrixCell->fk_product : '';
 								$output .= $this->select_produits($matrixCell->fk_blocHeaderCol, $matrixCell->fk_blocHeaderRow, $fkproduct, 'idprod_' . $matrixCell->fk_blocHeaderCol . '_' . $matrixCell->fk_blocHeaderRow, '', 20, 0, 1, 2);
@@ -1278,7 +1278,7 @@ class Bloc extends CommonObject
 								// ligne commande non vide  && le produit est present dans la config matrice
 								if (!empty($TlinesObjectFPC && $matrixCell->fk_product)){
 									$output .= '<input ';
-									if(!$user->rights->linesfromproductmatrix->bloc->read) $output .='disabled ';
+									if(!$user->hasRight('linesfromproductmatrix', 'bloc', 'read')) $output .='disabled ';
 									$output .= 'id="quantity-input"
 												style="width: 80%;"
 												class="classfortooltip inputNumber"
@@ -1298,7 +1298,7 @@ class Bloc extends CommonObject
 									if ($matrixCell->fk_product) {
 										/*$url = $this->getNomUrlForProduct($matrixCell->fk_product);
 										$output .= '<span>' . $url . '</span><BR />';*/
-										if ($user->rights->linesfromproductmatrix->bloc->read) {
+										if ($user->hasRight('linesfromproductmatrix', 'bloc', 'read')) {
 											$output .= '<input
 												id="quantity-input"
 												class="classfortooltip
@@ -1335,7 +1335,7 @@ class Bloc extends CommonObject
 						} else { // AFFICHAGE HEADER
 								// COl/ROW label
 								if ($matrixCell->type >= 0){
-									if ($mode == 'config' && $user->rights->linesfromproductmatrix->bloc->write) {
+									if ($mode == 'config' && $user->hasRight('linesfromproductmatrix', 'bloc', 'write')) {
 										$output .= '<input placeholder="'.$this->langs->trans("YourLabelHere").'" data-currentValue="'.$matrixCell->label.'" required id="blocHead-label-' . $this->displayMatrix[$row][$col]->headId . '" class="input-bloc-header"  type="text" size="6" name="blocHeadlabel" data-idhead="' . $this->displayMatrix[$row][$col]->headId . '" value="'.dol_htmlentities($matrixCell->label, ENT_QUOTES).'" >';
 									}else {
 										$output .= $matrixCell->label;
@@ -1420,11 +1420,11 @@ class Bloc extends CommonObject
 			$ajaxoptions = array();
 		}
 
-		if (strval($filtertype) === '' && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
-			if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+		if (strval($filtertype) === '' && (isModEnabled('product') || isModEnabled('service'))) {
+			if (isModEnabled('product') && !isModEnabled('service')) {
 				$filtertype = '0';
 			}
-			elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			elseif (!isModEnabled('product') && isModEnabled('service')) {
 				$filtertype = '1';
 			}
 		}
@@ -1445,10 +1445,10 @@ class Bloc extends CommonObject
 			// handle case where product or service module is disabled + no filter specified
 			if ($filtertype == '')
 			{
-				if (empty($conf->product->enabled)) { // when product module is disabled, show services only
+				if (!isModEnabled('product')) { // when product module is disabled, show services only
 					$filtertype = 1;
 				}
-				elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+				elseif (!isModEnabled('service')) { // when service module is disabled, show products only
 					$filtertype = 0;
 				}
 			}
@@ -1460,7 +1460,7 @@ class Bloc extends CommonObject
 			}
 			$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 
-			if (!empty($conf->variants->enabled)) {
+			if (isModEnabled('variants')) {
 				$out.= '<script>
 					//TODO  LET OR VAR
 					var selected = '.json_encode($selected_combinations).';
